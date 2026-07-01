@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================================ -->
+        <!-- Tree View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_student_tree" model="ir.ui.view">
+            <field name="name">winners.student.tree</field>
+            <field name="model">winners.student</field>
+            <field name="arch" type="xml">
+                <tree string="Étudiants">
+                    <field name="name"/>
+                    <field name="first_name"/>
+                    <field name="level"/>
+                    <field name="status"/>
+                    <field name="sessions_remaining"/>
+                    <field name="parent_phone"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Form View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_student_form" model="ir.ui.view">
+            <field name="name">winners.student.form</field>
+            <field name="model">winners.student</field>
+            <field name="arch" type="xml">
+                <form string="Étudiant">
+                    <sheet>
+                        <group>
+                            <group string="Informations scolaires">
+                                <field name="name"/>
+                                <field name="first_name"/>
+                                <field name="birth_date"/>
+                                <field name="level"/>
+                                <field name="branch_id"/>
+                                <field name="enrollment_date"/>
+                                <field name="sessions_remaining"/>
+                                <field name="status"/>
+                            </group>
+                            <group string="Photo &amp; Contact parent">
+                                <field name="photo" widget="image"/>
+                                <field name="parent_name"/>
+                                <field name="parent_phone"/>
+                                <field name="parent_address"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Action -->
+        <!-- ============================================================ -->
+        <record id="action_winners_student" model="ir.actions.act_window">
+            <field name="name">Étudiants</field>
+            <field name="res_model">winners.student</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Inscrire un nouvel étudiant
+                </p>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Menu -->
+        <!-- ============================================================ -->
+        <menuitem id="menu_winners_student"
+                  name="Étudiants"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_student"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary"
+                  sequence="30"/>
+
+    </data>
+</odoo>

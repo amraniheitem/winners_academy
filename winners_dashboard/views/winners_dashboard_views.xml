@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================================ -->
+        <!-- Client Action : Tableau de bord Winners -->
+        <!-- ============================================================ -->
+        <record id="action_winners_dashboard" model="ir.actions.client">
+            <field name="name">Tableau de bord</field>
+            <field name="tag">winners_dashboard</field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Menu : Tableau de bord (séquence 1) -->
+        <!-- ============================================================ -->
+        <menuitem id="menu_winners_dashboard"
+                  name="Tableau de bord"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_dashboard"
+                  sequence="1"/>
+
+    </data>
+</odoo>

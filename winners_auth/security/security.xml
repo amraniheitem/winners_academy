@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="module_category_winners_academy" model="ir.module.category">
+            <field name="name">Winners Academy</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="winners_group_director" model="res.groups">
+            <field name="name">Directeur</field>
+            <field name="category_id" ref="module_category_winners_academy"/>
+        </record>
+
+        <record id="winners_group_secretary" model="res.groups">
+            <field name="name">Secrétaire</field>
+            <field name="category_id" ref="module_category_winners_academy"/>
+        </record>
+
+        <record id="winners_group_teacher" model="res.groups">
+            <field name="name">Enseignant</field>
+            <field name="category_id" ref="module_category_winners_academy"/>
+        </record>
+
+        <record id="winners_group_cashier" model="res.groups">
+            <field name="name">Caissier</field>
+            <field name="category_id" ref="module_category_winners_academy"/>
+        </record>
+
+        <record id="winners_group_super_admin" model="res.groups">
+            <field name="name">Super administrateur</field>
+            <field name="category_id" ref="module_category_winners_academy"/>
+            <field name="implied_ids" eval="[
+                (4, ref('winners_group_director')),
+                (4, ref('winners_group_secretary')),
+                (4, ref('winners_group_teacher')),
+                (4, ref('winners_group_cashier')),
+            ]"/>
+        </record>
+    </data>
+</odoo>

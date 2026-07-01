@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="winners_dashboard.Dashboard">
+        <div class="winners_dashboard o_action">
+
+            <!-- ======== EN-TÊTE ======== -->
+            <div class="dashboard_header">
+                <div class="dashboard_header_left">
+                    <h1 class="dashboard_title">
+                        <i class="fa fa-graduation-cap"/> Winners Academy
+                    </h1>
+                    <p class="dashboard_subtitle">Tableau de bord</p>
+                </div>
+                <button class="btn dashboard_refresh_btn" t-on-click="onRefresh"
+                        t-att-disabled="state.isLoading">
+                    <i class="fa fa-refresh" t-att-class="{'fa-spin': state.isLoading}"/>
+                    Actualiser
+                </button>
+            </div>
+
+            <!-- ======== SPINNER ======== -->
+            <div t-if="state.isLoading" class="dashboard_loading">
+                <i class="fa fa-spinner fa-spin fa-3x"/>
+                <p>Chargement des données...</p>
+            </div>
+
+            <!-- ======== CARTES STATISTIQUES ======== -->
+            <div t-if="!state.isLoading" class="dashboard_cards">
+
+                <!-- Étudiants actifs -->
+                <div class="dashboard_card card_active" t-on-click="() => this.openStudents('active')">
+                    <div class="card_icon">
+                        <i class="fa fa-users"/>
+                    </div>
+                    <div class="card_content">
+                        <span class="card_value" t-esc="state.totalActive"/>
+                        <span class="card_label">Étudiants actifs</span>
+                    </div>
+                    <div class="card_arrow">
+                        <i class="fa fa-chevron-right"/>
+                    </div>
+                </div>
+
+                <!-- Étudiants en alerte -->
+                <div class="dashboard_card card_alert" t-on-click="() => this.openStudents('alert')">
+                    <div class="card_icon">
+                        <i class="fa fa-exclamation-triangle"/>
+                    </div>
+                    <div class="card_content">
+                        <span class="card_value" t-esc="state.totalAlert"/>
+                        <span class="card_label">Étudiants en alerte</span>
+                    </div>
+                    <div class="card_arrow">
+                        <i class="fa fa-chevron-right"/>
+                    </div>
+                </div>
+
+                <!-- Étudiants expirés -->
+                <div class="dashboard_card card_expired" t-on-click="() => this.openStudents('expired')">
+                    <div class="card_icon">
+                        <i class="fa fa-user-times"/>
+                    </div>
+                    <div class="card_content">
+                        <span class="card_value" t-esc="state.totalExpired"/>
+                        <span class="card_label">Étudiants expirés</span>
+                    </div>
+                    <div class="card_arrow">
+                        <i class="fa fa-chevron-right"/>
+                    </div>
+                </div>
+
+                <!-- Revenus du mois -->
+                <div class="dashboard_card card_revenue" t-on-click="openPayments">
+                    <div class="card_icon">
+                        <i class="fa fa-money"/>
+                    </div>
+                    <div class="card_content">
+                        <span class="card_value">
+                            <t t-esc="formatCurrency(state.revenueMonth)"/> DA
+                        </span>
+                        <span class="card_label">Revenus du mois</span>
+                    </div>
+                    <div class="card_arrow">
+                        <i class="fa fa-chevron-right"/>
+                    </div>
+                </div>
+
+                <!-- Présences du jour -->
+                <div class="dashboard_card card_attendance" t-on-click="openAttendance">
+                    <div class="card_icon">
+                        <i class="fa fa-check-circle"/>
+                    </div>
+                    <div class="card_content">
+                        <span class="card_value" t-esc="state.attendanceToday"/>
+                        <span class="card_label">Présences du jour</span>
+                    </div>
+                    <div class="card_arrow">
+                        <i class="fa fa-chevron-right"/>
+                    </div>
+                </div>
+
+                <!-- Séances du jour -->
+                <div class="dashboard_card card_sessions" t-on-click="openSessions">
+                    <div class="card_icon">
+                        <i class="fa fa-calendar"/>
+                    </div>
+                    <div class="card_content">
+                        <span class="card_value" t-esc="state.sessionsToday"/>
+                        <span class="card_label">Séances du jour</span>
+                    </div>
+                    <div class="card_arrow">
+                        <i class="fa fa-chevron-right"/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+</templates>

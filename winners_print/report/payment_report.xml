@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================================ -->
+        <!-- QWeb Template : Bon de Paiement (format compact, sans en-tête Odoo) -->
+        <!-- ============================================================ -->
+        <template id="report_payment_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; color: #333; padding: 10mm 15mm; max-height: 140mm;">
+
+                        <!-- ======== EN-TÊTE ======== -->
+                        <div style="text-align: center; margin-bottom: 12px; border-bottom: 3px solid #1a237e; padding-bottom: 8px;">
+                            <h1 style="color: #1a237e; font-size: 20px; font-weight: 700; margin: 0; letter-spacing: 2px;">
+                                WINNERS ACADEMY
+                            </h1>
+                            <h2 style="color: #424242; font-size: 14px; font-weight: 400; margin: 3px 0 0 0; letter-spacing: 1px;">
+                                BON DE PAIEMENT
+                            </h2>
+                        </div>
+
+                        <!-- ======== INFORMATIONS ACADÉMIE ======== -->
+                        <table style="width: 100%; margin-bottom: 10px; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 50%; padding: 4px 8px; border: 1px solid #bdbdbd; background-color: #e8eaf6;">
+                                    <strong>Branche :</strong>
+                                    <span t-field="o.branch_id.name"/>
+                                </td>
+                                <td style="width: 50%; padding: 4px 8px; border: 1px solid #bdbdbd; background-color: #e8eaf6; text-align: right;">
+                                    <strong>Date d'impression :</strong>
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ======== INFORMATIONS ÉTUDIANT ======== -->
+                        <h3 style="color: #1a237e; font-size: 12px; border-bottom: 2px solid #c5cae9; padding-bottom: 3px; margin: 8px 0 6px 0;">
+                            Informations de l'étudiant
+                        </h3>
+                        <table style="width: 100%; margin-bottom: 10px; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 30%; padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Nom complet</strong>
+                                </td>
+                                <td style="width: 70%; padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                    <span t-esc="'%s %s' % (o.student_id.first_name or '', o.student_id.name or '')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Niveau scolaire</strong>
+                                </td>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                    <span t-esc="dict(o.student_id._fields['level'].selection).get(o.student_id.level, '')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Branche</strong>
+                                </td>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                    <span t-field="o.student_id.branch_id.name"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ======== DÉTAILS DU PAIEMENT ======== -->
+                        <h3 style="color: #1a237e; font-size: 12px; border-bottom: 2px solid #c5cae9; padding-bottom: 3px; margin: 8px 0 6px 0;">
+                            Détails du paiement
+                        </h3>
+                        <table style="width: 100%; margin-bottom: 10px; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 30%; padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Date de paiement</strong>
+                                </td>
+                                <td style="width: 70%; padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                    <span t-field="o.date" t-options='{"format": "dd/MM/yyyy"}'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Montant</strong>
+                                </td>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd; font-weight: bold; color: #1b5e20;">
+                                    <span t-field="o.amount" t-options='{"widget": "float", "precision": 2}'/> DA
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Séances achetées</strong>
+                                </td>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                    <span t-field="o.sessions_count"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Mode de paiement</strong>
+                                </td>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                    <span t-if="o.payment_mode == 'cash'">Espèces</span>
+                                    <span t-if="o.payment_mode == 'transfer'">Virement</span>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ======== SÉANCES RESTANTES ======== -->
+                        <div style="background-color: #e8f5e9; border: 2px solid #66bb6a; border-radius: 5px; padding: 8px 12px; margin-bottom: 15px; text-align: center;">
+                            <strong style="font-size: 12px; color: #2e7d32;">
+                                Séances restantes après paiement :
+                            </strong>
+                            <span style="font-size: 16px; font-weight: 700; color: #1b5e20; margin-left: 8px;">
+                                <t t-esc="o.student_id.sessions_remaining"/>
+                            </span>
+                        </div>
+
+                        <!-- ======== PIED DE PAGE : SIGNATURE / CACHET ======== -->
+                        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 50%; text-align: center; padding-top: 8px;">
+                                    <div style="border-top: 2px solid #424242; width: 180px; margin: 0 auto; padding-top: 6px;">
+                                        <strong>Signature du responsable</strong>
+                                    </div>
+                                </td>
+                                <td style="width: 50%; text-align: center; padding-top: 8px;">
+                                    <div style="border-top: 2px solid #424242; width: 180px; margin: 0 auto; padding-top: 6px;">
+                                        <strong>Cachet de l'académie</strong>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_winners_schedule_super_admin,winners.schedule super admin,model_winners_schedule,winners_auth.winners_group_super_admin,1,1,1,1
+access_winners_schedule_director,winners.schedule director,model_winners_schedule,winners_auth.winners_group_director,1,1,1,1
+access_winners_schedule_secretary,winners.schedule secretary,model_winners_schedule,winners_auth.winners_group_secretary,1,1,1,1
+access_winners_schedule_teacher,winners.schedule teacher,model_winners_schedule,winners_auth.winners_group_teacher,1,0,0,0
+access_winners_schedule_cashier,winners.schedule cashier,model_winners_schedule,winners_auth.winners_group_cashier,1,0,0,0

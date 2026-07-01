@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================================ -->
+        <!-- Tree View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_room_tree" model="ir.ui.view">
+            <field name="name">winners.room.tree</field>
+            <field name="model">winners.room</field>
+            <field name="arch" type="xml">
+                <tree string="Salles">
+                    <field name="name"/>
+                    <field name="branch_id"/>
+                    <field name="capacity"/>
+                    <field name="floor"/>
+                    <field name="is_active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Form View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_room_form" model="ir.ui.view">
+            <field name="name">winners.room.form</field>
+            <field name="model">winners.room</field>
+            <field name="arch" type="xml">
+                <form string="Salle">
+                    <sheet>
+                        <group>
+                            <group string="Informations de la salle">
+                                <field name="name"/>
+                                <field name="branch_id"/>
+                                <field name="capacity"/>
+                                <field name="floor"/>
+                                <field name="is_active"/>
+                            </group>
+                            <group string="Détails">
+                                <field name="equipment"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Action -->
+        <!-- ============================================================ -->
+        <record id="action_winners_room" model="ir.actions.act_window">
+            <field name="name">Salles</field>
+            <field name="res_model">winners.room</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Ajouter une nouvelle salle
+                </p>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Menu -->
+        <!-- ============================================================ -->
+        <menuitem id="menu_winners_room"
+                  name="Salles"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_room"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
+                  sequence="65"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================================ -->
+        <!-- Tree View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_attendance_tree" model="ir.ui.view">
+            <field name="name">winners.attendance.tree</field>
+            <field name="model">winners.attendance</field>
+            <field name="arch" type="xml">
+                <tree string="Présences">
+                    <field name="student_id"/>
+                    <field name="group_id"/>
+                    <field name="date"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Form View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_attendance_form" model="ir.ui.view">
+            <field name="name">winners.attendance.form</field>
+            <field name="model">winners.attendance</field>
+            <field name="arch" type="xml">
+                <form string="Présence">
+                    <sheet>
+                        <group>
+                            <group string="Informations de la présence">
+                                <field name="student_id"/>
+                                <field name="group_id"/>
+                                <field name="date"/>
+                                <field name="status"/>
+                            </group>
+                            <group string="Détails">
+                                <field name="branch_id"/>
+                                <field name="notes"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Action -->
+        <!-- ============================================================ -->
+        <record id="action_winners_attendance" model="ir.actions.act_window">
+            <field name="name">Présences</field>
+            <field name="res_model">winners.attendance</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Enregistrer une nouvelle présence
+                </p>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Menu -->
+        <!-- ============================================================ -->
+        <menuitem id="menu_winners_attendance"
+                  name="Présences"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_attendance"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
+                  sequence="80"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================================ -->
+        <!-- winners.group — Tree View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_group_tree" model="ir.ui.view">
+            <field name="name">winners.group.tree</field>
+            <field name="model">winners.group</field>
+            <field name="arch" type="xml">
+                <tree string="Groupes">
+                    <field name="name"/>
+                    <field name="subject"/>
+                    <field name="level"/>
+                    <field name="teacher_id"/>
+                    <field name="nb_students"/>
+                    <field name="is_active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- winners.group — Form View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_group_form" model="ir.ui.view">
+            <field name="name">winners.group.form</field>
+            <field name="model">winners.group</field>
+            <field name="arch" type="xml">
+                <form string="Groupe">
+                    <sheet>
+                        <group>
+                            <group string="Informations du groupe">
+                                <field name="name"/>
+                                <field name="subject"/>
+                                <field name="level"/>
+                                <field name="teacher_id"/>
+                            </group>
+                            <group string="Configuration">
+                                <field name="branch_id"/>
+                                <field name="max_students"/>
+                                <field name="nb_students" readonly="1"/>
+                                <field name="is_active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Étudiants inscrits">
+                                <field name="student_ids"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- winners.group — Action -->
+        <!-- ============================================================ -->
+        <record id="action_winners_group" model="ir.actions.act_window">
+            <field name="name">Groupes</field>
+            <field name="res_model">winners.group</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Créer un nouveau groupe
+                </p>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- winners.session — Tree View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_session_tree" model="ir.ui.view">
+            <field name="name">winners.session.tree</field>
+            <field name="model">winners.session</field>
+            <field name="arch" type="xml">
+                <tree string="Séances">
+                    <field name="group_id"/>
+                    <field name="date"/>
+                    <field name="duration_hours"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- winners.session — Form View -->
+        <!-- ============================================================ -->
+        <record id="view_winners_session_form" model="ir.ui.view">
+            <field name="name">winners.session.form</field>
+            <field name="model">winners.session</field>
+            <field name="arch" type="xml">
+                <form string="Séance">
+                    <sheet>
+                        <group>
+                            <group string="Informations de la séance">
+                                <field name="group_id"/>
+                                <field name="date"/>
+                                <field name="duration_hours"/>
+                                <field name="status"/>
+                            </group>
+                            <group string="Notes">
+                                <field name="notes"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- winners.session — Action -->
+        <!-- ============================================================ -->
+        <record id="action_winners_session" model="ir.actions.act_window">
+            <field name="name">Séances</field>
+            <field name="res_model">winners.session</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Planifier une nouvelle séance
+                </p>
+            </field>
+        </record>
+
+        <!-- ============================================================ -->
+        <!-- Menus -->
+        <!-- ============================================================ -->
+        <menuitem id="menu_winners_group"
+                  name="Groupes"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_group"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
+                  sequence="40"/>
+
+        <menuitem id="menu_winners_session"
+                  name="Séances"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_session"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
+                  sequence="50"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_winners_payment_super_admin,winners.payment super admin,model_winners_payment,winners_auth.winners_group_super_admin,1,1,1,1
+access_winners_payment_director,winners.payment director,model_winners_payment,winners_auth.winners_group_director,1,1,1,1
+access_winners_payment_secretary,winners.payment secretary,model_winners_payment,winners_auth.winners_group_secretary,1,1,1,1
+access_winners_payment_cashier,winners.payment cashier,model_winners_payment,winners_auth.winners_group_cashier,1,1,1,1
+access_winners_payment_teacher,winners.payment teacher,model_winners_payment,winners_auth.winners_group_teacher,1,0,0,0

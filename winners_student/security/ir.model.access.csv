@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_winners_student_super_admin,winners.student super admin,model_winners_student,winners_auth.winners_group_super_admin,1,1,1,1
+access_winners_student_director,winners.student director,model_winners_student,winners_auth.winners_group_director,1,1,1,1
+access_winners_student_secretary,winners.student secretary,model_winners_student,winners_auth.winners_group_secretary,1,1,1,1
+access_winners_student_teacher,winners.student teacher,model_winners_student,winners_auth.winners_group_teacher,1,0,0,0

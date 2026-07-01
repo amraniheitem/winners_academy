@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Override branch menu to add group restrictions -->
+        <menuitem id="winners_branch.menu_winners_branch"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary"/>
+
+        <!-- Form View Inheritance -->
+        <record id="view_users_form_winners_inherit" model="ir.ui.view">
+            <field name="name">res.users.form.winners.inherit</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/div[hasclass('oe_title')]" position="after">
+                    <group string="Configuration Winners Academy" class="mt-3">
+                        <group>
+                            <field name="winners_role" required="1"/>
+                            <field name="branch_id"/>
+                        </group>
+                        <group>
+                            <field name="is_active_winners"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Custom Tree View for Winners Employees -->
+        <record id="view_winners_user_tree" model="ir.ui.view">
+            <field name="name">res.users.winners.tree</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <tree string="Employés Winners">
+                    <field name="name"/>
+                    <field name="login" string="Email"/>
+                    <field name="winners_role"/>
+                    <field name="branch_id"/>
+                    <field name="is_active_winners" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Act Window for Winners Employees -->
+        <record id="action_winners_user" model="ir.actions.act_window">
+            <field name="name">Employés Winners</field>
+            <field name="res_model">res.users</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_winners_user_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_users_form')})
+            ]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Créer un nouvel employé Winners
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_winners_user"
+                  name="Employés"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_user"
+                  sequence="5"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>
+    </data>
+</odoo>

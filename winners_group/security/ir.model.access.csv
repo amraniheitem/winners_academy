@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_winners_group_super_admin,winners.group super admin,model_winners_group,winners_auth.winners_group_super_admin,1,1,1,1
+access_winners_group_director,winners.group director,model_winners_group,winners_auth.winners_group_director,1,1,1,1
+access_winners_group_secretary,winners.group secretary,model_winners_group,winners_auth.winners_group_secretary,1,1,1,1
+access_winners_group_teacher,winners.group teacher,model_winners_group,winners_auth.winners_group_teacher,1,0,0,0
+access_winners_session_super_admin,winners.session super admin,model_winners_session,winners_auth.winners_group_super_admin,1,1,1,1
+access_winners_session_director,winners.session director,model_winners_session,winners_auth.winners_group_director,1,1,1,1
+access_winners_session_secretary,winners.session secretary,model_winners_session,winners_auth.winners_group_secretary,1,1,1,1
+access_winners_session_teacher,winners.session teacher,model_winners_session,winners_auth.winners_group_teacher,1,0,0,0

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_winners_attendance_super_admin,winners.attendance super admin,model_winners_attendance,winners_auth.winners_group_super_admin,1,1,1,1
+access_winners_attendance_director,winners.attendance director,model_winners_attendance,winners_auth.winners_group_director,1,1,1,1
+access_winners_attendance_secretary,winners.attendance secretary,model_winners_attendance,winners_auth.winners_group_secretary,1,1,1,1
+access_winners_attendance_teacher,winners.attendance teacher,model_winners_attendance,winners_auth.winners_group_teacher,1,1,1,1
+access_winners_attendance_cashier,winners.attendance cashier,model_winners_attendance,winners_auth.winners_group_cashier,1,0,0,0

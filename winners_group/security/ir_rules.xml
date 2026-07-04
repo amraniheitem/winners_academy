@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- winners.group -->
+        <record id="rule_group_by_branch" model="ir.rule">
+            <field name="name">Group: own branch only</field>
+            <field name="model_id" ref="winners_group.model_winners_group"/>
+            <field name="domain_force">[('branch_id', '=', user.branch_id.id)]</field>
+            <field name="groups" eval="[
+                (4, ref('winners_auth.winners_group_director')),
+                (4, ref('winners_auth.winners_group_secretary')),
+                (4, ref('winners_auth.winners_group_teacher')),
+                (4, ref('winners_auth.winners_group_cashier')),
+            ]"/>
+        </record>
+        <record id="rule_group_super_admin" model="ir.rule">
+            <field name="name">Group: super admin sees all</field>
+            <field name="model_id" ref="winners_group.model_winners_group"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('winners_auth.winners_group_super_admin')),
+            ]"/>
+        </record>
+
+        <!-- winners.session -->
+        <record id="rule_session_by_branch" model="ir.rule">
+            <field name="name">Session: own branch only</field>
+            <field name="model_id" ref="winners_group.model_winners_session"/>
+            <field name="domain_force">[('branch_id', '=', user.branch_id.id)]</field>
+            <field name="groups" eval="[
+                (4, ref('winners_auth.winners_group_director')),
+                (4, ref('winners_auth.winners_group_secretary')),
+                (4, ref('winners_auth.winners_group_teacher')),
+                (4, ref('winners_auth.winners_group_cashier')),
+            ]"/>
+        </record>
+        <record id="rule_session_super_admin" model="ir.rule">
+            <field name="name">Session: super admin sees all</field>
+            <field name="model_id" ref="winners_group.model_winners_session"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('winners_auth.winners_group_super_admin')),
+            ]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="web.NavBar.AppsMenu" t-inherit-mode="extension">
+        <xpath expr="//i[contains(@class, 'oi-apps')]" position="replace">
+            <img src="/winners_theme/static/src/img/winners_aca.jpg" alt="Winners Academy" style="height: 30px; width: auto; object-fit: contain; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); margin-right: 4px; transition: transform 0.2s ease;"/>
+        </xpath>
+    </t>
+
+    <t t-inherit="web.NavBar.SectionsMenu" t-inherit-mode="extension">
+        <xpath expr="//DropdownItem" position="attributes">
+            <attribute name="class">{ 
+                'o_nav_entry': true, 
+                'active': env.services.router.current &amp;&amp; (
+                    env.services.router.current.hash.menu_id == section.id || 
+                    (section.childrenTree &amp;&amp; section.childrenTree.some(c =&gt; 
+                        env.services.router.current.hash.menu_id == c.id || 
+                        (c.childrenTree &amp;&amp; c.childrenTree.some(cc =&gt; 
+                            env.services.router.current.hash.menu_id == cc.id
+                        ))
+                    ))
+                )
+            }</attribute>
+        </xpath>
+        <xpath expr="//MenuDropdown" position="attributes">
+            <attribute name="class">{ 
+                'active': env.services.router.current &amp;&amp; (
+                    env.services.router.current.hash.menu_id == section.id || 
+                    (section.childrenTree &amp;&amp; section.childrenTree.some(c =&gt; 
+                        env.services.router.current.hash.menu_id == c.id || 
+                        (c.childrenTree &amp;&amp; c.childrenTree.some(cc =&gt; 
+                            env.services.router.current.hash.menu_id == cc.id
+                        ))
+                    ))
+                )
+            }</attribute>
+        </xpath>
+    </t>
+</templates>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winners Academy — Documentation Projet & Structure Odoo 17</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1A4789;
+            --primary-light: #2563EB;
+            --primary-gradient: linear-gradient(135deg, #1A4789 0%, #2563EB 100%);
+            --accent-pink: #E6097D;
+            --mixed-gradient: linear-gradient(135deg, #1A4789 0%, #E6097D 100%);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --bg-body: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Header block */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-lg);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        header h1 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .badge-ver {
+            display: inline-block;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 14px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 40px 0 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 2px;
+            background: var(--border);
+        }
+
+        /* Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 25px;
+        }
+
+        /* Module Card */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-gradient);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .card-folder {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg-body);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .structure-list {
+            list-style: none;
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+
+        .structure-list li {
+            margin-bottom: 6px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .structure-list li::before {
+            content: '📄';
+            font-size: 0.75rem;
+        }
+
+        /* Done / Left Lists */
+        .status-box {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .status-box h2 {
+            font-family: 'Cairo', sans-serif;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-box.done h2 { color: var(--success); }
+        .status-box.todo h2 { color: var(--warning); }
+
+        .status-list {
+            list-style: none;
+        }
+
+        .status-list li {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .status-list li:last-child {
+            border-bottom: none;
+        }
+
+        .status-list.done-items li::before {
+            content: '✓';
+            color: white;
+            background-color: var(--success);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .status-list.todo-items li::before {
+            content: '→';
+            color: white;
+            background-color: var(--warning);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .task-detail {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer strong {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <h1>Winners Academy</h1>
+        <p>Système de Gestion Scolaire & Thème Premium Personnalisé</p>
+        <span class="badge-ver">Odoo v17.0 Community — Architecture active</span>
+    </header>
+
+    <!-- Done Tasks -->
+    <div class="status-box done">
+        <h2>✓ Ce qui a été fait (Completed)</h2>
+        <ul class="status-list done-items">
+            <li>
+                <div>
+                    <div class="task-title">Architecture Modulaire Scolaire</div>
+                    <div class="task-detail">Création et relation de 10 modules backend couvrant tout le workflow (élèves, enseignants, salles, plannings, présences, inscriptions, groupes, paiements).</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Thème Premium Customisé (Cairo Font)</div>
+                    <div class="task-detail">Intégration complète de la police d'écriture Cairo et mise en place d'un système visuel premium (cartes, formulaires, ombres douces et coins arrondis).</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Correction du Stacking Context (Superposition)</div>
+                    <div class="task-detail">Élévation de la balise parent <code>.o_navbar</code> à un <code>z-index: 1000</code> pour faire passer les dropdowns de navigation et le menu des applications devant le dashboard.</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Correction du Positionnement Popper.js</div>
+                    <div class="task-detail">Remplacement des animations transformées et des propriétés <code>position: absolute !important</code> par des transitions d'opacités simples, évitant de casser le positionnement calculé par Popper.</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Navbar SaaS et États Actifs Dynamiques</div>
+                    <div class="task-detail">Développement d'un patch OWL JS (<code>navbar_active.js</code>) et héritage QWeb (<code>web.NavBar.SectionsMenu</code>) pour marquer dynamiquement l'onglet actif et lui appliquer un dégradé moderne bleu-rose.</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Dashboard Analytique OWL</div>
+                    <div class="task-detail">Développement d'un dashboard moderne calculant les KPI clés de l'académie en temps réel (élèves actifs/expirés, revenus, cours du jour).</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Impression des Reçus de Paiement</div>
+                    <div class="task-detail">Génération et mise en page PDF des rapports de reçus de paiements (module <code>winners_print</code>).</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Todo Tasks -->
+    <div class="status-box todo">
+        <h2>→ Ce qu'il reste à faire (Remaining / Next Steps)</h2>
+        <ul class="status-list todo-items">
+            <li>
+                <div>
+                    <div class="task-title">Validation Globale des Workflows</div>
+                    <div class="task-detail">Tester l'inscription d'un élève, le décompte automatique de ses sessions lors de la prise de présence, et la mise à jour de son statut (actif/expiré).</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Optimisations du Dashboard & Filtres</div>
+                    <div class="task-detail">Ajouter un sélecteur de branche dans le tableau de bord pour que le directeur puisse filtrer les indicateurs d'une seule succursale.</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Traduction Bilingue</div>
+                    <div class="task-detail">Générer les fichiers de traductions (ar.po / fr.po) pour assurer un affichage propre en arabe et en français pour tous les modules.</div>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <div class="task-title">Alertes de Relance Automatiques</div>
+                    <div class="task-detail">Mettre en place un cron job ou des notifications pour alerter la secrétaire quand un élève n'a plus de sessions ou lorsque son abonnement expire.</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Modules Title -->
+    <div class="section-title">Modules Utilisés et Structure</div>
+
+    <!-- Modules Grid -->
+    <div class="modules-grid">
+        <!-- 1. winners_branch -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_branch</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Gestion des succursales et succursales de l'académie.</p>
+            <ul class="structure-list">
+                <li>models/winners_branch.py</li>
+                <li>views/winners_branch_views.xml</li>
+                <li>security/ir.model.access.csv</li>
+            </ul>
+        </div>
+
+        <!-- 2. winners_auth -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_auth</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Système d'authentification, gestion des rôles (super_admin, director, secretary, teacher) et restriction de menus.</p>
+            <ul class="structure-list">
+                <li>models/winners_user.py</li>
+                <li>views/winners_user_views.xml</li>
+                <li>security/security.xml</li>
+            </ul>
+        </div>
+
+        <!-- 3. winners_student -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_student</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Gestion des étudiants, de leur statut d'abonnement (sessions restées, actif, alerte, expiré) et coordonnées parentales.</p>
+            <ul class="structure-list">
+                <li>models/winners_student.py</li>
+                <li>views/winners_student_views.xml</li>
+                <li>security/ir.model.access.csv</li>
+            </ul>
+        </div>
+
+        <!-- 4. winners_teacher -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_teacher</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Gestion des professeurs, de leurs spécialités et liaisons avec l'utilisateur système.</p>
+            <ul class="structure-list">
+                <li>models/winners_teacher.py</li>
+                <li>views/winners_teacher_views.xml</li>
+                <li>security/ir.model.access.csv</li>
+            </ul>
+        </div>
+
+        <!-- 5. winners_room -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_room</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Gestion physique des salles de classe au sein des branches.</p>
+            <ul class="structure-list">
+                <li>models/winners_room.py</li>
+                <li>views/winners_room_views.xml</li>
+                <li>security/ir.model.access.csv</li>
+            </ul>
+        </div>
+
+        <!-- 6. winners_group -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_group</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Gestion des groupes scolaires (classes) et génération des sessions (cours planifiés).</p>
+            <ul class="structure-list">
+                <li>models/winners_group.py</li>
+                <li>models/winners_session.py</li>
+                <li>views/winners_group_views.xml</li>
+            </ul>
+        </div>
+
+        <!-- 7. winners_schedule -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_schedule</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Gestion des emplois du temps et créneaux horaires.</p>
+            <ul class="structure-list">
+                <li>models/winners_schedule.py</li>
+                <li>views/winners_schedule_views.xml</li>
+                <li>security/ir.model.access.csv</li>
+            </ul>
+        </div>
+
+        <!-- 8. winners_attendance -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_attendance</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Prise des présences pour chaque cours (Présent, Absent, Justifié).</p>
+            <ul class="structure-list">
+                <li>models/winners_attendance.py</li>
+                <li>views/winners_attendance_views.xml</li>
+                <li>security/ir.model.access.csv</li>
+            </ul>
+        </div>
+
+        <!-- 9. winners_payment -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_payment</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Suivi comptable des paiements des élèves (inscriptions, forfaits, historique).</p>
+            <ul class="structure-list">
+                <li>models/winners_payment.py</li>
+                <li>views/winners_payment_views.xml</li>
+                <li>security/ir.model.access.csv</li>
+            </ul>
+        </div>
+
+        <!-- 10. winners_print -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_print</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Templates d'impression PDF pour les reçus de paiement.</p>
+            <ul class="structure-list">
+                <li>report/payment_report.xml</li>
+                <li>report/payment_report_action.xml</li>
+            </ul>
+        </div>
+
+        <!-- 11. winners_dashboard -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_dashboard</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Action client OWL affichant les indicateurs clés et KPI de l'académie.</p>
+            <ul class="structure-list">
+                <li>static/src/js/dashboard.js</li>
+                <li>static/src/xml/dashboard.xml</li>
+                <li>static/src/css/dashboard.css</li>
+            </ul>
+        </div>
+
+        <!-- 12. winners_theme -->
+        <div class="card">
+            <div class="card-header">
+                <h3>winners_theme</h3>
+                <span class="card-folder">Module</span>
+            </div>
+            <p class="card-desc">Thème graphique ultra-premium (Cairo, Glassmorphism, animations).</p>
+            <ul class="structure-list">
+                <li>static/src/css/winners_theme.css</li>
+                <li>static/src/js/navbar_active.js</li>
+                <li>static/src/xml/navbar_templates.xml</li>
+                <li>views/web_layout_templates.xml</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Documentation générée pour <strong>Winners Academy</strong>. Odoo 17 Custom Suite.</p>
+    </footer>
+</div>
+
+</body>
+</html>

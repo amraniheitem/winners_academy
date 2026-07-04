@@ -4,117 +4,235 @@
     <t t-name="winners_dashboard.Dashboard">
         <div class="winners_dashboard o_action">
 
-            <!-- ======== EN-TÊTE ======== -->
-            <div class="dashboard_header">
+            <!-- ======== EN-TÊTE PREMIUM ======== -->
+            <div class="dashboard_header d-flex justify-content-between align-items-center mb-4">
                 <div class="dashboard_header_left">
-                    <h1 class="dashboard_title">
+                    <h1 class="dashboard_title m-0">
                         <i class="fa fa-graduation-cap"/> Winners Academy
                     </h1>
-                    <p class="dashboard_subtitle">Tableau de bord</p>
+                    <p class="dashboard_subtitle text-muted m-0">Tableau de bord de pilotage</p>
                 </div>
-                <button class="btn dashboard_refresh_btn" t-on-click="onRefresh"
-                        t-att-disabled="state.isLoading">
-                    <i class="fa fa-refresh" t-att-class="{'fa-spin': state.isLoading}"/>
-                    Actualiser
-                </button>
+                <div class="dashboard_header_right d-flex align-items-center gap-2">
+                    <!-- Sélecteur de branche pour le Super Admin -->
+                    <div t-if="state.isSuperAdmin" class="branch_select_container me-2">
+                        <select class="form-select branch_select" t-on-change="onBranchChange" t-att-value="state.selectedBranchId" style="border-radius: var(--winners-radius-md, 10px); font-family: 'Cairo', sans-serif; font-size: 0.9rem;">
+                            <option value="all">Toutes les branches (Vue globale)</option>
+                            <t t-foreach="state.branches" t-as="branch" t-key="branch.id">
+                                <option t-att-value="branch.id" t-esc="branch.name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <button class="btn dashboard_refresh_btn" t-on-click="onRefresh"
+                            t-att-disabled="state.isLoading">
+                        <i class="fa fa-refresh" t-att-class="{'fa-spin': state.isLoading}"/>
+                        Actualiser
+                    </button>
+                </div>
             </div>
 
-            <!-- ======== SPINNER ======== -->
-            <div t-if="state.isLoading" class="dashboard_loading">
-                <i class="fa fa-spinner fa-spin fa-3x"/>
-                <p>Chargement des données...</p>
+            <!-- ======== CHARGEMENT ======== -->
+            <div t-if="state.isLoading" class="dashboard_loading text-center py-5">
+                <i class="fa fa-spinner fa-spin fa-3x mb-3" style="color: var(--winners-blue, #1A4789);"/>
+                <p class="text-muted font-family-cairo">Chargement des indicateurs en cours...</p>
             </div>
 
-            <!-- ======== CARTES STATISTIQUES ======== -->
-            <div t-if="!state.isLoading" class="dashboard_cards">
+            <t t-if="!state.isLoading">
+                <!-- ======== CARTES DE STATISTIQUES SAAS ======== -->
+                <div class="dashboard_cards">
 
-                <!-- Étudiants actifs -->
-                <div class="dashboard_card card_active" t-on-click="() => this.openStudents('active')">
-                    <div class="card_icon">
-                        <i class="fa fa-users"/>
+                    <!-- 1. Section Étudiants -->
+                    <div class="dashboard_card card_students" t-on-click="() => this.openStudents('all')">
+                        <div class="card_header_main">
+                            <span class="card_badge">ÉLÈVES</span>
+                            <div class="card_icon"><i class="fa fa-users"/></div>
+                        </div>
+                        <div class="card_body_main">
+                            <h3 class="card_value" t-esc="state.totalStudents"/>
+                            <p class="card_label">Total Inscrits</p>
+                        </div>
+                        <div class="card_footer_details">
+                            <div class="footer_sub">
+                                <span class="sub_val text-success" t-esc="state.totalActive"/>
+                                <span class="sub_lbl">Actifs</span>
+                            </div>
+                            <div class="footer_sub">
+                                <span class="sub_val text-warning" t-esc="state.totalAlert"/>
+                                <span class="sub_lbl">Alerte</span>
+                            </div>
+                            <div class="footer_sub">
+                                <span class="sub_val text-danger" t-esc="state.totalExpired"/>
+                                <span class="sub_lbl">Expirés</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card_content">
-                        <span class="card_value" t-esc="state.totalActive"/>
-                        <span class="card_label">Étudiants actifs</span>
+
+                    <!-- 2. Section Finances -->
+                    <div class="dashboard_card card_revenue" t-on-click="openPayments">
+                        <div class="card_header_main">
+                            <span class="card_badge badge_finance">REVENUS</span>
+                            <div class="card_icon icon_finance"><i class="fa fa-money"/></div>
+                        </div>
+                        <div class="card_body_main">
+                            <h3 class="card_value font-family-cairo" t-esc="formatCurrency(state.revenueMonth)"/>
+                            <p class="card_label">Revenus du Mois</p>
+                        </div>
+                        <div class="card_footer_details">
+                            <div class="footer_sub">
+                                <span class="sub_val" t-esc="formatCurrency(state.avgPaymentAmount)"/>
+                                <span class="sub_lbl">Moy. Reçu</span>
+                            </div>
+                            <div class="footer_sub">
+                                <span class="sub_val" t-esc="state.totalConfirmedPayments"/>
+                                <span class="sub_lbl">Bons Confirmés</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card_arrow">
-                        <i class="fa fa-chevron-right"/>
+
+                    <!-- 3. Section Enseignants et Classes -->
+                    <div class="dashboard_card card_teachers" t-on-click="openTeachers">
+                        <div class="card_header_main">
+                            <span class="card_badge badge_teachers">STAFF</span>
+                            <div class="card_icon icon_teachers"><i class="fa fa-graduation-cap"/></div>
+                        </div>
+                        <div class="card_body_main">
+                            <h3 class="card_value" t-esc="state.totalTeachers"/>
+                            <p class="card_label">Enseignants Actifs</p>
+                        </div>
+                        <div class="card_footer_details justify-content-start">
+                            <div class="footer_sub pe-4">
+                                <span class="sub_val" t-esc="state.totalGroups"/>
+                                <span class="sub_lbl">Groupes / Classes</span>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- 4. Section Établissement -->
+                    <div class="dashboard_card card_rooms" t-on-click="openRooms">
+                        <div class="card_header_main">
+                            <span class="card_badge badge_rooms">SÉANCES</span>
+                            <div class="card_icon icon_rooms"><i class="fa fa-calendar"/></div>
+                        </div>
+                        <div class="card_body_main">
+                            <h3 class="card_value" t-esc="state.sessionsToday"/>
+                            <p class="card_label">Séances Aujourd'hui</p>
+                        </div>
+                        <div class="card_footer_details">
+                            <div class="footer_sub">
+                                <span class="sub_val text-success" t-esc="state.attendanceToday"/>
+                                <span class="sub_lbl">Présences</span>
+                            </div>
+                            <div class="footer_sub">
+                                <span class="sub_val" t-esc="state.totalRooms"/>
+                                <span class="sub_lbl">Salles Disponibles</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- Étudiants en alerte -->
-                <div class="dashboard_card card_alert" t-on-click="() => this.openStudents('alert')">
-                    <div class="card_icon">
-                        <i class="fa fa-exclamation-triangle"/>
+                <!-- ======== GRAPHIQUES & CHARTS ======== -->
+                <div class="dashboard_charts_grid mt-4">
+                    
+                    <!-- Graphique 1 : Historique de Facturation -->
+                    <div class="chart_card">
+                        <div class="chart_header">
+                            <h4 class="chart_title"><i class="fa fa-bar-chart"/> Historique des Encaissements</h4>
+                            <p class="chart_subtitle">Évolution des revenus sur les 6 derniers mois (DA)</p>
+                        </div>
+                        <div class="chart_container">
+                            <canvas t-ref="revenueChart"/>
+                        </div>
                     </div>
-                    <div class="card_content">
-                        <span class="card_value" t-esc="state.totalAlert"/>
-                        <span class="card_label">Étudiants en alerte</span>
+
+                    <!-- Graphique 2 : Inscriptions -->
+                    <div class="chart_card">
+                        <div class="chart_header">
+                            <h4 class="chart_title"><i class="fa fa-pie-chart"/> État des Abonnements</h4>
+                            <p class="chart_subtitle">Répartition active des étudiants</p>
+                        </div>
+                        <div class="chart_container doughnut_container">
+                            <canvas t-ref="studentChart"/>
+                        </div>
                     </div>
-                    <div class="card_arrow">
-                        <i class="fa fa-chevron-right"/>
-                    </div>
+
                 </div>
 
-                <!-- Étudiants expirés -->
-                <div class="dashboard_card card_expired" t-on-click="() => this.openStudents('expired')">
-                    <div class="card_icon">
-                        <i class="fa fa-user-times"/>
-                    </div>
-                    <div class="card_content">
-                        <span class="card_value" t-esc="state.totalExpired"/>
-                        <span class="card_label">Étudiants expirés</span>
-                    </div>
-                    <div class="card_arrow">
-                        <i class="fa fa-chevron-right"/>
-                    </div>
-                </div>
+                <!-- ======== LISTES / TABLES DÉTAILLÉES ======== -->
+                <div class="dashboard_tables_grid mt-4">
 
-                <!-- Revenus du mois -->
-                <div class="dashboard_card card_revenue" t-on-click="openPayments">
-                    <div class="card_icon">
-                        <i class="fa fa-money"/>
+                    <!-- Table 1 : Derniers Bons Encaissés -->
+                    <div class="table_card">
+                        <div class="table_header_container">
+                            <h4 class="table_title"><i class="fa fa-usd"/> Reçus Récents (Bons)</h4>
+                            <span class="table_btn_link" t-on-click="openPayments">Tout afficher</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table dashboard_table">
+                                <thead>
+                                    <tr>
+                                        <th>Élève</th>
+                                        <th>Date</th>
+                                        <th>Montant</th>
+                                        <th>État</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="state.recentPayments" t-as="p" t-key="p.id">
+                                        <tr class="table_row_clickable" t-on-click="() => this.openPaymentRecord(p.id)">
+                                            <td class="font-weight-600" t-esc="p.student_id ? p.student_id[1] : 'Inconnu'"/>
+                                            <td class="text-muted" t-esc="p.date"/>
+                                            <td class="font-weight-bold" t-esc="formatCurrency(p.amount)"/>
+                                            <td>
+                                                <span t-attf-class="badge_status status_{{p.state}}" t-esc="p.state == 'confirmed' ? 'Confirmé' : 'Brouillon'"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr t-if="state.recentPayments.length == 0">
+                                        <td colspan="4" class="text-center text-muted py-3">Aucun reçu de paiement ce mois-ci.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="card_content">
-                        <span class="card_value">
-                            <t t-esc="formatCurrency(state.revenueMonth)"/> DA
-                        </span>
-                        <span class="card_label">Revenus du mois</span>
-                    </div>
-                    <div class="card_arrow">
-                        <i class="fa fa-chevron-right"/>
-                    </div>
-                </div>
 
-                <!-- Présences du jour -->
-                <div class="dashboard_card card_attendance" t-on-click="openAttendance">
-                    <div class="card_icon">
-                        <i class="fa fa-check-circle"/>
+                    <!-- Table 2 : Séances programmées aujourd'hui -->
+                    <div class="table_card">
+                        <div class="table_header_container">
+                            <h4 class="table_title"><i class="fa fa-clock-o"/> Séances du Jour</h4>
+                            <span class="table_btn_link" t-on-click="openSessions">Voir l'emploi du temps</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table dashboard_table">
+                                <thead>
+                                    <tr>
+                                        <th>Groupe</th>
+                                        <th>Enseignant</th>
+                                        <th>Salle</th>
+                                        <th>Heure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="state.todaySessions" t-as="s" t-key="s.id">
+                                        <tr class="table_row_clickable" t-on-click="() => this.openSessionRecord(s.id)">
+                                            <td class="font-weight-600" t-esc="s.group_id ? s.group_id[1] : '-'"/>
+                                            <td class="text-muted" t-esc="s.teacher_id ? s.teacher_id[1] : '-'"/>
+                                            <td>
+                                                <span class="badge_room_name" t-esc="s.room_id ? s.room_id[1] : '-'"/>
+                                            </td>
+                                            <td class="font-weight-bold" t-esc="formatTime(s.date)"/>
+                                        </tr>
+                                    </t>
+                                    <tr t-if="state.todaySessions.length == 0">
+                                        <td colspan="4" class="text-center text-muted py-3">Aucune séance planifiée aujourd'hui.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="card_content">
-                        <span class="card_value" t-esc="state.attendanceToday"/>
-                        <span class="card_label">Présences du jour</span>
-                    </div>
-                    <div class="card_arrow">
-                        <i class="fa fa-chevron-right"/>
-                    </div>
-                </div>
 
-                <!-- Séances du jour -->
-                <div class="dashboard_card card_sessions" t-on-click="openSessions">
-                    <div class="card_icon">
-                        <i class="fa fa-calendar"/>
-                    </div>
-                    <div class="card_content">
-                        <span class="card_value" t-esc="state.sessionsToday"/>
-                        <span class="card_label">Séances du jour</span>
-                    </div>
-                    <div class="card_arrow">
-                        <i class="fa fa-chevron-right"/>
-                    </div>
                 </div>
+            </t>
 
-            </div>
         </div>
     </t>
 

@@ -1,69 +1,193 @@
 /*
- * Winners Academy — Modern SaaS Theme for Odoo 17
- * ================================================
- * Inspiration : Stripe · Notion · Linear
+ * Winners Academy — Ultra-Premium SaaS Theme for Odoo 17
+ * ========================================================
+ * Inspiration : Stripe · Linear · Vercel · Raycast
  * Font : Cairo (Arabic + Latin)
  *
- * NOTE: Navbar selectors use high-specificity patterns
- * (body .o_web_client) to override Odoo's compiled SCSS.
+ * Features:
+ *   - Glassmorphism navbar with frosted glass
+ *   - Animated gradient buttons with glow
+ *   - Premium card effects with colored hover glow
+ *   - Micro-animations & smooth transitions
+ *   - Animated status badges with pulse dots
+ *   - Frosted glass modals & dropdowns
+ *   - Modern form inputs with animated focus ring
  */
 
 /* ==========================================================================
-   1. GOOGLE FONTS — Cairo
-   ========================================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
-
-/* ==========================================================================
-   2. CSS VARIABLES — Palette & Design Tokens
+   2. CSS VARIABLES — Extended Design Tokens
    ========================================================================== */
 
 :root {
     /* --- Couleurs principales --- */
-    --winners-blue:             #1A4789;
-    --winners-blue-dark:        #0F2D5C;
-    --winners-pink:             #E6097D;
-    --winners-white:            #FFFFFF;
-    --winners-gray-light:       #F8F9FB;
+    --winners-blue: #1A4789;
+    --winners-blue-dark: #0F2D5C;
+    --winners-blue-light: #2563EB;
+    --winners-pink: #E6097D;
+    --winners-pink-light: #F472B6;
+    --winners-white: #FFFFFF;
+    --winners-gray-light: #F8F9FB;
 
     /* --- Gris neutres (SaaS) --- */
-    --winners-gray-50:          #F9FAFB;
-    --winners-gray-100:         #F3F4F6;
-    --winners-gray-200:         #E5E7EB;
-    --winners-gray-300:         #D1D5DB;
-    --winners-gray-400:         #9CA3AF;
-    --winners-gray-500:         #6B7280;
-    --winners-gray-600:         #4B5563;
-    --winners-gray-700:         #374151;
-    --winners-gray-800:         #1F2937;
-    --winners-gray-900:         #111827;
+    --winners-gray-50: #F9FAFB;
+    --winners-gray-100: #F3F4F6;
+    --winners-gray-200: #E5E7EB;
+    --winners-gray-300: #D1D5DB;
+    --winners-gray-400: #9CA3AF;
+    --winners-gray-500: #6B7280;
+    --winners-gray-600: #4B5563;
+    --winners-gray-700: #374151;
+    --winners-gray-800: #1F2937;
+    --winners-gray-900: #111827;
+
+    /* --- Gradient premium --- */
+    --winners-gradient-blue: linear-gradient(135deg, #1A4789 0%, #2563EB 100%);
+    --winners-gradient-pink: linear-gradient(135deg, #E6097D 0%, #F472B6 100%);
+    --winners-gradient-mixed: linear-gradient(135deg, #1A4789 0%, #E6097D 100%);
+    --winners-gradient-subtle: linear-gradient(135deg, rgba(26, 71, 137, 0.03) 0%, rgba(230, 9, 125, 0.03) 100%);
 
     /* --- Badges de statut --- */
-    --winners-status-active:    #2E7D32;
-    --winners-status-alert:     #F57C00;
-    --winners-status-expired:   #C62828;
-    --winners-status-suspended: #757575;
+    --winners-status-active: #059669;
+    --winners-status-alert: #D97706;
+    --winners-status-expired: #DC2626;
+    --winners-status-suspended: #6B7280;
 
     /* --- Utilitaires dérivés --- */
-    --winners-blue-tint:        rgba(26, 71, 137, 0.08);
-    --winners-blue-ring:        rgba(26, 71, 137, 0.10);
-    --winners-pink-glow:        rgba(230, 9, 125, 0.25);
-    --winners-shadow-xs:        0 1px 2px rgba(0, 0, 0, 0.04);
-    --winners-shadow-sm:        0 1px 3px rgba(0, 0, 0, 0.06);
-    --winners-shadow-md:        0 4px 12px rgba(0, 0, 0, 0.08);
-    --winners-shadow-lg:        0 8px 24px rgba(0, 0, 0, 0.10);
-    --winners-shadow-colored:   0 4px 14px rgba(26, 71, 137, 0.18);
-    --winners-radius-sm:        6px;
-    --winners-radius-md:        8px;
-    --winners-radius-lg:        12px;
-    --winners-radius-pill:      9999px;
-    --winners-transition:       all 0.2s ease;
-    --winners-transition-slow:  all 0.25s ease;
-    --winners-easing:           cubic-bezier(0.4, 0, 0.2, 1);
+    --winners-blue-tint: rgba(26, 71, 137, 0.06);
+    --winners-blue-ring: rgba(26, 71, 137, 0.15);
+    --winners-pink-glow: rgba(230, 9, 125, 0.20);
+    --winners-blue-glow: rgba(26, 71, 137, 0.20);
+
+    /* --- Ombres premium multi-couches --- */
+    --winners-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --winners-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+    --winners-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    --winners-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --winners-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --winners-shadow-blue: 0 4px 14px rgba(26, 71, 137, 0.20);
+    --winners-shadow-pink: 0 4px 14px rgba(230, 9, 125, 0.18);
+    --winners-shadow-glow: 0 0 20px rgba(26, 71, 137, 0.12);
+
+    /* --- Rayons, transitions --- */
+    --winners-radius-sm: 6px;
+    --winners-radius-md: 10px;
+    --winners-radius-lg: 14px;
+    --winners-radius-xl: 20px;
+    --winners-radius-pill: 9999px;
+    --winners-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --winners-transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --winners-transition-spring: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --winners-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    --winners-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* --- Glassmorphism --- */
+    --winners-glass-bg: rgba(255, 255, 255, 0.82);
+    --winners-glass-border: rgba(255, 255, 255, 0.25);
+    --winners-glass-blur: 16px;
 }
 
 /* ==========================================================================
-   3. TYPOGRAPHIE — Cairo partout
+   3. ANIMATIONS KEYFRAMES
+   ========================================================================== */
+
+@keyframes winnersShimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes winnersPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.85);
+    }
+}
+
+@keyframes winnersSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes winnersSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes winnersFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes winnersGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(26, 71, 137, 0.15);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(26, 71, 137, 0.25);
+    }
+}
+
+@keyframes winnersGradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes winnersBorderGlow {
+
+    0%,
+    100% {
+        border-color: rgba(26, 71, 137, 0.2);
+    }
+
+    50% {
+        border-color: rgba(26, 71, 137, 0.4);
+    }
+}
+
+/* ==========================================================================
+   4. TYPOGRAPHIE — Cairo Global
    ========================================================================== */
 
 body,
@@ -80,7 +204,14 @@ button,
 .btn,
 .dropdown-menu,
 .o_statusbar_status,
-.breadcrumb {
+.breadcrumb,
+.o_cp_buttons,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: 'Cairo', sans-serif !important;
 }
 
@@ -88,126 +219,184 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: var(--winners-gray-800);
-    background-color: var(--winners-gray-light);
+    background-color: var(--winners-gray-50);
+    letter-spacing: -0.01em;
 }
 
 /* ==========================================================================
-   4. NAVBAR — Style blanc SaaS avec ombre subtile
+   5. NAVBAR — Glassmorphism Frosted Glass
    --------------------------------------------------------------------------
-   Odoo 17 compiles navbar BG from $o-navbar-bg in SCSS with high specificity.
-   We use body .o_web_client .o_main_navbar to win the cascade.
-   We also override the CSS custom properties Odoo 17 sets on .o_main_navbar.
+   Premium frosted glass navbar with backdrop-filter blur.
    ========================================================================== */
 
-/* Override Odoo CSS custom properties on the navbar root */
+/* Parent Wrapper Stacking Fix */
+body .o_web_client .o_navbar,
+.o_navbar.o_navbar {
+    position: relative !important;
+    z-index: 1000 !important;
+}
+
+/* Navbar Base */
 body .o_web_client .o_main_navbar,
 .o_main_navbar.o_main_navbar {
     --NavBar-odoo-color-btn: var(--winners-gray-700);
     --NavBar-odoo-color-btn-txt: var(--winners-gray-700);
-    background-color: var(--winners-white) !important;
+    background: var(--winners-glass-bg) !important;
     background-image: none !important;
-    border-bottom: 1px solid var(--winners-gray-200) !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
-    height: 48px;
+    -webkit-backdrop-filter: blur(var(--winners-glass-blur)) saturate(180%) !important;
+    backdrop-filter: blur(var(--winners-glass-blur)) saturate(180%) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.5) inset !important;
+    height: 52px !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: var(--winners-transition) !important;
+    position: relative !important;
+    z-index: 1000 !important;
 }
 
-/* Logo / titre → bleu marine */
+/* Brand Name / Title (Winners Academy) */
 body .o_web_client .o_main_navbar .o_menu_brand,
 body .o_web_client .o_main_navbar .o_menu_brand:hover,
 .o_main_navbar.o_main_navbar .o_menu_brand {
     color: var(--winners-blue) !important;
-    font-weight: 700 !important;
+    font-weight: 800 !important;
     font-size: 1.05rem !important;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     background: transparent !important;
+    padding: 0 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
 }
 
-/* Entrées de menu → gris foncé */
-body .o_web_client .o_main_navbar .o_menu_sections > .o_nav_entry,
-body .o_web_client .o_main_navbar .o_menu_sections > li > a,
-body .o_web_client .o_main_navbar .o_menu_sections > li > button,
+/* Menu Entries — Sleek, premium tabs */
+body .o_web_client .o_main_navbar .o_menu_sections>.o_nav_entry,
+body .o_web_client .o_main_navbar .o_menu_sections>li>a,
+body .o_web_client .o_main_navbar .o_menu_sections>li>button,
 body .o_web_client .o_main_navbar .o_menu_sections .dropdown-toggle,
-.o_main_navbar.o_main_navbar .o_menu_sections > .o_nav_entry,
-.o_main_navbar.o_main_navbar .o_menu_sections > li > a,
-.o_main_navbar.o_main_navbar .o_menu_sections > li > button {
-    color: var(--winners-gray-700) !important;
-    font-weight: 500 !important;
-    font-size: 0.875rem !important;
-    border-radius: var(--winners-radius-sm) !important;
-    padding: 6px 12px !important;
-    margin: 0 2px !important;
-    transition: var(--winners-transition) !important;
-    border: none !important;
-    background: transparent !important;
-}
-
-/* Menu hover */
-body .o_web_client .o_main_navbar .o_menu_sections > .o_nav_entry:hover,
-body .o_web_client .o_main_navbar .o_menu_sections > li > a:hover,
-body .o_web_client .o_main_navbar .o_menu_sections > li > button:hover,
-body .o_web_client .o_main_navbar .o_menu_sections .dropdown-toggle:hover {
-    background-color: var(--winners-blue-tint) !important;
-    color: var(--winners-blue) !important;
-}
-
-/* Menu actif — fond teinté bleu + texte bleu marine */
-body .o_web_client .o_main_navbar .o_menu_sections > .o_nav_entry.active,
-body .o_web_client .o_main_navbar .o_menu_sections > .active > a,
-body .o_web_client .o_main_navbar .o_menu_sections > .active > .o_nav_entry,
-body .o_web_client .o_main_navbar .o_menu_sections > li.active > a {
-    background-color: var(--winners-blue-tint) !important;
-    color: var(--winners-blue) !important;
+.o_main_navbar.o_main_navbar .o_menu_sections>.o_nav_entry,
+.o_main_navbar.o_main_navbar .o_menu_sections>li>a,
+.o_main_navbar.o_main_navbar .o_menu_sections>li>button {
+    width: auto !important;
+    min-width: 0 !important;
+    height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13.5px !important;
     font-weight: 600 !important;
-    border-radius: var(--winners-radius-sm) !important;
-    border-bottom: none !important;
-}
-
-/* Systray — icônes en gris foncé */
-body .o_web_client .o_main_navbar .o_menu_systray .dropdown-toggle,
-body .o_web_client .o_main_navbar .o_menu_systray .o_nav_entry,
-body .o_web_client .o_main_navbar .o_menu_systray > li > a,
-body .o_web_client .o_main_navbar .o_menu_systray > li > button {
     color: var(--winners-gray-600) !important;
     background: transparent !important;
+    border-radius: 8px !important;
+    border: none !important;
+    margin: 0 3px !important;
+    padding: 0 14px !important;
     transition: var(--winners-transition) !important;
+    box-shadow: none !important;
+}
+
+/* Menu Hover — Subtle background tint */
+body .o_web_client .o_main_navbar .o_menu_sections>.o_nav_entry:hover,
+body .o_web_client .o_main_navbar .o_menu_sections>li>a:hover,
+body .o_web_client .o_main_navbar .o_menu_sections>li>button:hover,
+body .o_web_client .o_main_navbar .o_menu_sections .dropdown-toggle:hover {
+    background: rgba(26, 71, 137, 0.06) !important;
+    color: var(--winners-blue) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: none !important;
+}
+
+/* Menu Active — Premium mixed gradient (blue to pink/purple) with soft glow */
+body .o_web_client .o_main_navbar .o_menu_sections>.o_nav_entry.active,
+body .o_web_client .o_main_navbar .o_menu_sections>.active>a,
+body .o_web_client .o_main_navbar .o_menu_sections>.active>.o_nav_entry,
+body .o_web_client .o_main_navbar .o_menu_sections>li.active>a {
+    background: var(--winners-gradient-mixed) !important;
+    color: var(--winners-white) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(230, 9, 125, 0.25) !important;
+}
+
+/* Systray Icons */
+body .o_web_client .o_main_navbar .o_menu_systray .dropdown-toggle,
+body .o_web_client .o_main_navbar .o_menu_systray .o_nav_entry,
+body .o_web_client .o_main_navbar .o_menu_systray>li>a,
+body .o_web_client .o_main_navbar .o_menu_systray>li>button {
+    color: var(--winners-gray-500) !important;
+    background: transparent !important;
+    transition: var(--winners-transition) !important;
+    border-radius: 8px !important;
+    width: 34px !important;
+    height: 34px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 body .o_web_client .o_main_navbar .o_menu_systray .dropdown-toggle:hover,
 body .o_web_client .o_main_navbar .o_menu_systray .o_nav_entry:hover {
     color: var(--winners-blue) !important;
-    background-color: var(--winners-blue-tint) !important;
-    border-radius: var(--winners-radius-sm) !important;
+    background-color: rgba(26, 71, 137, 0.06) !important;
+    transform: translateY(-1px) !important;
 }
 
-/* Hamburger menu icon color */
-body .o_web_client .o_main_navbar .o_menu_toggle {
-    color: var(--winners-gray-700) !important;
+/* App Launcher Icon Animation */
+body .o_web_client .o_main_navbar .o_navbar_apps_menu .dropdown-toggle img {
+    transition: transform 0.3s var(--winners-easing-spring) !important;
+}
+
+body .o_web_client .o_main_navbar .o_navbar_apps_menu .dropdown-toggle:hover img {
+    transform: scale(1.1) rotate(2deg) !important;
 }
 
 /* ==========================================================================
-   5. BOUTONS — Arrondis, généreux, fluides
+   6. BOUTONS — Gradient avec glow animé
    ========================================================================== */
 
 .btn {
     border-radius: var(--winners-radius-md) !important;
-    padding: 8px 20px !important;
+    padding: 9px 22px !important;
     font-weight: 600 !important;
     font-size: 0.875rem !important;
     letter-spacing: 0.01em;
     transition: var(--winners-transition) !important;
     border: none !important;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Bouton primaire */
+/* Shimmer overlay on buttons */
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.15),
+            transparent);
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+
+.btn:hover::after {
+    left: 120%;
+}
+
+/* Bouton primaire — gradient + glow */
 .btn-primary,
 .btn-primary.oe_highlight,
 .oe_highlight,
 .o_form_button_save {
-    background-color: var(--winners-blue) !important;
+    background: var(--winners-gradient-blue) !important;
+    background-size: 200% 200% !important;
     color: var(--winners-white) !important;
     border: none !important;
-    box-shadow: var(--winners-shadow-xs) !important;
+    box-shadow: var(--winners-shadow-sm), 0 0 0 0 rgba(26, 71, 137, 0) !important;
 }
 
 .btn-primary:hover,
@@ -218,18 +407,26 @@ body .o_web_client .o_main_navbar .o_menu_toggle {
 .oe_highlight:hover,
 .oe_highlight:focus,
 .o_form_button_save:hover {
-    background-color: var(--winners-blue-dark) !important;
+    background: var(--winners-gradient-blue) !important;
+    background-size: 200% 200% !important;
+    animation: winnersGradientShift 3s ease infinite !important;
     color: var(--winners-white) !important;
-    transform: translateY(-1px);
-    box-shadow: var(--winners-shadow-colored) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--winners-shadow-blue), 0 0 20px rgba(26, 71, 137, 0.15) !important;
 }
 
-/* Bouton secondaire */
+.btn-primary:active,
+.oe_highlight:active {
+    transform: translateY(0) scale(0.98) !important;
+}
+
+/* Bouton secondaire — outlined with gradient border effect */
 .btn-secondary,
 .btn-light {
     background-color: var(--winners-white) !important;
     color: var(--winners-gray-700) !important;
-    border: 1px solid var(--winners-gray-200) !important;
+    border: 1.5px solid var(--winners-gray-200) !important;
+    box-shadow: var(--winners-shadow-xs) !important;
 }
 
 .btn-secondary:hover,
@@ -238,49 +435,64 @@ body .o_web_client .o_main_navbar .o_menu_toggle {
 .btn-light:focus {
     background-color: var(--winners-gray-50) !important;
     color: var(--winners-blue) !important;
-    border-color: var(--winners-gray-300) !important;
-    transform: translateY(-1px);
-    box-shadow: var(--winners-shadow-sm) !important;
+    border-color: rgba(26, 71, 137, 0.3) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--winners-shadow-md), 0 0 0 3px rgba(26, 71, 137, 0.06) !important;
 }
 
-/* Bouton rose (accent) */
+/* Bouton rose (accent / danger) — gradient rose */
 .btn-danger {
-    background-color: var(--winners-pink) !important;
+    background: var(--winners-gradient-pink) !important;
+    background-size: 200% 200% !important;
     color: var(--winners-white) !important;
     border: none !important;
 }
 
 .btn-danger:hover,
 .btn-danger:focus {
-    background-color: #C4076A !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px var(--winners-pink-glow) !important;
+    animation: winnersGradientShift 3s ease infinite !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--winners-shadow-pink), 0 0 20px rgba(230, 9, 125, 0.12) !important;
 }
 
-/* Boutons d'action / icônes → cercle gris au hover */
+/* Bouton succès */
+.btn-success {
+    background: linear-gradient(135deg, #059669 0%, #34D399 100%) !important;
+    color: var(--winners-white) !important;
+    border: none !important;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25) !important;
+}
+
+/* Boutons d'action / icônes → cercle glass au hover */
 .o_kanban_record .oe_kanban_action,
 .o_list_button .btn-link,
 .o_cp_action_menus .dropdown-toggle {
-    border-radius: 50% !important;
-    width: 32px;
-    height: 32px;
+    border-radius: var(--winners-radius-md) !important;
+    width: 34px;
+    height: 34px;
     display: inline-flex !important;
     align-items: center;
     justify-content: center;
     padding: 0 !important;
-    transition: var(--winners-transition) !important;
-    color: var(--winners-gray-500) !important;
+    transition: var(--winners-transition-slow) !important;
+    color: var(--winners-gray-400) !important;
+    background: transparent !important;
 }
 
 .o_kanban_record .oe_kanban_action:hover,
 .o_list_button .btn-link:hover,
 .o_cp_action_menus .dropdown-toggle:hover {
-    background-color: var(--winners-gray-100) !important;
+    background-color: var(--winners-blue-tint) !important;
     color: var(--winners-blue) !important;
+    transform: scale(1.1) !important;
 }
 
 /* ==========================================================================
-   6. CHAMPS DE FORMULAIRE — Inputs, Selects, Textareas
+   7. CHAMPS DE FORMULAIRE — Animated Focus Ring
    ========================================================================== */
 
 .o_form_view .o_input,
@@ -294,16 +506,18 @@ select.form-control,
 textarea.form-control,
 .form-control,
 .form-select {
-    border: 1px solid var(--winners-gray-200) !important;
+    border: 1.5px solid var(--winners-gray-200) !important;
     border-radius: var(--winners-radius-md) !important;
     background-color: var(--winners-white) !important;
     color: var(--winners-gray-800) !important;
-    padding: 8px 12px !important;
+    padding: 10px 14px !important;
     font-size: 0.875rem !important;
-    transition: var(--winners-transition) !important;
+    transition: var(--winners-transition-slow) !important;
     outline: none !important;
+    box-shadow: var(--winners-shadow-xs) !important;
 }
 
+/* Animated focus ring with glow */
 .o_form_view .o_input:focus,
 .o_form_view input.o_field_widget:focus,
 .o_form_view textarea:focus,
@@ -316,8 +530,17 @@ textarea.form-control:focus,
 .form-control:focus,
 .form-select:focus {
     border-color: var(--winners-blue) !important;
-    box-shadow: 0 0 0 3px var(--winners-blue-ring) !important;
+    box-shadow: 0 0 0 4px var(--winners-blue-ring), var(--winners-shadow-sm) !important;
     background-color: var(--winners-white) !important;
+    transform: translateY(-1px);
+}
+
+/* Hover state for inputs */
+.o_form_view .o_input:hover:not(:focus),
+.form-control:hover:not(:focus),
+.form-select:hover:not(:focus) {
+    border-color: var(--winners-gray-300) !important;
+    box-shadow: var(--winners-shadow-sm) !important;
 }
 
 /* Placeholder */
@@ -325,52 +548,78 @@ textarea.form-control:focus,
 .form-control::placeholder {
     color: var(--winners-gray-400) !important;
     font-weight: 400;
+    font-style: italic;
 }
 
-/* Labels */
+/* Labels — uppercase modern */
 .o_form_view .o_form_label,
 .o_form_label {
-    color: var(--winners-gray-600) !important;
-    font-weight: 600 !important;
-    font-size: 0.8rem !important;
+    color: var(--winners-gray-500) !important;
+    font-weight: 700 !important;
+    font-size: 0.75rem !important;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 4px !important;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px !important;
 }
 
 /* ==========================================================================
-   7. CARTES & FORM SHEET — Élégantes et aérées
+   8. CARTES & FORM SHEET — Premium with hover glow
    ========================================================================== */
 
 .o_form_sheet,
-.o_form_view .o_form_sheet_bg > .o_form_sheet {
+.o_form_view .o_form_sheet_bg>.o_form_sheet {
     background-color: var(--winners-white) !important;
     border-radius: var(--winners-radius-lg) !important;
     box-shadow: var(--winners-shadow-sm) !important;
     border: 1px solid var(--winners-gray-100) !important;
-    padding: 24px 32px !important;
+    padding: 28px 36px !important;
     transition: var(--winners-transition-slow) !important;
+    animation: winnersSlideUp 0.3s var(--winners-easing) !important;
+}
+
+.o_form_sheet:hover,
+.o_form_view .o_form_sheet_bg>.o_form_sheet:hover {
+    box-shadow: var(--winners-shadow-md), var(--winners-shadow-glow) !important;
 }
 
 .o_form_view .o_form_sheet_bg {
-    background-color: var(--winners-gray-light) !important;
-    padding: 16px 0 !important;
+    background: var(--winners-gradient-subtle) !important;
+    padding: 20px 0 !important;
 }
 
-/* Kanban cards */
+/* Kanban cards — premium hover lift */
 .o_kanban_record {
     background-color: var(--winners-white) !important;
     border-radius: var(--winners-radius-lg) !important;
     box-shadow: var(--winners-shadow-sm) !important;
     border: 1px solid var(--winners-gray-100) !important;
-    padding: 16px !important;
-    transition: var(--winners-transition-slow), transform 0.25s var(--winners-easing) !important;
+    padding: 18px !important;
+    transition: var(--winners-transition-slow) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Kanban card colored accent bar on top */
+.o_kanban_record::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--winners-gradient-blue);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .o_kanban_record:hover {
-    box-shadow: var(--winners-shadow-md) !important;
-    transform: translateY(-2px);
-    border-color: var(--winners-gray-200) !important;
+    box-shadow: var(--winners-shadow-lg), 0 0 0 1px rgba(26, 71, 137, 0.05) !important;
+    transform: translateY(-4px);
+    border-color: rgba(26, 71, 137, 0.1) !important;
+}
+
+.o_kanban_record:hover::before {
+    opacity: 1;
 }
 
 /* Generic cards */
@@ -379,57 +628,67 @@ textarea.form-control:focus,
     border-radius: var(--winners-radius-lg) !important;
     box-shadow: var(--winners-shadow-sm) !important;
     border: 1px solid var(--winners-gray-100) !important;
-    transition: var(--winners-transition-slow), transform 0.25s var(--winners-easing) !important;
+    transition: var(--winners-transition-slow) !important;
+    overflow: hidden;
 }
 
 .card:hover {
-    box-shadow: var(--winners-shadow-md) !important;
-    transform: translateY(-2px);
+    box-shadow: var(--winners-shadow-lg) !important;
+    transform: translateY(-3px);
 }
 
 /* ==========================================================================
-   8. TABLES & LISTES — Clean et lisibles
+   9. TABLES & LISTES — Premium data grid
    ========================================================================== */
 
-/* En-têtes de colonnes */
+/* Wrapper avec radius */
+.o_list_view {
+    border-radius: var(--winners-radius-lg) !important;
+    overflow: hidden;
+    box-shadow: var(--winners-shadow-sm) !important;
+    border: 1px solid var(--winners-gray-100) !important;
+}
+
+/* En-têtes colonnes */
 .o_list_view thead th,
 .o_list_view .o_list_header {
     color: var(--winners-gray-500) !important;
-    font-weight: 600 !important;
-    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    font-size: 0.72rem !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    border-bottom: 1px solid var(--winners-gray-200) !important;
-    background-color: var(--winners-white) !important;
-    padding: 10px 12px !important;
+    letter-spacing: 0.08em !important;
+    border-bottom: 2px solid var(--winners-gray-100) !important;
+    background-color: var(--winners-gray-50) !important;
+    padding: 12px 14px !important;
 }
 
-/* Lignes */
+/* Lignes avec transition */
 .o_list_view tbody tr {
     transition: var(--winners-transition) !important;
     border-bottom: 1px solid var(--winners-gray-100) !important;
 }
 
 .o_list_view tbody tr:hover {
-    background-color: var(--winners-gray-50) !important;
+    background-color: rgba(26, 71, 137, 0.03) !important;
 }
 
 /* Cellules */
 .o_list_view tbody td {
     color: var(--winners-gray-800) !important;
     font-size: 0.875rem !important;
-    padding: 10px 12px !important;
+    padding: 12px 14px !important;
     vertical-align: middle !important;
-    border-bottom: 1px solid var(--winners-gray-100) !important;
+    border-bottom: 1px solid var(--winners-gray-50) !important;
 }
 
 /* Sélection de ligne */
 .o_list_view tbody tr.o_data_row.o_list_record_selected {
-    background-color: var(--winners-blue-tint) !important;
+    background-color: rgba(26, 71, 137, 0.06) !important;
+    box-shadow: inset 3px 0 0 0 var(--winners-blue) !important;
 }
 
 /* ==========================================================================
-   9. BADGES DE STATUT — Pill style avec point coloré
+   10. BADGES DE STATUT — Animated Pill avec pulse dot
    ========================================================================== */
 
 .status_active,
@@ -438,64 +697,81 @@ textarea.form-control:focus,
 .status_suspended {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     border-radius: var(--winners-radius-pill);
-    padding: 4px 14px;
+    padding: 5px 16px;
     font-weight: 600;
-    font-size: 0.78em;
+    font-size: 0.76em;
     line-height: 1.4;
+    letter-spacing: 0.02em;
 }
 
+/* Animated pulse dot */
 .status_active::before,
 .status_alert::before,
 .status_expired::before,
 .status_suspended::before {
     content: '';
     display: inline-block;
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     flex-shrink: 0;
+    animation: winnersPulse 2s ease-in-out infinite;
 }
 
-/* Actif — Vert */
+/* Actif — Vert emeraude */
 .status_active {
-    background-color: rgba(46, 125, 50, 0.10) !important;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(52, 211, 153, 0.08) 100%) !important;
     color: var(--winners-status-active) !important;
+    border: 1px solid rgba(5, 150, 105, 0.15);
 }
+
 .status_active::before {
     background-color: var(--winners-status-active);
+    box-shadow: 0 0 6px rgba(5, 150, 105, 0.4);
 }
 
-/* Alerte — Orange */
+/* Alerte — Ambre */
 .status_alert {
-    background-color: rgba(245, 124, 0, 0.10) !important;
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(251, 191, 36, 0.08) 100%) !important;
     color: var(--winners-status-alert) !important;
+    border: 1px solid rgba(217, 119, 6, 0.15);
 }
+
 .status_alert::before {
     background-color: var(--winners-status-alert);
+    box-shadow: 0 0 6px rgba(217, 119, 6, 0.4);
 }
 
 /* Expiré — Rouge */
 .status_expired {
-    background-color: rgba(198, 40, 40, 0.10) !important;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(248, 113, 113, 0.08) 100%) !important;
     color: var(--winners-status-expired) !important;
-}
-.status_expired::before {
-    background-color: var(--winners-status-expired);
+    border: 1px solid rgba(220, 38, 38, 0.15);
 }
 
-/* Suspendu — Gris */
-.status_suspended {
-    background-color: rgba(117, 117, 117, 0.10) !important;
-    color: var(--winners-status-suspended) !important;
+.status_expired::before {
+    background-color: var(--winners-status-expired);
+    box-shadow: 0 0 6px rgba(220, 38, 38, 0.4);
 }
+
+/* Suspendu — Gris neutre */
+.status_suspended {
+    background: linear-gradient(135deg, rgba(107, 114, 128, 0.08) 0%, rgba(156, 163, 175, 0.08) 100%) !important;
+    color: var(--winners-status-suspended) !important;
+    border: 1px solid rgba(107, 114, 128, 0.15);
+}
+
 .status_suspended::before {
     background-color: var(--winners-status-suspended);
+    box-shadow: 0 0 6px rgba(107, 114, 128, 0.3);
+    animation: none;
+    /* no pulse for suspended */
 }
 
 /* ==========================================================================
-   10. BREADCRUMB / SIDEBAR
+   11. BREADCRUMB — Modern path navigation
    ========================================================================== */
 
 .breadcrumb {
@@ -517,141 +793,202 @@ textarea.form-control:focus,
     color: var(--winners-blue) !important;
 }
 
-/* Séparateur discret */
-.breadcrumb-item + .breadcrumb-item::before {
+.breadcrumb-item+.breadcrumb-item::before {
     color: var(--winners-gray-300) !important;
-    content: '/' !important;
-    font-weight: 400 !important;
+    content: '›' !important;
+    font-weight: 300 !important;
+    font-size: 1.1em;
 }
 
-/* Dernier élément → bleu marine bold */
 .breadcrumb-item.active,
 .breadcrumb-item:last-child {
-    color: var(--winners-blue) !important;
+    color: var(--winners-gray-800) !important;
     font-weight: 700 !important;
 }
 
-/* Control Panel */
+/* Control Panel — Clean with gradient border bottom */
 .o_control_panel {
     background-color: var(--winners-white) !important;
     border-bottom: 1px solid var(--winners-gray-100) !important;
-    padding: 8px 16px !important;
+    padding: 10px 20px !important;
     box-shadow: none !important;
 }
 
 /* ==========================================================================
-   11. DROPDOWNS & MENUS
+   12. DROPDOWNS & MENUS — Solid white, fully opaque
    ========================================================================== */
 
-.dropdown-menu {
-    border: 1px solid var(--winners-gray-200) !important;
-    border-radius: var(--winners-radius-md) !important;
-    box-shadow: var(--winners-shadow-lg) !important;
-    padding: 6px !important;
-    background-color: var(--winners-white) !important;
-    animation: winnersDropdown 0.15s var(--winners-easing);
+/* Global: every dropdown, panel, sidebar, chat window → solid white */
+.dropdown-menu,
+.o-dropdown--menu,
+.o_dropdown_menu,
+.o-dropdown .o-dropdown--menu,
+.o_navbar_apps_menu .dropdown-menu,
+.o_navbar_apps_menu .o-dropdown--menu,
+body .o_web_client .o_navbar_apps_menu .dropdown-menu,
+body .o_web_client .o-dropdown--menu,
+.o_thread_window,
+.o_chat_window,
+.o_mail_systray_item .dropdown-menu,
+.o_sidebar,
+.o_burger_menu,
+.o_burger_menu_content {
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: var(--winners-radius-lg) !important;
+    box-shadow: var(--winners-shadow-xl) !important;
+    padding: 8px !important;
+    background-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+    z-index: 1050 !important;
+    /* position is managed by Popper.js — do NOT override */
+    /* animation uses opacity only — do NOT touch transform (Popper needs it) */
+    animation: winnersFadeIn 0.2s var(--winners-easing) !important;
 }
 
-@keyframes winnersDropdown {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Apps menu specific — full height panel needs white bg */
+.o_navbar_apps_menu .o-dropdown,
+.o_navbar_apps_menu>.o-dropdown,
+.o_navbar_apps_menu .dropdown,
+.o_navbar_apps_menu {
+    background: transparent !important;
+    /* position & z-index managed by Popper.js — do NOT override */
 }
 
+.o_navbar_apps_menu .o-dropdown--menu,
+.o_navbar_apps_menu .dropdown-menu {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    min-width: 260px !important;
+    border-radius: 0 0 var(--winners-radius-lg) var(--winners-radius-lg) !important;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    padding: 12px 8px !important;
+    /* z-index managed by Popper.js — do NOT override */
+}
+
+/* Dropdown items — base style */
 .dropdown-item {
-    border-radius: var(--winners-radius-sm) !important;
-    padding: 8px 12px !important;
+    border-radius: var(--winners-radius-md) !important;
+    padding: 10px 16px !important;
     font-size: 0.875rem !important;
     color: var(--winners-gray-700) !important;
     transition: var(--winners-transition) !important;
+    margin: 2px 0 !important;
+    background: transparent !important;
 }
 
-.dropdown-item:hover,
-.dropdown-item:focus {
+/* Dropdown items — hover */
+.dropdown-item:hover {
     background-color: var(--winners-blue-tint) !important;
     color: var(--winners-blue) !important;
+    transform: translateX(2px);
 }
 
+/* Dropdown items — active/clicked → Winners gradient rose+bleu */
 .dropdown-item.active,
-.dropdown-item:active {
-    background-color: var(--winners-blue) !important;
+.dropdown-item:active,
+.dropdown-item.focus,
+.dropdown-item.o_app.active,
+.dropdown-item.o_app.focus,
+.o_navbar_apps_menu .dropdown-item.focus,
+.o_navbar_apps_menu .dropdown-item.active,
+.o_navbar_apps_menu .o_app.focus,
+.o_navbar_apps_menu .o_app.active {
+    background: var(--winners-gradient-mixed) !important;
     color: var(--winners-white) !important;
+    box-shadow: var(--winners-shadow-blue) !important;
+    border-radius: var(--winners-radius-md) !important;
+    font-weight: 700 !important;
+}
+
+/* Dropdown dividers */
+.dropdown-divider {
+    border-color: var(--winners-gray-100) !important;
+    margin: 6px 8px !important;
 }
 
 /* ==========================================================================
-   12. MODALS & DIALOGS
+   13. MODALS — Frosted glass premium
    ========================================================================== */
 
+.modal-backdrop {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
 .modal-content {
-    border-radius: var(--winners-radius-lg) !important;
-    border: none !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+    border-radius: var(--winners-radius-xl) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
     overflow: hidden;
+    animation: winnersSlideUp 0.3s var(--winners-easing-spring) !important;
 }
 
 .modal-header {
     background-color: var(--winners-white) !important;
     border-bottom: 1px solid var(--winners-gray-100) !important;
-    padding: 16px 24px !important;
+    padding: 20px 28px !important;
 }
 
 .modal-header .modal-title {
     color: var(--winners-gray-900) !important;
-    font-weight: 700 !important;
-    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: -0.02em;
 }
 
 .modal-body {
-    padding: 24px !important;
+    padding: 28px !important;
 }
 
 .modal-footer {
-    background-color: var(--winners-gray-50) !important;
+    background: var(--winners-gray-50) !important;
     border-top: 1px solid var(--winners-gray-100) !important;
-    padding: 12px 24px !important;
+    padding: 16px 28px !important;
 }
 
 /* ==========================================================================
-   13. PAGINATION
+   14. PAGINATION — Modern pill style
    ========================================================================== */
 
 .pagination .page-item .page-link {
-    border: 1px solid var(--winners-gray-200) !important;
+    border: 1.5px solid var(--winners-gray-200) !important;
     color: var(--winners-gray-600) !important;
-    border-radius: var(--winners-radius-sm) !important;
-    margin: 0 2px !important;
-    padding: 6px 12px !important;
+    border-radius: var(--winners-radius-md) !important;
+    margin: 0 3px !important;
+    padding: 7px 14px !important;
     font-size: 0.85rem !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     transition: var(--winners-transition) !important;
+    background: var(--winners-white) !important;
 }
 
 .pagination .page-item .page-link:hover {
     background-color: var(--winners-blue-tint) !important;
     color: var(--winners-blue) !important;
-    border-color: var(--winners-gray-300) !important;
+    border-color: rgba(26, 71, 137, 0.2) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--winners-shadow-sm) !important;
 }
 
 .pagination .page-item.active .page-link {
-    background-color: var(--winners-blue) !important;
-    border-color: var(--winners-blue) !important;
+    background: var(--winners-gradient-blue) !important;
+    border-color: transparent !important;
     color: var(--winners-white) !important;
-    box-shadow: var(--winners-shadow-xs) !important;
+    box-shadow: var(--winners-shadow-blue) !important;
+    transform: translateY(-1px);
 }
 
 /* ==========================================================================
-   14. SCROLLBAR — Fine et discrète
+   15. SCROLLBAR — Ultra-fine with gradient thumb
    ========================================================================== */
 
-/* Webkit (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -659,53 +996,62 @@ textarea.form-control:focus,
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(26, 71, 137, 0.3);
+    background: linear-gradient(180deg, rgba(26, 71, 137, 0.25), rgba(26, 71, 137, 0.4));
     border-radius: var(--winners-radius-pill);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(26, 71, 137, 0.5);
+    background: linear-gradient(180deg, rgba(26, 71, 137, 0.4), rgba(26, 71, 137, 0.6));
 }
 
-/* Firefox */
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(26, 71, 137, 0.3) transparent;
+    scrollbar-color: rgba(26, 71, 137, 0.25) transparent;
 }
 
 /* ==========================================================================
-   15. CHECKBOX & TOGGLE
+   16. CHECKBOX & TOGGLE — Custom accent
    ========================================================================== */
 
 input[type="checkbox"],
 .o_list_view .o_list_record_selector input[type="checkbox"] {
     accent-color: var(--winners-blue) !important;
     border-radius: 4px;
+    cursor: pointer;
 }
 
 .form-check-input:checked {
     background-color: var(--winners-blue) !important;
     border-color: var(--winners-blue) !important;
+    box-shadow: 0 0 0 2px rgba(26, 71, 137, 0.15) !important;
 }
 
 /* ==========================================================================
-   16. STATUS BAR (Odoo pipeline)
+   17. STATUS BAR — Pipeline avec gradient active
    ========================================================================== */
 
 .o_statusbar_status button {
     font-weight: 500 !important;
-    color: var(--winners-gray-500) !important;
+    color: var(--winners-gray-400) !important;
     transition: var(--winners-transition) !important;
+    border-radius: var(--winners-radius-sm) !important;
+}
+
+.o_statusbar_status button:hover {
+    color: var(--winners-blue) !important;
+    background-color: var(--winners-blue-tint) !important;
 }
 
 .o_statusbar_status button.o_arrow_button_current,
 .o_statusbar_status button[aria-checked="true"] {
-    color: var(--winners-blue) !important;
+    color: var(--winners-white) !important;
+    background: var(--winners-gradient-blue) !important;
     font-weight: 700 !important;
+    box-shadow: var(--winners-shadow-blue) !important;
 }
 
 /* ==========================================================================
-   17. LIENS — Couleur bleue, hover rose
+   18. LIENS
    ========================================================================== */
 
 a {
@@ -719,21 +1065,35 @@ a:hover {
 }
 
 /* ==========================================================================
-   18. FOND GÉNÉRAL & DIVERS
+   19. TABS / NOTEBOOK — Underline style with animated indicator
    ========================================================================== */
 
-.o_action_manager {
-    background-color: var(--winners-gray-light) !important;
+.nav-tabs {
+    border-bottom: 2px solid var(--winners-gray-100) !important;
+    gap: 4px;
 }
 
-/* Tabs / Notebooks */
 .nav-tabs .nav-link {
     color: var(--winners-gray-500) !important;
     font-weight: 500 !important;
     border: none !important;
-    padding: 8px 16px !important;
-    border-radius: var(--winners-radius-sm) var(--winners-radius-sm) 0 0 !important;
+    padding: 10px 18px !important;
+    border-radius: var(--winners-radius-md) var(--winners-radius-md) 0 0 !important;
     transition: var(--winners-transition) !important;
+    position: relative;
+}
+
+.nav-tabs .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--winners-gradient-blue);
+    transition: all 0.3s var(--winners-easing);
+    transform: translateX(-50%);
+    border-radius: 1px;
 }
 
 .nav-tabs .nav-link:hover {
@@ -741,29 +1101,215 @@ a:hover {
     background-color: var(--winners-blue-tint) !important;
 }
 
+.nav-tabs .nav-link:hover::after {
+    width: 60%;
+}
+
 .nav-tabs .nav-link.active {
     color: var(--winners-blue) !important;
     font-weight: 700 !important;
-    border-bottom: 2px solid var(--winners-blue) !important;
     background-color: transparent !important;
 }
 
-/* Chatter */
-.o_chatter_topbar {
-    border-bottom: 1px solid var(--winners-gray-100) !important;
+.nav-tabs .nav-link.active::after {
+    width: 100%;
 }
 
-/* Kanban columns */
+/* ==========================================================================
+   20. CHATTER
+   ========================================================================== */
+
+.o_chatter_topbar {
+    border-bottom: 1px solid var(--winners-gray-100) !important;
+    padding: 8px 0 !important;
+}
+
+.o_chatter_topbar .btn {
+    font-size: 0.82rem !important;
+    padding: 6px 14px !important;
+}
+
+/* ==========================================================================
+   21. KANBAN COLUMNS
+   ========================================================================== */
+
 .o_kanban_group {
     background-color: var(--winners-gray-50) !important;
     border-radius: var(--winners-radius-lg) !important;
-    padding: 8px !important;
+    padding: 10px !important;
+    border: 1px solid var(--winners-gray-100) !important;
 }
 
-/* Selection highlight */
+.o_kanban_header {
+    padding-bottom: 8px !important;
+    margin-bottom: 8px !important;
+    border-bottom: 2px solid var(--winners-gray-200) !important;
+}
+
+/* ==========================================================================
+   22. SEARCH BAR — Premium glassmorphism search
+   ========================================================================== */
+
+.o_searchview {
+    border: 1.5px solid var(--winners-gray-200) !important;
+    border-radius: var(--winners-radius-md) !important;
+    background: var(--winners-gray-50) !important;
+    box-shadow: var(--winners-shadow-xs), inset 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+    transition: var(--winners-transition-slow) !important;
+    overflow: hidden;
+    width: 100% !important;
+    max-width: none !important;
+    /* ou une autre valeur */
+}
+
+.o_searchview:focus-within {
+    background: var(--winners-white) !important;
+    border-color: var(--winners-blue) !important;
+    box-shadow: 0 0 0 4px var(--winners-blue-ring), var(--winners-shadow-md) !important;
+    transform: translateY(-1px);
+}
+
+.o_searchview_input {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    font-size: 0.9rem !important;
+}
+
+.o_cp_searchview {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: none !important;
+}
+
+
+
+/* ==========================================================================
+   23. TOOLTIPS — Modern dark style
+   ========================================================================== */
+
+.tooltip .tooltip-inner {
+    background: var(--winners-gray-900) !important;
+    color: var(--winners-white) !important;
+    border-radius: var(--winners-radius-md) !important;
+    padding: 8px 14px !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    box-shadow: var(--winners-shadow-lg) !important;
+    letter-spacing: 0.01em;
+}
+
+/* ==========================================================================
+   24. ALERTS / NOTIFICATIONS — Modern frosted
+   ========================================================================== */
+
+.alert {
+    border-radius: var(--winners-radius-lg) !important;
+    border: none !important;
+    padding: 16px 20px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    box-shadow: var(--winners-shadow-sm) !important;
+    animation: winnersSlideUp 0.3s ease !important;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(26, 71, 137, 0.06) 0%, rgba(37, 99, 235, 0.06) 100%) !important;
+    color: var(--winners-blue) !important;
+    border-left: 4px solid var(--winners-blue) !important;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.06) 0%, rgba(52, 211, 153, 0.06) 100%) !important;
+    color: #065F46 !important;
+    border-left: 4px solid #059669 !important;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.06) 0%, rgba(251, 191, 36, 0.06) 100%) !important;
+    color: #92400E !important;
+    border-left: 4px solid #D97706 !important;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.06) 0%, rgba(248, 113, 113, 0.06) 100%) !important;
+    color: #991B1B !important;
+    border-left: 4px solid #DC2626 !important;
+}
+
+/* ==========================================================================
+   25. PROGRESS BARS — Gradient animated
+   ========================================================================== */
+
+.progress {
+    height: 8px !important;
+    border-radius: var(--winners-radius-pill) !important;
+    background-color: var(--winners-gray-100) !important;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.progress-bar {
+    background: var(--winners-gradient-blue) !important;
+    background-size: 200% 100% !important;
+    animation: winnersShimmer 2s ease-in-out infinite !important;
+    border-radius: var(--winners-radius-pill) !important;
+    transition: width 0.6s var(--winners-easing) !important;
+}
+
+/* ==========================================================================
+   26. BADGES (Odoo generic) — Pill glass
+   ========================================================================== */
+
+.badge {
+    border-radius: var(--winners-radius-pill) !important;
+    padding: 4px 12px !important;
+    font-weight: 600 !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.03em;
+    box-shadow: var(--winners-shadow-xs) !important;
+}
+
+.badge.bg-primary,
+.badge.text-bg-primary {
+    background: var(--winners-gradient-blue) !important;
+}
+
+.badge.bg-danger,
+.badge.text-bg-danger {
+    background: var(--winners-gradient-pink) !important;
+}
+
+.badge.bg-success,
+.badge.text-bg-success {
+    background: linear-gradient(135deg, #059669, #34D399) !important;
+}
+
+.badge.bg-warning,
+.badge.text-bg-warning {
+    background: linear-gradient(135deg, #D97706, #FBBF24) !important;
+    color: #78350F !important;
+}
+
+/* ==========================================================================
+   27. FOND GÉNÉRAL & DIVERS
+   ========================================================================== */
+
+.o_action_manager {
+    background: var(--winners-gradient-subtle) !important;
+}
+
+/* Selection highlight — blue tint */
 ::selection {
     background-color: rgba(26, 71, 137, 0.15);
     color: var(--winners-blue-dark);
+}
+
+/* Remove ugly outlines globally */
+*:focus-visible {
+    outline: 2px solid rgba(26, 71, 137, 0.3) !important;
+    outline-offset: 2px !important;
+    border-radius: 4px;
 }
 
 /* Smooth global transitions */
@@ -771,4 +1317,31 @@ a:hover {
 *::before,
 *::after {
     transition-timing-function: var(--winners-easing);
+}
+
+/* ==========================================================================
+   28. RESPONSIVE REFINEMENTS
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+    body .o_web_client .o_main_navbar,
+    .o_main_navbar.o_main_navbar {
+        height: 48px;
+    }
+
+    .o_form_sheet,
+    .o_form_view .o_form_sheet_bg>.o_form_sheet {
+        padding: 16px 20px !important;
+        border-radius: var(--winners-radius-md) !important;
+    }
+
+    .btn {
+        padding: 8px 16px !important;
+    }
+
+    .modal-content {
+        border-radius: var(--winners-radius-lg) !important;
+        margin: 8px !important;
+    }
 }

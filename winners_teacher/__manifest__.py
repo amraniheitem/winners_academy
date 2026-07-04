@@ -5,6 +5,7 @@
     "depends": ["base", "winners_auth", "winners_branch"],
     "data": [
         "security/ir.model.access.csv",
+        "security/ir_rules.xml",
         "views/winners_teacher_views.xml",
     ],
     "installable": True,

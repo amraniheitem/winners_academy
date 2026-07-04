@@ -65,4 +65,5 @@ class WinnersStudent(models.Model):
     branch_id = fields.Many2one(
         comodel_name="winners.branch",
         string="Branche",
+        default=lambda self: self.env.user.branch_id,
     )

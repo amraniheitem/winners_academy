@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="web_layout_cairo_font" inherit_id="web.layout">
+        <xpath expr="//head" position="inside">
+            <link rel="preconnect" href="https://fonts.googleapis.com"/>
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+        </xpath>
+    </template>
+
+    <template id="login_layout_logo_inherit" inherit_id="web.login_layout">
+        <xpath expr="//div[hasclass('card-body')]/div[1]/img" position="replace">
+            <img src="/winners_theme/static/src/img/winners_aca.jpg" alt="Winners Academy" style="max-height: 100px; max-width: 100%; width: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 6px; background: white; margin-bottom: 12px;"/>
+        </xpath>
+    </template>
+</odoo>

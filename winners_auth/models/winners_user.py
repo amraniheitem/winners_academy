@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from odoo import fields, models, api
 
 
@@ -76,3 +77,13 @@ class ResUsers(models.Model):
         if group_commands:
             # Bypass self.write recursive loop
             super(ResUsers, self).write({'groups_id': group_commands})
+
+        # Set home action to Winners Dashboard so user lands there after login
+        dashboard_action = self.env.ref(
+            'winners_dashboard.action_winners_dashboard',
+            raise_if_not_found=False,
+        )
+        if dashboard_action and self.action_id != dashboard_action:
+            super(ResUsers, self).write({
+                'action_id': dashboard_action.id,
+            })

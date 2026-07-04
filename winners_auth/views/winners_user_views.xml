@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Override branch menu to add group restrictions -->
+        <!-- Override branch menu: proper label + restrict to Super Admin -->
         <menuitem id="winners_branch.menu_winners_branch"
-                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary"/>
+                  name="Branches"
+                  groups="winners_auth.winners_group_super_admin"/>
 
         <!-- Form View Inheritance -->
         <record id="view_users_form_winners_inherit" model="ir.ui.view">

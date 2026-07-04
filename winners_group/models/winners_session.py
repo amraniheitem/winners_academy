@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from odoo import fields, models
 
 
@@ -9,6 +10,13 @@ class WinnersSession(models.Model):
         comodel_name="winners.group",
         string="Groupe",
         required=True,
+    )
+    branch_id = fields.Many2one(
+        comodel_name="winners.branch",
+        string="Branche",
+        related="group_id.branch_id",
+        readonly=True,
+        store=True,
     )
     date = fields.Datetime(
         string="Date et heure",

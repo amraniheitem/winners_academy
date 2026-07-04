@@ -1,5 +1,6 @@
 # pyrefly: ignore [missing-import]
 from odoo import fields, models
+# pyrefly: ignore [missing-import]
 from odoo.exceptions import UserError
 
 
@@ -36,6 +37,7 @@ class WinnersPayment(models.Model):
     branch_id = fields.Many2one(
         comodel_name="winners.branch",
         string="Branche",
+        default=lambda self: self.env.user.branch_id,
     )
     notes = fields.Text(
         string="Notes",

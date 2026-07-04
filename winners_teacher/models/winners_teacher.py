@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from odoo import fields, models
 
 
@@ -29,6 +30,7 @@ class WinnersTeacher(models.Model):
     branch_id = fields.Many2one(
         comodel_name="winners.branch",
         string="Branche",
+        default=lambda self: self.env.user.branch_id,
     )
     user_id = fields.Many2one(
         comodel_name="res.users",

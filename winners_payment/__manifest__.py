@@ -11,6 +11,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/ir_rules.xml",
         "views/winners_payment_views.xml",
     ],
     "installable": True,

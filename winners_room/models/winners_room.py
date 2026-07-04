@@ -18,6 +18,7 @@ class WinnersRoom(models.Model):
         comodel_name="winners.branch",
         string="Branche",
         required=True,
+        default=lambda self: self.env.user.branch_id,
     )
     floor = fields.Char(
         string="Étage",

@@ -12,6 +12,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/ir_rules.xml",
         "views/winners_attendance_views.xml",
     ],
     "installable": True,

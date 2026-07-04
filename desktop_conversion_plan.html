@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winners Academy — Guide de Transition Desktop & Roadmap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1A4789;
+            --primary-light: #2563EB;
+            --primary-gradient: linear-gradient(135deg, #1A4789 0%, #2563EB 100%);
+            --accent-pink: #E6097D;
+            --mixed-gradient: linear-gradient(135deg, #1A4789 0%, #E6097D 100%);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --bg-body: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Header block */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 45px 30px;
+            background: var(--mixed-gradient);
+            border-radius: var(--radius-lg);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        header h1 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            font-size: 1.15rem;
+            opacity: 0.95;
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin: 45px 0 25px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 2px;
+            background: var(--border);
+        }
+
+        /* Layout Grid */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .card h2, .card h3 {
+            font-family: 'Cairo', sans-serif;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        /* Step List */
+        .steps {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .steps li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .steps li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-light);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .steps li:nth-child(1)::before { content: '1'; }
+        .steps li:nth-child(2)::before { content: '2'; }
+        .steps li:nth-child(3)::before { content: '3'; }
+        .steps li:nth-child(4)::before { content: '4'; }
+
+        /* Tech Badges */
+        .badge {
+            display: inline-block;
+            background: #EFF6FF;
+            color: #1E40AF;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 8px;
+            border: 1px solid #DBEAFE;
+        }
+
+        .badge-alt {
+            background: #FDF2F8;
+            color: #9D174D;
+            border: 1px solid #FCE7F3;
+        }
+
+        /* Alert Box */
+        .alert-box {
+            background: #FFFBEB;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: #92400E;
+        }
+
+        /* Roadmap List */
+        .roadmap-list {
+            list-style: none;
+        }
+
+        .roadmap-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .roadmap-list li:last-child {
+            border: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .roadmap-icon {
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+
+        .roadmap-content h4 {
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.05rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .roadmap-content p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <h1>Winners Academy</h1>
+        <p>Transition vers une Application Desktop & Roadmap de Fin de Projet</p>
+    </header>
+
+    <!-- Layout Grid -->
+    <div class="layout-grid">
+        
+        <!-- Main Column -->
+        <div class="main-column">
+            
+            <!-- Section Desktop conversion -->
+            <div class="card">
+                <h2>1. Comment transformer Odoo en Application Desktop</h2>
+                <p>Pour convertir le projet en une véritable application installable sur PC (Windows/macOS), deux approches fiables s'offrent à vous :</p>
+                
+                <h3>Méthode A : L'approche native PWA (Progressive Web App) <span class="badge">Recommandé</span></h3>
+                <p>Odoo 17 supporte nativement le standard PWA. C'est l'approche la plus stable et la plus simple pour les utilisateurs.</p>
+                <ul class="steps">
+                    <li>Ouvrez votre instance Odoo dans Google Chrome ou Microsoft Edge (ex: <code>http://localhost:8069</code>).</li>
+                    <li>Dans la barre d'adresse à droite, cliquez sur l'icône <strong>"Installer Winners Academy"</strong> (représentée par un écran avec une flèche ou un "+" selon le navigateur).</li>
+                    <li>L'application s'installe sur le système et génère un raccourci direct sur le bureau Windows.</li>
+                    <li>L'application s'ouvre dans une fenêtre autonome et épurée (sans barre d'adresse de navigateur ni onglets), offrant le rendu d'une application native.</li>
+                </ul>
+
+                <h3>Méthode B : Le conteneur Electron / Tauri <span class="badge badge-alt">Avancé</span></h3>
+                <p>Si vous souhaitez distribuer un fichier <code>.exe</code> d'installation autonome qui encapsule également la base de données et le serveur Python en local :</p>
+                <ul class="steps">
+                    <li><strong>Création du Wrapper :</strong> Nous utilisons un package Node.js comme Electron ou Tauri configuré pour pointer vers l'URL d'Odoo.</li>
+                    <li><strong>Packaging de la Base de Données :</strong> Intégrer un binaire de PostgreSQL et de Python portable à l'intérieur du dossier de l'application.</li>
+                    <li><strong>Script de Démarrage :</strong> Au clic sur l'icône, un script en arrière-plan lance automatiquement les services PostgreSQL et Odoo, puis ouvre la fenêtre de l'application.</li>
+                </ul>
+
+                <div class="alert-box">
+                    <strong>⚠️ Note importante :</strong> Dans le cas d'une utilisation multi-branches (Mostaganem, Mesra, etc.), il est fortement recommandé d'héberger le serveur Odoo sur le Cloud (ex: VPS) afin que toutes les branches travaillent sur la même base de données centrale. Les applications desktop de chaque site se connecteront alors simplement à cette URL distante.
+                </div>
+            </div>
+
+            <!-- Section Ce qu'il reste à faire -->
+            <div class="card">
+                <h2>2. Ce qu'il reste à faire dans le projet (Roadmap)</h2>
+                <p>Pour finaliser complètement l'application et la préparer pour un déploiement réel :</p>
+                
+                <ul class="roadmap-list">
+                    <li>
+                        <span class="roadmap-icon">🌐</span>
+                        <div class="roadmap-content">
+                            <h4>Déploiement en Production (Cloud)</h4>
+                            <p>Installer l'instance Odoo 17 et la base de données PostgreSQL sur un serveur VPS (OVH, DigitalOcean) accessible par internet avec un certificat SSL sécurisé (HTTPS).</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="roadmap-icon">💾</span>
+                        <div class="roadmap-content">
+                            <h4>Stratégie de Sauvegardes Automatiques</h4>
+                            <p>Configurer un script de sauvegarde automatique journalière (cron) pour copier la base de données PostgreSQL et les fichiers média (ex: photos des étudiants) vers un stockage sécurisé déporté (ex: Google Drive, Dropbox, ou S3).</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="roadmap-icon">📥</span>
+                        <div class="roadmap-content">
+                            <h4>Importation des Données Existantes</h4>
+                            <p>Préparer et importer les fichiers Excel ou CSV contenant la liste des élèves actuels, des professeurs, et des historiques de paiement pour démarrer l'activité sans ressaisie manuelle.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="roadmap-icon">🛠️</span>
+                        <div class="roadmap-content">
+                            <h4>Tests de Charge et Cas Limites</h4>
+                            <p>Simuler des connexions simultanées de plusieurs secrétaires et directeurs de branches différentes pour vérifier la réactivité du serveur et l'absence de lenteurs lors de la génération des reçus de paiement PDF.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Sidebar / Summary Column -->
+        <div class="side-column">
+            
+            <div class="card">
+                <h3>Résumé des acquis</h3>
+                <p>Voici ce que nous avons déjà construit dans la suite logicielle d'Odoo :</p>
+                <ul class="roadmap-list" style="margin-top: 10px;">
+                    <li>
+                        <span class="roadmap-icon">✅</span>
+                        <div class="roadmap-content">
+                            <h4>Modèles Métier Actifs</h4>
+                            <p>Étudiants, Enseignants, Groupes, Séances, Salles, Paiements, Présences, Emplois du temps.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="roadmap-icon">✅</span>
+                        <div class="roadmap-content">
+                            <h4>Système d'Autorisations</h4>
+                            <p>Définition de 5 rôles distincts (Super Admin, Directeur, Secrétaire, Enseignant, Caissier).</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="roadmap-icon">✅</span>
+                        <div class="roadmap-content">
+                            <h4>Sécurité Multi-Branches</h4>
+                            <p>Règles dynamiques limitant les accès des employés à leur seule branche d'affectation.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="roadmap-icon">✅</span>
+                        <div class="roadmap-content">
+                            <h4>Design Premium & Dashboard</h4>
+                            <p>Interface modernisée et tableau de bord interactif avec sélecteur de branche consolidé.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Document généré pour l'équipe technique de <strong>Winners Academy</strong>.</p>
+    </footer>
+</div>
+
+</body>
+</html>

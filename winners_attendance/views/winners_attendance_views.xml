@@ -2,71 +2,262 @@
 <odoo>
     <data>
 
-        <!-- ============================================================ -->
-        <!-- Tree View -->
-        <!-- ============================================================ -->
-        <record id="view_winners_attendance_tree" model="ir.ui.view">
-            <field name="name">winners.attendance.tree</field>
-            <field name="model">winners.attendance</field>
+        <!-- ══════════════════════════════════════ -->
+        <!-- ATTENDANCE SHEET — TREE VIEW          -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_sheet_tree" model="ir.ui.view">
+            <field name="name">winners.attendance.sheet.tree</field>
+            <field name="model">winners.attendance.sheet</field>
             <field name="arch" type="xml">
-                <tree string="Présences">
-                    <field name="student_id"/>
-                    <field name="group_id"/>
+                <!-- Décoration couleur selon l'état -->
+                <tree string="Feuilles de Présence" decoration-info="state == 'in_progress'" decoration-success="state == 'open'" decoration-muted="state == 'closed'">
+                    <header>
+                        <button name="action_sync_zkteco_button" string="🔄 Synchroniser pointeuse" type="object" class="btn-secondary"/>
+                        <button name="action_generate_today_button" string="📋 Générer feuilles du jour" type="object" class="btn-secondary"/>
+                    </header>
                     <field name="date"/>
-                    <field name="status"/>
+                    <field name="time_start" widget="float_time"/>
+                    <field name="time_end" widget="float_time"/>
+                    <field name="group_id"/>
+                    <field name="subject"/>
+                    <field name="teacher_id"/>
+                    <field name="room_id"/>
+                    <field name="progress_display"/>
+                    <field name="state" widget="badge" decoration-info="state == 'in_progress'" decoration-success="state == 'open'" decoration-muted="state == 'closed'"/>
                 </tree>
             </field>
         </record>
 
-        <!-- ============================================================ -->
-        <!-- Form View -->
-        <!-- ============================================================ -->
-        <record id="view_winners_attendance_form" model="ir.ui.view">
-            <field name="name">winners.attendance.form</field>
-            <field name="model">winners.attendance</field>
+        <!-- ══════════════════════════════════════ -->
+        <!-- ATTENDANCE SHEET — FORM VIEW          -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_sheet_form" model="ir.ui.view">
+            <field name="name">winners.attendance.sheet.form</field>
+            <field name="model">winners.attendance.sheet</field>
             <field name="arch" type="xml">
-                <form string="Présence">
+                <form string="Feuille de Présence">
+                    <header>
+                        <button name="action_add_student_manually" string="➕ Ajouter un étudiant" type="object" class="btn-secondary" invisible="state == 'closed'"/>
+                        <button name="action_sync_zkteco_button" string="🔄 Synchroniser pointeuse" type="object" class="btn-secondary" invisible="state == 'closed'"/>
+                        <button name="action_close" string="Clôturer la feuille" type="object" class="oe_highlight" invisible="state == 'closed'"/>
+                        <button name="action_reopen" string="Réouvrir la feuille" type="object" invisible="state != 'closed'" groups="winners_auth.winners_group_super_admin"/>
+                        <field name="state" widget="statusbar" statusbar_visible="open,in_progress,closed"/>
+                    </header>
                     <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                        </div>
                         <group>
-                            <group string="Informations de la présence">
-                                <field name="student_id"/>
-                                <field name="group_id"/>
-                                <field name="date"/>
-                                <field name="status"/>
+                            <group string="Détails du créneau">
+                                <field name="date" readonly="state == 'closed'"/>
+                                <field name="group_id" readonly="state == 'closed'"/>
+                                <field name="subject"/>
+                                <field name="teacher_id"/>
                             </group>
-                            <group string="Détails">
+                            <group string="Planification et localisation">
+                                <field name="time_start" widget="float_time" readonly="state == 'closed'"/>
+                                <field name="time_end" widget="float_time" readonly="state == 'closed'"/>
+                                <field name="room_id" readonly="state == 'closed'"/>
                                 <field name="branch_id"/>
-                                <field name="notes"/>
                             </group>
                         </group>
+                        
+                        <notebook>
+                            <page string="Liste des étudiants">
+                                <group>
+                                    <div class="oe_grey">
+                                        Cliquez sur <strong>Présent</strong> ou <strong>En retard</strong> pour valider la présence de l'étudiant. Cela décompte automatiquement une séance de son abonnement.
+                                    </div>
+                                </group>
+                                <field name="line_ids" readonly="state == 'closed'">
+                                    <tree string="Étudiants" editable="bottom" create="0" delete="0">
+                                        <field name="student_id" readonly="1"/>
+                                        <field name="status" widget="badge" decoration-success="status == 'present'" decoration-warning="status == 'late'" decoration-danger="status == 'absent'"/>
+                                        <button name="action_mark_present" string="Présent" type="object" icon="fa-check-circle" class="btn-success" invisible="status == 'present'"/>
+                                        <button name="action_mark_late" string="En Retard" type="object" icon="fa-clock-o" class="btn-warning" invisible="status in ('present', 'late')"/>
+                                        <button name="action_mark_absent" string="Absent" type="object" icon="fa-times-circle" class="btn-danger" invisible="status == 'absent'"/>
+                                        <field name="marked_by" readonly="1"/>
+                                        <field name="marked_at" readonly="1"/>
+                                        <field name="source" readonly="1"/>
+                                        <field name="notes"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Audit de clôture" invisible="state != 'closed'">
+                                <group>
+                                    <field name="closed_by"/>
+                                    <field name="closed_at"/>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
         </record>
 
-        <!-- ============================================================ -->
-        <!-- Action -->
-        <!-- ============================================================ -->
-        <record id="action_winners_attendance" model="ir.actions.act_window">
-            <field name="name">Présences</field>
-            <field name="res_model">winners.attendance</field>
+        <!-- ══════════════════════════════════════ -->
+        <!-- ATTENDANCE SHEET — SEARCH VIEW         -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_sheet_search" model="ir.ui.view">
+            <field name="name">winners.attendance.sheet.search</field>
+            <field name="model">winners.attendance.sheet</field>
+            <field name="arch" type="xml">
+                <search string="Recherche feuilles de présence">
+                    <field name="group_id"/>
+                    <field name="teacher_id"/>
+                    <field name="room_id"/>
+                    
+                    <!-- Filtres rapides -->
+                    <filter string="Aujourd'hui" name="today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="En cours" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                    <filter string="Ouvertes" name="open" domain="[('state', '=', 'open')]"/>
+                    <filter string="Clôturées" name="closed" domain="[('state', '=', 'closed')]"/>
+                    
+                    <separator/>
+                    <group expand="0" string="Regrouper par">
+                        <filter string="Date" name="group_by_date" context="{'group_by': 'date'}"/>
+                        <filter string="Groupe" name="group_by_group" context="{'group_by': 'group_id'}"/>
+                        <filter string="Enseignant" name="group_by_teacher" context="{'group_by': 'teacher_id'}"/>
+                        <filter string="État" name="group_by_state" context="{'group_by': 'state'}"/>
+                        <filter string="Branche" name="group_by_branch" context="{'group_by': 'branch_id'}" groups="winners_auth.winners_group_super_admin"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- ACTION : PRÉSENCES DU JOUR            -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="action_winners_attendance_sheet_today" model="ir.actions.act_window">
+            <field name="name">Présences du jour</field>
+            <field name="res_model">winners.attendance.sheet</field>
             <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_winners_attendance_sheet_search"/>
+            <!-- Filtre par défaut sur aujourd'hui -->
+            <field name="context">{'search_default_today': 1}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Enregistrer une nouvelle présence
+                    Aucune feuille de présence aujourd'hui.
+                </p>
+                <p>
+                    Cliquez sur « 📋 Générer feuilles du jour » pour créer les feuilles selon l'emploi du temps.
                 </p>
             </field>
         </record>
 
-        <!-- ============================================================ -->
-        <!-- Menu -->
-        <!-- ============================================================ -->
-        <menuitem id="menu_winners_attendance"
-                  name="Présences"
+        <!-- ══════════════════════════════════════ -->
+        <!-- ACTION SERVEUR : RÉGÉNÉRER             -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="action_server_regenerate_attendance" model="ir.actions.server">
+            <field name="name">Régénérer les feuilles de présence du jour</field>
+            <field name="model_id" ref="model_winners_attendance_sheet"/>
+            <field name="binding_model_id" ref="model_winners_attendance_sheet"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_regenerate_today()</field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- ACTION SERVEUR : FORCER SYNCHRO        -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="action_server_sync_zkteco" model="ir.actions.server">
+            <field name="name">Forcer la synchronisation ZKTeco</field>
+            <field name="model_id" ref="model_winners_attendance_sheet"/>
+            <field name="binding_model_id" ref="model_winners_attendance_sheet"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_sync_zkteco_button()</field>
+            <field name="groups_id" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- MENUS                                  -->
+        <!-- ══════════════════════════════════════ -->
+        <!-- Menu Présences : affiche les feuilles de présence du jour -->
+        <menuitem id="winners_attendance.menu_winners_attendance"
+                  name="Feuilles de présence"
                   parent="winners_branch.menu_winners_academy_root"
-                  action="action_winners_attendance"
+                  action="action_winners_attendance_sheet_today"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
                   sequence="80"/>
+
+        <!-- Menu pour les anomalies de pointage -->
+        <menuitem id="menu_winners_attendance_anomaly"
+                  name="Anomalies de pointage"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_attendance_anomaly"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary"
+                  sequence="85"/>
+
+        <!-- Menu pour les logs de synchronisation -->
+        <menuitem id="menu_winners_attendance_sync_log"
+                  name="Log de synchro ZKTeco"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_attendance_sync_log"
+                  groups="winners_auth.winners_group_super_admin"
+                  sequence="90"/>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- PROCESSED TXN — TREE VIEW (Admin)     -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_processed_txn_tree" model="ir.ui.view">
+            <field name="name">winners.attendance.processed.txn.tree</field>
+            <field name="model">winners.attendance.processed.txn</field>
+            <field name="arch" type="xml">
+                <tree string="Transactions traitées (déduplication)" create="0" delete="0" edit="0">
+                    <field name="timestamp"/>
+                    <field name="zk_user_id"/>
+                    <field name="result"/>
+                    <field name="processed_at"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- PROCESSED TXN — ACTION (Admin only) -->
+        <record id="action_winners_attendance_processed_txn" model="ir.actions.act_window">
+            <field name="name">Transactions traitées (déduplication)</field>
+            <field name="res_model">winners.attendance.processed.txn</field>
+            <field name="view_mode">tree</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Aucune transaction traitée.
+                </p>
+                <p>
+                    Cette table enregistre chaque couple (user_id, timestamp)
+                    déjà traité pour éviter les re-traitements.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu pour les transactions traitées -->
+        <menuitem id="menu_winners_attendance_processed_txn"
+                  name="Transactions traitées"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_attendance_processed_txn"
+                  groups="winners_auth.winners_group_super_admin"
+                  sequence="91"/>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- ACTIONS SERVEUR : DIAGNOSTIC ADMIN    -->
+        <!-- ══════════════════════════════════════ -->
+
+        <!-- Bouton Reset Watermark -->
+        <record id="action_server_reset_watermark" model="ir.actions.server">
+            <field name="name">🔧 Réinitialiser le watermark ZKTeco</field>
+            <field name="model_id" ref="model_winners_attendance_processor"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_reset_watermark()</field>
+            <field name="groups_id" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
+
+        <!-- Bouton Purge table dédup -->
+        <record id="action_server_purge_processed_txn" model="ir.actions.server">
+            <field name="name">🗑️ Purger la table de déduplication</field>
+            <field name="model_id" ref="model_winners_attendance_processor"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_purge_processed_txn()</field>
+            <field name="groups_id" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
 
     </data>
 </odoo>

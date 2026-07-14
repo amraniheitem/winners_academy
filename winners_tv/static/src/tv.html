@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winners Academy TV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════
+           RESET & BASE
+           ═══════════════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blue: #1A4789;
+            --blue-dark: #0F2D5A;
+            --blue-light: #2563A8;
+            --pink: #E6097D;
+            --pink-light: #FF3399;
+            --bg-dark: #0A0F1E;
+            --bg-card: #111827;
+            --bg-header: rgba(16, 24, 48, 0.95);
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --border: rgba(255, 255, 255, 0.06);
+            --green: #10B981;
+            --orange: #F59E0B;
+            --red: #EF4444;
+            --row-current: rgba(26, 71, 137, 0.35);
+            --row-past: rgba(100, 116, 139, 0.15);
+            --glow-blue: 0 0 40px rgba(26, 71, 137, 0.3);
+            --glow-pink: 0 0 40px rgba(230, 9, 125, 0.2);
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background:
+                radial-gradient(ellipse at 20% 0%, rgba(26, 71, 137, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, rgba(230, 9, 125, 0.08) 0%, transparent 50%),
+                var(--bg-dark);
+        }
+
+        /* ═══════════════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════════════ */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5vh 4vw;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            height: 12vh;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0.3vh;
+            background: linear-gradient(90deg, var(--blue), var(--pink), var(--blue));
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5vw;
+            flex-shrink: 0;
+        }
+
+        .logo-container {
+            width: 8vh;
+            height: 8vh;
+            border-radius: 1.5vh;
+            background: linear-gradient(135deg, var(--blue), var(--pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--glow-pink);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            inset: 0.3vh;
+            border-radius: 1.2vh;
+            background: var(--bg-dark);
+        }
+
+        .logo-text {
+            position: relative;
+            z-index: 1;
+            font-size: 3.5vh;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, var(--pink-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-center {
+            text-align: center;
+            flex: 1;
+            min-width: 0;
+            padding: 0 2vw;
+        }
+
+        .branch-name {
+            font-size: 3.8vh;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--text-primary), var(--pink-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 45vw;
+        }
+
+        .header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.4vh;
+            direction: ltr;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .clock {
+            font-size: 4.8vh;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(26, 71, 137, 0.5);
+            line-height: 1;
+        }
+
+        .date-info {
+            font-size: 1.8vh;
+            color: var(--text-secondary);
+            font-weight: 500;
+            direction: ltr;
+            white-space: nowrap;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           SCHEDULE TABLE
+           ═══════════════════════════════════════════════════ */
+        .schedule-container {
+            padding: 2.5vh 4vw 0;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5vw;
+            margin-bottom: 2vh;
+            flex-wrap: nowrap;
+        }
+
+        .table-title-icon {
+            width: 5vh;
+            height: 5vh;
+            border-radius: 1.2vh;
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4vh;
+            box-shadow: var(--glow-blue);
+            flex-shrink: 0;
+        }
+
+        .table-title h2 {
+            font-size: 2.8vh;
+            font-weight: 800;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .table-title .day-badge {
+            background: linear-gradient(135deg, var(--pink), var(--pink-light));
+            padding: 0.5vh 2vw;
+            border-radius: 2vh;
+            font-size: 1.6vh;
+            font-weight: 700;
+            color: #fff;
+            margin-right: auto;
+            white-space: nowrap;
+        }
+
+        .schedule-table-wrapper {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            border-radius: 1.5vh;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2.5vh;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        thead tr {
+            background: linear-gradient(90deg, var(--blue-dark), var(--blue));
+        }
+
+        thead th {
+            padding: 1.8vh 1vw;
+            font-size: 2vh;
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+        }
+
+        thead th span {
+            font-weight: 400 !important;
+            font-size: 1.3vh !important;
+            opacity: 0.85 !important;
+            display: block !important;
+            margin-top: 0.4vh !important;
+        }
+
+        thead th:first-child {
+            border-radius: 0 1.5vh 0 0;
+        }
+
+        thead th:last-child {
+            border-radius: 1.5vh 0 0 0;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody td {
+            padding: 1.8vh 1vw;
+            text-align: center;
+            font-size: 2.2vh;
+            font-weight: 600;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        thead th:first-child,
+        tbody td:first-child {
+            padding-right: 2vw;
+        }
+
+        thead th:last-child,
+        tbody td:last-child {
+            padding-left: 2vw;
+        }
+
+        /* Row states */
+        .row-current {
+            background: var(--row-current);
+            animation: pulseRow 3s ease-in-out infinite;
+        }
+
+        .row-current td {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .row-current td:first-child {
+            position: relative;
+        }
+
+        .row-current td:first-child::before {
+            content: '▶';
+            position: absolute;
+            right: 0.5vw;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pink);
+            font-size: 1.8vh;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .row-past {
+            background: var(--row-past);
+        }
+
+        .row-past td {
+            color: var(--text-muted);
+        }
+
+        .row-upcoming td {
+            color: var(--text-primary);
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.5vh 1.5vw;
+            border-radius: 2vh;
+            font-size: 1.6vh;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-current {
+            background: rgba(26, 71, 137, 0.3);
+            color: #60A5FA;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            animation: pulseBadge 2s ease-in-out infinite;
+        }
+
+        .status-past {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--text-muted);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+        }
+
+        .status-upcoming {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--green);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 2.5vh;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 8vh;
+            opacity: 0.3;
+        }
+
+        .empty-text {
+            font-size: 2.4vh;
+            font-weight: 600;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           ATTENDANCE POPUP
+           ═══════════════════════════════════════════════════ */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-card {
+            background: linear-gradient(165deg, #111827 0%, #0F172A 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 4vh;
+            padding: 6vh 8vh;
+            text-align: center;
+            max-width: 80vh;
+            width: 95%;
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.8) translateY(40px);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5), var(--glow-blue);
+        }
+
+        .popup-overlay.active .popup-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .popup-card::before {
+            content: '';
+            position: absolute;
+            top: -0.3vh;
+            left: -0.3vh;
+            right: -0.3vh;
+            bottom: -0.3vh;
+            border-radius: 4.3vh;
+            background: linear-gradient(135deg, var(--blue), var(--pink), var(--blue));
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .popup-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 4vh;
+            background: linear-gradient(165deg, #111827, #0F172A);
+            z-index: -1;
+        }
+
+        .popup-welcome {
+            font-size: 4vh;
+            font-weight: 900;
+            margin-bottom: 4vh;
+            background: linear-gradient(135deg, var(--green), #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .popup-photo-wrapper {
+            width: 25vh;
+            height: 25vh;
+            margin: 0 auto 3.5vh;
+            border-radius: 50%;
+            padding: 0.6vh;
+            background: linear-gradient(135deg, var(--blue), var(--pink));
+            box-shadow: 0 8px 32px rgba(26, 71, 137, 0.3);
+        }
+
+        .popup-photo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-photo-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9.6vh;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .popup-name {
+            font-size: 5vh;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 1.8vh;
+            line-height: 1.3;
+        }
+
+        .popup-level {
+            font-size: 2.5vh;
+            color: var(--text-secondary);
+            margin-bottom: 3.5vh;
+            padding: 1vh 3.6vh;
+            background: rgba(255, 255, 255, 0.05);
+            display: inline-block;
+            border-radius: 2.8vh;
+            border: 1px solid var(--border);
+        }
+
+        .popup-sessions {
+            font-size: 4.2vh;
+            font-weight: 800;
+            margin-bottom: 1vh;
+        }
+
+        .popup-sessions-label {
+            font-size: 2vh;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .sessions-green {
+            color: var(--green);
+        }
+
+        .sessions-orange {
+            color: var(--orange);
+        }
+
+        .sessions-red {
+            color: var(--red);
+        }
+
+        /* Confetti particles */
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            animation: confettiFall 3s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════════════════ */
+        @keyframes pulseRow {
+
+            0%,
+            100% {
+                background: var(--row-current);
+            }
+
+            50% {
+                background: rgba(26, 71, 137, 0.45);
+            }
+        }
+
+        @keyframes pulseBadge {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 12px 4px rgba(96, 165, 250, 0.15);
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-40px) rotate(0deg) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(300px) rotate(720deg) scale(0.3);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-row {
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        /* ═══════════════════════════════════════════════════
+           SCROLLBAR (hidden)
+           ═══════════════════════════════════════════════════ */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        * {
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ════════════ HEADER ════════════ -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-container">
+                <span class="logo-text">W</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="branch-name" id="branchName">Winners Academy</div>
+        </div>
+        <div class="header-right">
+            <div class="clock" id="clock">00:00:00</div>
+            <div class="date-info" id="dateInfo"></div>
+        </div>
+    </header>
+
+    <!-- ════════════ SCHEDULE ════════════ -->
+    <main class="schedule-container">
+        <div class="table-title">
+            <div class="table-title-icon">📅</div>
+            <h2>جدول الحصص اليومي / Emploi du temps du jour</h2>
+            <span class="day-badge" id="dayBadge"></span>
+        </div>
+        <div class="schedule-table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>وقت البداية<span>Heure début</span></th>
+                        <th>وقت النهاية<span>Heure fin</span></th>
+                        <th>المجموعة<span>Groupe</span></th>
+                        <th>المادة<span>Matière</span></th>
+                        <th>الأستاذ<span>Professeur</span></th>
+                        <th>القاعة<span>Salle</span></th>
+                        <th>الحالة<span>Statut</span></th>
+                    </tr>
+                </thead>
+                <tbody id="scheduleBody">
+                </tbody>
+            </table>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <div class="empty-icon">📭</div>
+                <div class="empty-text">لا توجد حصص اليوم / Aucune séance aujourd'hui</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ════════════ ATTENDANCE POPUP ════════════ -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-card" id="popupCard">
+            <div class="popup-welcome">مرحباً / Bienvenue !</div>
+            <div class="popup-photo-wrapper">
+                <div id="popupPhotoContainer">
+                    <div class="popup-photo-placeholder" id="popupPhotoPlaceholder">👤</div>
+                </div>
+            </div>
+            <div class="popup-name" id="popupName"></div>
+            <div class="popup-level" id="popupLevel"></div>
+            <div class="popup-sessions" id="popupSessions"></div>
+            <div class="popup-sessions-label">الحصص المتبقية / Séances restantes</div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════
+        // STATE
+        // ═══════════════════════════════════════════════════
+        let lastAttendanceTimestamp = null;
+        let popupTimeout = null;
+        let isPopupVisible = false;
+        let currentScheduleJson = '';
+        let scrollInterval = null;
+
+        // ═══════════════════════════════════════════════════
+        // CLOCK
+        // ═══════════════════════════════════════════════════
+        const arabicDays = {
+            'Sunday': 'الأحد', 'Monday': 'الاثنين', 'Tuesday': 'الثلاثاء',
+            'Wednesday': 'الأربعاء', 'Thursday': 'الخميس', 'Friday': 'الجمعة',
+            'Saturday': 'السبت'
+        };
+
+        const frenchDays = {
+            'Sunday': 'Dimanche', 'Monday': 'Lundi', 'Tuesday': 'Mardi',
+            'Wednesday': 'Mercredi', 'Thursday': 'Jeudi', 'Friday': 'Vendredi',
+            'Saturday': 'Samedi'
+        };
+
+        const arabicMonths = {
+            0: 'يناير', 1: 'فبراير', 2: 'مارس', 3: 'أبريل',
+            4: 'ماي', 5: 'يونيو', 6: 'يوليو', 7: 'أغسطس',
+            8: 'سبتمبر', 9: 'أكتوبر', 10: 'نوفمبر', 11: 'ديسمبر'
+        };
+
+        const frenchMonths = {
+            0: 'Janvier', 1: 'Février', 2: 'Mars', 3: 'Avril',
+            4: 'Mai', 5: 'Juin', 6: 'Juillet', 7: 'Août',
+            8: 'Septembre', 9: 'Octobre', 10: 'Novembre', 11: 'Décembre'
+        };
+
+        const dayFrMap = {
+            'monday': 'Lundi', 'tuesday': 'Mardi', 'wednesday': 'Mercredi',
+            'thursday': 'Jeudi', 'friday': 'Vendredi', 'saturday': 'Samedi',
+            'sunday': 'Dimanche'
+        };
+
+        const dayArMap = {
+            'monday': 'الاثنين', 'tuesday': 'الثلاثاء', 'wednesday': 'الأربعاء',
+            'thursday': 'الخميس', 'friday': 'الجمعة', 'saturday': 'السبت',
+            'sunday': 'الأحد'
+        };
+
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+
+            const engDay = now.toLocaleDateString('en-US', { weekday: 'long' });
+            const day = now.getDate();
+            const month = now.getMonth();
+            const year = now.getFullYear();
+
+            const arDate = `${arabicDays[engDay]} ${day} ${arabicMonths[month]} ${year}`;
+            const frDate = `${frenchDays[engDay]} ${day} ${frenchMonths[month]} ${year}`;
+            document.getElementById('dateInfo').textContent = `${arDate}  —  ${frDate}`;
+        }
+
+        // ═══════════════════════════════════════════════════
+        // STATUS LABELS
+        // ═══════════════════════════════════════════════════
+        const statusLabels = {
+            'current': { ar: '🔴 جارية', fr: 'En cours', css: 'status-current' },
+            'past': { ar: '✅ انتهت', fr: 'Terminée', css: 'status-past' },
+            'upcoming': { ar: '⏳ قادمة', fr: 'À venir', css: 'status-upcoming' },
+        };
+
+        // ═══════════════════════════════════════════════════
+        // RENDER SCHEDULE
+        // ═══════════════════════════════════════════════════
+        function renderSchedule(schedule) {
+            const tbody = document.getElementById('scheduleBody');
+            const empty = document.getElementById('emptyState');
+
+            if (!schedule || schedule.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'flex';
+                currentScheduleJson = '';
+                if (scrollInterval) {
+                    clearInterval(scrollInterval);
+                    scrollInterval = null;
+                }
+                return;
+            }
+
+            // Compare data to avoid constant re-rendering & resets
+            const scheduleJson = JSON.stringify(schedule);
+            if (scheduleJson === currentScheduleJson) {
+                return;
+            }
+            currentScheduleJson = scheduleJson;
+
+            empty.style.display = 'none';
+            const html = schedule.map((s, i) => {
+                const rowClass = `row-${s.status}`;
+                const st = statusLabels[s.status] || statusLabels['upcoming'];
+                const delay = i * 0.05;
+                return `
+                    <tr class="${rowClass} fade-in-row" style="animation-delay: ${delay}s">
+                        <td style="direction:ltr">${s.time_start}</td>
+                        <td style="direction:ltr">${s.time_end}</td>
+                        <td>${s.group}</td>
+                        <td>${s.subject}</td>
+                        <td>${s.teacher}</td>
+                        <td>${s.room}</td>
+                        <td><span class="status-badge ${st.css}">${st.ar}<br><small>${st.fr}</small></span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = html;
+
+            // Re-init auto-scroll
+            initAutoScroll();
+        }
+
+        // ═══════════════════════════════════════════════════
+        // AUTO SCROLL
+        // ═══════════════════════════════════════════════════
+        function initAutoScroll() {
+            const wrapper = document.querySelector('.schedule-table-wrapper');
+            if (!wrapper) return;
+
+            if (scrollInterval) {
+                clearInterval(scrollInterval);
+                scrollInterval = null;
+            }
+
+            wrapper.scrollTop = 0;
+
+            setTimeout(() => {
+                const scrollHeight = wrapper.scrollHeight;
+                const clientHeight = wrapper.clientHeight;
+
+                if (scrollHeight <= clientHeight) return;
+
+                const scrollSpeed = 1; // 1px per tick
+                let direction = 1; // 1 = down, -1 = up
+                let isPaused = false;
+
+                scrollInterval = setInterval(() => {
+                    if (isPaused || isPopupVisible) return;
+
+                    if (direction === 1) {
+                        wrapper.scrollTop += scrollSpeed;
+                        if (wrapper.scrollTop + clientHeight >= scrollHeight - 2) {
+                            isPaused = true;
+                            direction = -1;
+                            setTimeout(() => { isPaused = false; }, 4000); // Pause at bottom
+                        }
+                    } else {
+                        // Scroll back up quickly
+                        wrapper.scrollTop -= scrollSpeed * 4;
+                        if (wrapper.scrollTop <= 0) {
+                            wrapper.scrollTop = 0;
+                            isPaused = true;
+                            direction = 1;
+                            setTimeout(() => { isPaused = false; }, 4000); // Pause at top
+                        }
+                    }
+                }, 40); // ~25 FPS
+            }, 1000);
+        }
+
+        // ═══════════════════════════════════════════════════
+        // ATTENDANCE POPUP
+        // ═══════════════════════════════════════════════════
+        function showAttendancePopup(data) {
+            if (isPopupVisible) return;
+            isPopupVisible = true;
+
+            const overlay = document.getElementById('popupOverlay');
+            const card = document.getElementById('popupCard');
+
+            // Set data
+            document.getElementById('popupName').textContent = data.student_name;
+            document.getElementById('popupLevel').textContent = data.level || '';
+
+            // Photo
+            const container = document.getElementById('popupPhotoContainer');
+            if (data.photo) {
+                container.innerHTML = `<img class="popup-photo" src="data:image/png;base64,${data.photo}" alt="Photo">`;
+            } else {
+                container.innerHTML = `<div class="popup-photo-placeholder">👤</div>`;
+            }
+
+            // Sessions remaining with color
+            const sessions = data.sessions_remaining || 0;
+            let colorClass = 'sessions-green';
+            if (sessions === 0) colorClass = 'sessions-red';
+            else if (sessions <= 2) colorClass = 'sessions-orange';
+
+            document.getElementById('popupSessions').innerHTML =
+                `<span class="${colorClass}">${sessions}</span>`;
+
+            // Add confetti
+            addConfetti(card);
+
+            // Show
+            overlay.classList.add('active');
+
+            // Auto-hide after 5 seconds
+            if (popupTimeout) clearTimeout(popupTimeout);
+            popupTimeout = setTimeout(() => {
+                overlay.classList.remove('active');
+                setTimeout(() => {
+                    isPopupVisible = false;
+                    // Clean confetti
+                    card.querySelectorAll('.confetti').forEach(c => c.remove());
+                }, 500);
+            }, 5000);
+        }
+
+        function addConfetti(container) {
+            const colors = ['#E6097D', '#1A4789', '#10B981', '#F59E0B', '#60A5FA', '#A78BFA'];
+            for (let i = 0; i < 30; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti';
+                el.style.left = Math.random() * 100 + '%';
+                el.style.top = Math.random() * 30 + '%';
+                el.style.background = colors[Math.floor(Math.random() * colors.length)];
+                el.style.animationDelay = Math.random() * 1 + 's';
+                el.style.width = (4 + Math.random() * 6) + 'px';
+                el.style.height = (4 + Math.random() * 6) + 'px';
+                container.appendChild(el);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════
+        // DAY BADGE
+        // ═══════════════════════════════════════════════════
+        function updateDayBadge() {
+            const now = new Date();
+            const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const current = days[now.getDay()];
+            const badge = document.getElementById('dayBadge');
+            badge.textContent = `${dayArMap[current]} / ${dayFrMap[current]}`;
+        }
+
+        // ═══════════════════════════════════════════════════
+        // DATA POLLING
+        // ═══════════════════════════════════════════════════
+        async function fetchData() {
+            try {
+                const resp = await fetch('/tv/data');
+                if (!resp.ok) return;
+                const data = await resp.json();
+
+                // Update branch name
+                if (data.branch_name) {
+                    document.getElementById('branchName').textContent = data.branch_name;
+                }
+
+                // Update schedule
+                renderSchedule(data.schedule);
+
+                // Check for new attendance
+                if (data.last_attendance) {
+                    const ts = data.last_attendance.timestamp;
+                    if (ts !== lastAttendanceTimestamp) {
+                        lastAttendanceTimestamp = ts;
+                        showAttendancePopup(data.last_attendance);
+                    }
+                }
+            } catch (err) {
+                console.error('TV Data fetch error:', err);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════
+        updateClock();
+        updateDayBadge();
+        setInterval(updateClock, 1000);
+
+        // Initial fetch
+        fetchData();
+
+        // Poll every 3 seconds for attendance detection
+        setInterval(fetchData, 3000);
+    </script>
+</body>
+
+</html>

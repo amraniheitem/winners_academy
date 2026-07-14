@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_winners_salary_super_admin,winners.salary super admin,model_winners_salary,winners_auth.winners_group_super_admin,1,1,1,1
+access_winners_salary_director,winners.salary director,model_winners_salary,winners_auth.winners_group_director,1,1,1,0
+access_winners_salary_secretary,winners.salary secretary,model_winners_salary,winners_auth.winners_group_secretary,1,0,0,0
+access_winners_salary_teacher,winners.salary teacher,model_winners_salary,winners_auth.winners_group_teacher,1,0,0,0
+access_winners_salary_cashier,winners.salary cashier,model_winners_salary,winners_auth.winners_group_cashier,1,0,0,0

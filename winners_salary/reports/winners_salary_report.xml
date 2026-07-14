@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- REPORT ACTION                          -->
+        <!-- ══════════════════════════════════════ -->
+
+        <record id="action_report_salary_slip" model="ir.actions.report">
+            <field name="name">Bulletin de salaire / كشف الراتب</field>
+            <field name="model">winners.salary</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">winners_salary.report_salary_slip</field>
+            <field name="report_file">winners_salary.report_salary_slip</field>
+            <field name="print_report_name">'Bulletin_%s_%s' % (object.teacher_id.name, object.period_start)</field>
+            <field name="binding_model_id" ref="model_winners_salary"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- REPORT TEMPLATE                        -->
+        <!-- ══════════════════════════════════════ -->
+
+        <template id="report_salary_slip">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page" style="font-family: 'Segoe UI', Tahoma, sans-serif;">
+
+                            <!-- ── HEADER ── -->
+                            <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px solid #2c3e50; padding-bottom: 15px;">
+                                <h2 style="margin: 0; color: #2c3e50;">
+                                    <strong>Winners Academy</strong>
+                                </h2>
+                                <p style="margin: 5px 0; font-size: 14px; color: #7f8c8d;">
+                                    <t t-esc="o.branch_id.name or 'Winners Academy'"/>
+                                </p>
+                                <h3 style="margin: 10px 0 0 0; color: #e74c6f;">
+                                    Bulletin de salaire / كشف الراتب
+                                </h3>
+                                <p style="margin: 5px 0; font-size: 16px; font-weight: bold; color: #2c3e50;">
+                                    <t t-esc="o.name"/>
+                                </p>
+                            </div>
+
+                            <!-- ── EMPLOYEE INFO ── -->
+                            <table style="width: 100%; margin-bottom: 20px; font-size: 13px;">
+                                <tr>
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td style="font-weight: bold; width: 40%; padding: 4px 0;">Enseignant / الأستاذ :</td>
+                                                <td style="padding: 4px 0;"><t t-esc="o.teacher_id.name"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: bold; padding: 4px 0;">Spécialité / التخصص :</td>
+                                                <td style="padding: 4px 0;"><t t-esc="dict(o.teacher_id._fields['specialty'].selection).get(o.teacher_id.specialty, '')"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: bold; padding: 4px 0;">Branche / الفرع :</td>
+                                                <td style="padding: 4px 0;"><t t-esc="o.branch_id.name or ''"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td style="font-weight: bold; width: 40%; padding: 4px 0;">Période / الفترة :</td>
+                                                <td style="padding: 4px 0;">
+                                                    <t t-esc="o.period_start.strftime('%d/%m/%Y')"/> —
+                                                    <t t-esc="o.period_end.strftime('%d/%m/%Y')"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: bold; padding: 4px 0;">État / الحالة :</td>
+                                                <td style="padding: 4px 0;">
+                                                    <t t-if="o.state == 'draft'">Brouillon / مسودة</t>
+                                                    <t t-if="o.state == 'validated'">Validé / مصادق عليه</t>
+                                                    <t t-if="o.state == 'paid'">Payé / مدفوع</t>
+                                                </td>
+                                            </tr>
+                                            <tr t-if="o.payment_date">
+                                                <td style="font-weight: bold; padding: 4px 0;">Date paiement / تاريخ الدفع :</td>
+                                                <td style="padding: 4px 0;"><t t-esc="o.payment_date.strftime('%d/%m/%Y')"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- ── SALARY BREAKDOWN TABLE ── -->
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
+                                <thead>
+                                    <tr style="background-color: #2c3e50; color: white;">
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #34495e;">
+                                            Désignation / البيان
+                                        </th>
+                                        <th style="padding: 10px; text-align: center; border: 1px solid #34495e; width: 100px;">
+                                            Quantité / الكمية
+                                        </th>
+                                        <th style="padding: 10px; text-align: center; border: 1px solid #34495e; width: 120px;">
+                                            Taux (DA) / المعدل
+                                        </th>
+                                        <th style="padding: 10px; text-align: right; border: 1px solid #34495e; width: 140px;">
+                                            Montant (DA) / المبلغ
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Base salary -->
+                                    <tr style="background-color: #ecf0f1;">
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; font-weight: bold;">
+                                            Salaire de base / الراتب الأساسي
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">—</td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">—</td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right; font-weight: bold;">
+                                            <t t-esc="'%.2f' % o.base_salary"/> DA
+                                        </td>
+                                    </tr>
+
+                                    <!-- Sessions info -->
+                                    <tr>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7;">
+                                            Séances prévues / الحصص المخططة
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">
+                                            <t t-esc="o.total_sessions_planned"/>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">—</td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right;">—</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7;">
+                                            Séances effectuées / الحصص المنجزة
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">
+                                            <t t-esc="o.total_sessions_done"/>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">—</td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right;">—</td>
+                                    </tr>
+
+                                    <!-- Absence deduction (RED) -->
+                                    <tr t-if="o.absences_count > 0" style="background-color: #fdecea;">
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; color: #c0392b;">
+                                            <strong>(-)</strong> Retenue absences / خصم الغياب
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">
+                                            <t t-esc="o.absences_count"/>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">
+                                            <t t-esc="'%.2f' % o.absence_deduction_rate"/>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right; color: #c0392b; font-weight: bold;">
+                                            - <t t-esc="'%.2f' % o.absence_deduction"/> DA
+                                        </td>
+                                    </tr>
+
+                                    <!-- Overtime (GREEN) -->
+                                    <tr t-if="o.overtime_hours > 0" style="background-color: #e8f8f5;">
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; color: #27ae60;">
+                                            <strong>(+)</strong> Heures supplémentaires / ساعات إضافية
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">
+                                            <t t-esc="'%.1f' % o.overtime_hours"/> h
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">
+                                            <t t-esc="'%.2f' % o.overtime_rate"/>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right; color: #27ae60; font-weight: bold;">
+                                            + <t t-esc="'%.2f' % o.overtime_amount"/> DA
+                                        </td>
+                                    </tr>
+
+                                    <!-- Bonus (GREEN) -->
+                                    <tr t-if="o.bonus > 0" style="background-color: #e8f8f5;">
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; color: #27ae60;">
+                                            <strong>(+)</strong> Prime / منحة
+                                            <t t-if="o.bonus_justification">
+                                                <br/><small style="color: #7f8c8d;"><t t-esc="o.bonus_justification"/></small>
+                                            </t>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">—</td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">—</td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right; color: #27ae60; font-weight: bold;">
+                                            + <t t-esc="'%.2f' % o.bonus"/> DA
+                                        </td>
+                                    </tr>
+
+                                    <!-- Other deductions (RED) -->
+                                    <tr t-if="o.other_deductions > 0" style="background-color: #fdecea;">
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; color: #c0392b;">
+                                            <strong>(-)</strong> Autres retenues / خصومات أخرى
+                                            <t t-if="o.deductions_justification">
+                                                <br/><small style="color: #7f8c8d;"><t t-esc="o.deductions_justification"/></small>
+                                            </t>
+                                        </td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">—</td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: center;">—</td>
+                                        <td style="padding: 8px; border: 1px solid #bdc3c7; text-align: right; color: #c0392b; font-weight: bold;">
+                                            - <t t-esc="'%.2f' % o.other_deductions"/> DA
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                                <!-- NET SALARY TOTAL -->
+                                <tfoot>
+                                    <tr style="background-color: #2c3e50; color: white;">
+                                        <td colspan="3" style="padding: 12px; border: 1px solid #34495e; font-size: 15px; font-weight: bold;">
+                                            SALAIRE NET / الراتب الصافي
+                                        </td>
+                                        <td style="padding: 12px; border: 1px solid #34495e; text-align: right; font-size: 18px; font-weight: bold;">
+                                            <t t-esc="'%.2f' % o.net_salary"/> DA
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                            <!-- ── SIGNATURES ── -->
+                            <table style="width: 100%; margin-top: 40px; font-size: 12px;">
+                                <tr>
+                                    <td style="width: 33%; text-align: center; vertical-align: top;">
+                                        <p style="border-top: 1px solid #bdc3c7; padding-top: 5px; margin-top: 40px;">
+                                            <strong>L'enseignant / الأستاذ</strong><br/>
+                                            <t t-esc="o.teacher_id.name"/>
+                                        </p>
+                                    </td>
+                                    <td style="width: 33%; text-align: center; vertical-align: top;">
+                                        <p style="border-top: 1px solid #bdc3c7; padding-top: 5px; margin-top: 40px;">
+                                            <strong>Validé par / صادق عليه</strong><br/>
+                                            <t t-esc="o.validated_by.name or '—'"/>
+                                        </p>
+                                    </td>
+                                    <td style="width: 33%; text-align: center; vertical-align: top;">
+                                        <p style="border-top: 1px solid #bdc3c7; padding-top: 5px; margin-top: 40px;">
+                                            <strong>Le directeur / المدير</strong><br/>
+                                            _______________
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- ── FOOTER NOTE ── -->
+                            <p style="margin-top: 30px; font-size: 10px; color: #95a5a6; text-align: center; border-top: 1px solid #ecf0f1; padding-top: 10px;">
+                                Document généré automatiquement par Winners Academy ERP.
+                                Ce document n'a de valeur que signé par les parties concernées.
+                            </p>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

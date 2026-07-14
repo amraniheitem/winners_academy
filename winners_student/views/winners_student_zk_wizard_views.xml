@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- WIZARD : Association empreinte ZKTeco  -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_student_zk_wizard_form" model="ir.ui.view">
+            <field name="name">winners.student.zk.wizard.form</field>
+            <field name="model">winners.student.zk.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Associer une empreinte ZKTeco">
+                    <group>
+                        <field name="student_id" readonly="1"/>
+                    </group>
+
+                    <!-- Message d'erreur si la pointeuse est injoignable -->
+                    <group invisible="not error_message">
+                        <div class="alert alert-danger" role="alert">
+                            <strong>⚠ Erreur de communication :</strong>
+                            <field name="error_message" nolabel="1"/>
+                        </div>
+                    </group>
+
+                    <group string="Utilisateurs enregistrés sur la pointeuse" invisible="error_message">
+                        <div class="text-muted mb-2">
+                            Sélectionnez l'utilisateur correspondant à cet étudiant puis cliquez sur « Confirmer ».
+                            Les utilisateurs déjà associés à un autre étudiant sont marqués en rouge.
+                        </div>
+                    </group>
+
+                    <field name="device_user_ids" invisible="error_message" nolabel="1"
+                           options="{'no_open': True}">
+                        <tree string="Utilisateurs pointeuse" create="0" delete="0"
+                              decoration-danger="already_linked">
+                            <field name="device_uid"/>
+                            <field name="device_name"/>
+                            <field name="device_user_id"/>
+                            <field name="already_linked" column_invisible="1"/>
+                            <field name="linked_student_name" string="Déjà associé à"
+                                   invisible="not already_linked"/>
+                            <button name="action_select_and_confirm"
+                                    string="🔗 Associer"
+                                    type="object"
+                                    class="btn-primary"
+                                    invisible="already_linked"/>
+                        </tree>
+                    </field>
+
+                    <group invisible="error_message">
+                        <field name="selected_line_id"
+                               string="Utilisateur sélectionné"
+                               domain="[('wizard_id', '=', id)]"
+                               options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+
+                    <footer>
+                        <button name="action_confirm"
+                                string="✓ Confirmer l'association"
+                                type="object"
+                                class="btn-primary"
+                                invisible="error_message"/>
+                        <button name="action_refresh"
+                                string="⟳ Rafraîchir la liste"
+                                type="object"
+                                class="btn-secondary"/>
+                        <button string="Annuler" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,4 +1,9 @@
-from odoo import fields, models
+from odoo import api, fields, models
+from odoo.exceptions import UserError
+
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class WinnersStudent(models.Model):
@@ -67,3 +72,79 @@ class WinnersStudent(models.Model):
         string="Branche",
         default=lambda self: self.env.user.branch_id,
     )
+
+    # ══════════════════════════════════════
+    # CHAMPS BIOMÉTRIQUES (ZKTeco K60 Pro)
+    # ══════════════════════════════════════
+
+    zk_device_id = fields.Integer(
+        string="UID Appareil ZKTeco",
+        help="UID de l'utilisateur sur la pointeuse ZKTeco K60 Pro.",
+        copy=False,
+    )
+    zk_device_name_snapshot = fields.Char(
+        string="Nom sur l'appareil",
+        help="Nom tel qu'il apparaissait sur la pointeuse au moment de l'association.",
+        copy=False,
+        readonly=True,
+    )
+    fingerprint_linked = fields.Boolean(
+        string="Empreinte associée",
+        compute="_compute_fingerprint_linked",
+        store=True,
+    )
+    fingerprint_linked_date = fields.Datetime(
+        string="Date d'association",
+        copy=False,
+        readonly=True,
+    )
+    last_valid_checkin_time = fields.Datetime(
+        string="Dernier pointage valide",
+        help="Horodatage du dernier pointage accepté (anti-doublon).",
+        copy=False,
+        readonly=True,
+    )
+
+    # ══════════════════════════════════════
+    # COMPUTED
+    # ══════════════════════════════════════
+
+    @api.depends('zk_device_id')
+    def _compute_fingerprint_linked(self):
+        for student in self:
+            student.fingerprint_linked = bool(student.zk_device_id)
+
+    # ══════════════════════════════════════
+    # ACTIONS BIOMÉTRIQUES
+    # ══════════════════════════════════════
+
+    def action_open_fingerprint_wizard(self):
+        """Ouvre le wizard d'association d'empreinte ZKTeco."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Associer une empreinte',
+            'res_model': 'winners.student.zk.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_student_id': self.id,
+            },
+        }
+
+    def action_unlink_fingerprint(self):
+        """Dissocie l'empreinte (retire le lien côté Odoo uniquement)."""
+        self.ensure_one()
+        if not self.zk_device_id:
+            raise UserError("Aucune empreinte n'est associée à cet étudiant.")
+        old_uid = self.zk_device_id
+        old_name = self.zk_device_name_snapshot
+        self.write({
+            'zk_device_id': False,
+            'zk_device_name_snapshot': False,
+            'fingerprint_linked_date': False,
+        })
+        _logger.info(
+            "Empreinte dissociée pour l'étudiant %s (ancien uid=%s, nom=%s)",
+            self.name, old_uid, old_name,
+        )

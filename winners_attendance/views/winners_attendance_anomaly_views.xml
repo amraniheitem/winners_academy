@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- ANOMALY — TREE VIEW                    -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_anomaly_tree" model="ir.ui.view">
+            <field name="name">winners.attendance.anomaly.tree</field>
+            <field name="model">winners.attendance.anomaly</field>
+            <field name="arch" type="xml">
+                <tree string="Anomalies de pointage"
+                      decoration-danger="not resolved"
+                      decoration-muted="resolved">
+                    <field name="timestamp"/>
+                    <field name="student_id"/>
+                    <field name="zk_device_id"/>
+                    <field name="reason"/>
+                    <field name="resolved" widget="boolean"/>
+                    <field name="resolved_by"/>
+                    <field name="resolved_at"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- ANOMALY — FORM VIEW                    -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_anomaly_form" model="ir.ui.view">
+            <field name="name">winners.attendance.anomaly.form</field>
+            <field name="model">winners.attendance.anomaly</field>
+            <field name="arch" type="xml">
+                <form string="Anomalie de pointage">
+                    <header>
+                        <button name="action_resolve"
+                                string="✓ Marquer comme résolu"
+                                type="object"
+                                class="btn-success"
+                                invisible="resolved"/>
+                        <button name="action_link_to_sheet"
+                                string="📋 Rattacher à une feuille"
+                                type="object"
+                                class="btn-primary"
+                                invisible="resolved"/>
+                        <button name="action_unresolve"
+                                string="Réouvrir"
+                                type="object"
+                                invisible="not resolved"
+                                groups="winners_auth.winners_group_super_admin"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Pointage">
+                                <field name="timestamp"/>
+                                <field name="zk_device_id"/>
+                                <field name="student_id"/>
+                                <field name="reason"/>
+                            </group>
+                            <group string="Résolution">
+                                <field name="resolved"/>
+                                <field name="resolved_by"/>
+                                <field name="resolved_at"/>
+                                <field name="sheet_id"
+                                       readonly="resolved"
+                                       options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group string="Détails">
+                            <field name="reason_detail" readonly="1"/>
+                        </group>
+                        <group string="Notes">
+                            <field name="notes"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- ANOMALY — SEARCH VIEW                  -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_anomaly_search" model="ir.ui.view">
+            <field name="name">winners.attendance.anomaly.search</field>
+            <field name="model">winners.attendance.anomaly</field>
+            <field name="arch" type="xml">
+                <search string="Recherche anomalies">
+                    <field name="student_id"/>
+                    <field name="reason"/>
+
+                    <filter string="Non résolues" name="unresolved"
+                            domain="[('resolved', '=', False)]"/>
+                    <filter string="Résolues" name="resolved"
+                            domain="[('resolved', '=', True)]"/>
+                    <filter string="Aujourd'hui" name="today"
+                            domain="[('timestamp', '&gt;=', (context_today()).strftime('%Y-%m-%d 00:00:00')),
+                                     ('timestamp', '&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                    <separator/>
+                    <filter string="UID inconnu" name="unknown"
+                            domain="[('reason', '=', 'unknown_device_id')]"/>
+                    <filter string="Hors fenêtre" name="out_of_window"
+                            domain="[('reason', '=', 'out_of_window')]"/>
+                    <filter string="Aucune feuille" name="no_sheet"
+                            domain="[('reason', '=', 'no_sheet')]"/>
+
+                    <separator/>
+                    <group expand="0" string="Regrouper par">
+                        <filter string="Raison" name="group_by_reason"
+                                context="{'group_by': 'reason'}"/>
+                        <filter string="Étudiant" name="group_by_student"
+                                context="{'group_by': 'student_id'}"/>
+                        <filter string="Date" name="group_by_date"
+                                context="{'group_by': 'timestamp:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- ANOMALY — ACTION                       -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="action_winners_attendance_anomaly" model="ir.actions.act_window">
+            <field name="name">Anomalies de pointage</field>
+            <field name="res_model">winners.attendance.anomaly</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_winners_attendance_anomaly_search"/>
+            <field name="context">{'search_default_unresolved': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Aucune anomalie de pointage.
+                </p>
+                <p>
+                    Les anomalies apparaissent lorsqu'un pointage ne peut pas être
+                    automatiquement rattaché à une feuille de présence.
+                </p>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- SYNC LOG — TREE VIEW (Admin)           -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_sync_log_tree" model="ir.ui.view">
+            <field name="name">winners.attendance.sync.log.tree</field>
+            <field name="model">winners.attendance.sync.log</field>
+            <field name="arch" type="xml">
+                <tree string="Log de synchronisation ZKTeco" create="0" delete="0" edit="0">
+                    <field name="timestamp"/>
+                    <field name="zk_device_id"/>
+                    <field name="student_id"/>
+                    <field name="action" widget="badge"
+                           decoration-success="action == 'accepted'"
+                           decoration-warning="action == 'duplicate_ignored'"
+                           decoration-danger="action in ('anomaly_created', 'unknown_id')"/>
+                    <field name="details"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- SYNC LOG — ACTION (Admin only)         -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="action_winners_attendance_sync_log" model="ir.actions.act_window">
+            <field name="name">Log synchronisation ZKTeco</field>
+            <field name="res_model">winners.attendance.sync.log</field>
+            <field name="view_mode">tree</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Aucun log de synchronisation.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

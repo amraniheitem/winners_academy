@@ -13,6 +13,7 @@
                     <field name="name"/>
                     <field name="specialty"/>
                     <field name="phone"/>
+                    <field name="base_salary"/>
                     <field name="is_active"/>
                 </tree>
             </field>
@@ -40,6 +41,7 @@
                                 <field name="phone"/>
                                 <field name="specialty"/>
                                 <field name="hire_date"/>
+                                <field name="base_salary"/>
                             </group>
                             <group string="Affectation">
                                 <field name="branch_id"/>

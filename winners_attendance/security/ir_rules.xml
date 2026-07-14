@@ -1,23 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <record id="rule_attendance_by_branch" model="ir.rule">
-            <field name="name">Attendance: own branch only</field>
-            <field name="model_id" ref="winners_attendance.model_winners_attendance"/>
+        <!-- ══════════════════════════════════════ -->
+        <!-- RECORD RULES — winners.attendance.sheet -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="rule_attendance_sheet_super_admin" model="ir.rule">
+            <field name="name">Attendance Sheet: Super Admin sees all</field>
+            <field name="model_id" ref="model_winners_attendance_sheet"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
+
+        <record id="rule_attendance_sheet_by_branch" model="ir.rule">
+            <field name="name">Attendance Sheet: Branch Director/Secretary/Cashier see own branch only</field>
+            <field name="model_id" ref="model_winners_attendance_sheet"/>
             <field name="domain_force">[('branch_id', '=', user.branch_id.id)]</field>
             <field name="groups" eval="[
                 (4, ref('winners_auth.winners_group_director')),
                 (4, ref('winners_auth.winners_group_secretary')),
-                (4, ref('winners_auth.winners_group_teacher')),
                 (4, ref('winners_auth.winners_group_cashier')),
             ]"/>
         </record>
-        <record id="rule_attendance_super_admin" model="ir.rule">
-            <field name="name">Attendance: super admin sees all</field>
-            <field name="model_id" ref="winners_attendance.model_winners_attendance"/>
+
+        <record id="rule_attendance_sheet_teacher" model="ir.rule">
+            <field name="name">Attendance Sheet: Teacher sees own classes only</field>
+            <field name="model_id" ref="model_winners_attendance_sheet"/>
+            <field name="domain_force">[('teacher_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_teacher'))]"/>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- RECORD RULES — winners.attendance.line  -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="rule_attendance_line_super_admin" model="ir.rule">
+            <field name="name">Attendance Line: Super Admin sees all</field>
+            <field name="model_id" ref="model_winners_attendance_line"/>
             <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
+
+        <record id="rule_attendance_line_by_branch" model="ir.rule">
+            <field name="name">Attendance Line: Branch Director/Secretary/Cashier see own branch only</field>
+            <field name="model_id" ref="model_winners_attendance_line"/>
+            <field name="domain_force">[('sheet_id.branch_id', '=', user.branch_id.id)]</field>
             <field name="groups" eval="[
-                (4, ref('winners_auth.winners_group_super_admin')),
+                (4, ref('winners_auth.winners_group_director')),
+                (4, ref('winners_auth.winners_group_secretary')),
+                (4, ref('winners_auth.winners_group_cashier')),
+            ]"/>
+        </record>
+
+        <record id="rule_attendance_line_teacher" model="ir.rule">
+            <field name="name">Attendance Line: Teacher sees own classes only</field>
+            <field name="model_id" ref="model_winners_attendance_line"/>
+            <field name="domain_force">[('sheet_id.teacher_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_teacher'))]"/>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- RECORD RULES — winners.attendance.anomaly -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="rule_attendance_anomaly_super_admin" model="ir.rule">
+            <field name="name">Attendance Anomaly: Super Admin sees all</field>
+            <field name="model_id" ref="model_winners_attendance_anomaly"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
+
+        <record id="rule_attendance_anomaly_by_branch" model="ir.rule">
+            <field name="name">Attendance Anomaly: Branch Director/Secretary/Cashier see own branch only</field>
+            <field name="model_id" ref="model_winners_attendance_anomaly"/>
+            <field name="domain_force">['|', ('branch_id', '=', False), ('branch_id', '=', user.branch_id.id)]</field>
+            <field name="groups" eval="[
+                (4, ref('winners_auth.winners_group_director')),
+                (4, ref('winners_auth.winners_group_secretary')),
+                (4, ref('winners_auth.winners_group_cashier')),
             ]"/>
         </record>
     </data>

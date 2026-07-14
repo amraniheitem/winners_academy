@@ -47,6 +47,55 @@
                                 <field name="parent_address"/>
                             </group>
                         </group>
+                        <notebook>
+                            <page string="Biométrie" name="biometrie">
+                                <!-- Statut clair de l'association -->
+                                <group>
+                                    <div class="alert alert-success" role="alert"
+                                         invisible="not fingerprint_linked">
+                                        <strong>✓ Empreinte associée :</strong>
+                                        <field name="zk_device_name_snapshot" nolabel="1" class="d-inline"/>
+                                        (UID <field name="zk_device_id" nolabel="1" class="d-inline"/>)
+                                    </div>
+                                    <div class="alert alert-warning" role="alert"
+                                         invisible="fingerprint_linked">
+                                        <strong>✗ Aucune empreinte associée</strong>
+                                        <p class="mb-0 text-muted">
+                                            Enrôlez d'abord l'empreinte sur la pointeuse, puis cliquez sur « Associer une empreinte ».
+                                        </p>
+                                    </div>
+                                </group>
+
+                                <!-- Boutons d'action -->
+                                <group>
+                                    <button name="action_open_fingerprint_wizard"
+                                            string="🔗 Associer une empreinte"
+                                            type="object"
+                                            class="btn-primary"
+                                            invisible="fingerprint_linked"
+                                            groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary"/>
+                                    <button name="action_unlink_fingerprint"
+                                            string="✗ Dissocier l'empreinte"
+                                            type="object"
+                                            class="btn-danger"
+                                            invisible="not fingerprint_linked"
+                                            confirm="Êtes-vous sûr de vouloir dissocier cette empreinte ? Le lien côté Odoo sera supprimé (aucune donnée effacée sur la pointeuse)."
+                                            groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary"/>
+                                </group>
+
+                                <!-- Détails de l'association (lecture seule) -->
+                                <group string="Détails de l'association"
+                                       invisible="not fingerprint_linked">
+                                    <field name="fingerprint_linked" invisible="1"/>
+                                    <field name="zk_device_id" readonly="1" string="UID sur la pointeuse"/>
+                                    <field name="zk_device_name_snapshot" readonly="1" string="Nom sur la pointeuse"/>
+                                    <field name="fingerprint_linked_date" readonly="1"/>
+                                    <field name="last_valid_checkin_time" readonly="1"/>
+                                </group>
+                                <!-- Hidden computed field for invisible conditions -->
+                                <field name="fingerprint_linked" invisible="1"/>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

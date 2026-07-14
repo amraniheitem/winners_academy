@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- FORM VIEW                              -->
+        <!-- ══════════════════════════════════════ -->
+
+        <record id="view_winners_salary_form" model="ir.ui.view">
+            <field name="name">winners.salary.form</field>
+            <field name="model">winners.salary</field>
+            <field name="arch" type="xml">
+                <form string="Bulletin de salaire">
+                    <header>
+                        <!-- Workflow buttons -->
+                        <button name="action_recalculate"
+                                string="🔄 Recalculer séances"
+                                type="object"
+                                class="btn-secondary"
+                                invisible="state == 'paid'"
+                                groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>
+                        <button name="action_validate"
+                                string="✅ Valider"
+                                type="object"
+                                class="btn-primary"
+                                invisible="state != 'draft'"
+                                groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>
+                        <button name="action_pay"
+                                string="💰 Marquer payé"
+                                type="object"
+                                class="btn-success"
+                                invisible="state != 'validated'"
+                                groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>
+                        <button name="action_reset_to_draft"
+                                string="🔓 Réouvrir"
+                                type="object"
+                                class="btn-warning"
+                                invisible="state == 'draft'"
+                                groups="winners_auth.winners_group_super_admin"/>
+                        <field name="state"
+                               widget="statusbar"
+                               statusbar_visible="draft,validated,paid"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <!-- Enseignant & Période -->
+                        <group string="Informations générales">
+                            <group>
+                                <field name="teacher_id"
+                                       readonly="state != 'draft'"/>
+                                <field name="branch_id"/>
+                            </group>
+                            <group>
+                                <field name="period_start"
+                                       readonly="state != 'draft'"/>
+                                <field name="period_end"
+                                       readonly="state != 'draft'"/>
+                            </group>
+                        </group>
+
+                        <!-- Salaire de base -->
+                        <group string="Rémunération de base">
+                            <group>
+                                <field name="base_salary"
+                                       readonly="state == 'paid'"/>
+                            </group>
+                        </group>
+
+                        <!-- Séances & Absences -->
+                        <group string="Séances &amp; Absences">
+                            <group>
+                                <field name="total_sessions_planned"/>
+                                <field name="total_sessions_done"/>
+                                <field name="absences_count"/>
+                            </group>
+                            <group>
+                                <field name="absence_deduction_rate"
+                                       readonly="state == 'paid'"/>
+                                <field name="absence_deduction"/>
+                            </group>
+                        </group>
+
+                        <!-- Heures supplémentaires -->
+                        <group string="Heures supplémentaires">
+                            <group>
+                                <field name="overtime_hours"
+                                       readonly="state == 'paid'"/>
+                                <field name="overtime_rate"
+                                       readonly="state == 'paid'"/>
+                            </group>
+                            <group>
+                                <field name="overtime_amount"/>
+                            </group>
+                        </group>
+
+                        <!-- Primes & Retenues -->
+                        <group string="Primes &amp; Retenues">
+                            <group>
+                                <field name="bonus"
+                                       readonly="state == 'paid'"/>
+                                <field name="bonus_justification"
+                                       readonly="state == 'paid'"
+                                       placeholder="Justification obligatoire si prime > 0"/>
+                            </group>
+                            <group>
+                                <field name="other_deductions"
+                                       readonly="state == 'paid'"/>
+                                <field name="deductions_justification"
+                                       readonly="state == 'paid'"
+                                       placeholder="Justification obligatoire si retenues > 0"/>
+                            </group>
+                        </group>
+
+                        <!-- Résultat final -->
+                        <group string="Salaire net">
+                            <group>
+                                <field name="net_salary"
+                                       class="oe_subtotal_footer_separator"
+                                       widget="monetary_field"
+                                       readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="validated_by"/>
+                                <field name="payment_date"/>
+                            </group>
+                        </group>
+
+                        <!-- Notes -->
+                        <group string="Notes">
+                            <field name="notes"
+                                   nolabel="1"
+                                   colspan="2"
+                                   placeholder="Notes ou remarques..."
+                                   readonly="state == 'paid'"/>
+                        </group>
+                    </sheet>
+
+                    <!-- Chatter (audit trail) -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- TREE VIEW                              -->
+        <!-- ══════════════════════════════════════ -->
+
+        <record id="view_winners_salary_tree" model="ir.ui.view">
+            <field name="name">winners.salary.tree</field>
+            <field name="model">winners.salary</field>
+            <field name="arch" type="xml">
+                <tree string="Bulletins de salaire"
+                      decoration-success="state == 'paid'"
+                      decoration-info="state == 'validated'"
+                      decoration-muted="state == 'draft'">
+                    <field name="name"/>
+                    <field name="teacher_id"/>
+                    <field name="branch_id"/>
+                    <field name="period_start"/>
+                    <field name="period_end"/>
+                    <field name="base_salary" string="Base (DA)"/>
+                    <field name="absences_count" string="Abs."/>
+                    <field name="absence_deduction" string="Ret. abs. (DA)"/>
+                    <field name="overtime_amount" string="H.Supp. (DA)"/>
+                    <field name="bonus" string="Prime (DA)"/>
+                    <field name="net_salary" string="Net (DA)" decoration-bf="1"/>
+                    <field name="state"
+                           widget="badge"
+                           decoration-success="state == 'paid'"
+                           decoration-info="state == 'validated'"
+                           decoration-warning="state == 'draft'"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- SEARCH VIEW                            -->
+        <!-- ══════════════════════════════════════ -->
+
+        <record id="view_winners_salary_search" model="ir.ui.view">
+            <field name="name">winners.salary.search</field>
+            <field name="model">winners.salary</field>
+            <field name="arch" type="xml">
+                <search string="Rechercher bulletins">
+                    <field name="teacher_id"/>
+                    <field name="branch_id"/>
+                    <field name="name"/>
+                    <separator/>
+                    <filter name="filter_draft"
+                            string="Brouillons"
+                            domain="[('state', '=', 'draft')]"/>
+                    <filter name="filter_validated"
+                            string="Validés"
+                            domain="[('state', '=', 'validated')]"/>
+                    <filter name="filter_paid"
+                            string="Payés"
+                            domain="[('state', '=', 'paid')]"/>
+                    <separator/>
+                    <filter name="filter_current_month"
+                            string="Mois courant"
+                            domain="[
+                                ('period_start', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%%Y-%%m-%%d')),
+                                ('period_start', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%%Y-%%m-%%d')),
+                            ]"/>
+                    <separator/>
+                    <group expand="0" string="Grouper par">
+                        <filter name="group_branch"
+                                string="Branche"
+                                context="{'group_by': 'branch_id'}"/>
+                        <filter name="group_state"
+                                string="État"
+                                context="{'group_by': 'state'}"/>
+                        <filter name="group_teacher"
+                                string="Enseignant"
+                                context="{'group_by': 'teacher_id'}"/>
+                        <filter name="group_period"
+                                string="Période"
+                                context="{'group_by': 'period_start:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- ACT WINDOW                             -->
+        <!-- ══════════════════════════════════════ -->
+
+        <record id="action_winners_salary" model="ir.actions.act_window">
+            <field name="name">Bulletins de salaire</field>
+            <field name="res_model">winners.salary</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_winners_salary_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Créer un nouveau bulletin de salaire
+                </p>
+                <p>
+                    Gérez les salaires de vos enseignants : calcul automatique
+                    depuis les séances, heures supplémentaires, primes et retenues.
+                </p>
+            </field>
+        </record>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- MENU ITEMS                             -->
+        <!-- ══════════════════════════════════════ -->
+
+        <menuitem id="menu_winners_salary"
+                  name="Salaires"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_salary"
+                  sequence="20"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>
+
+    </data>
+</odoo>

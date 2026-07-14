@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- WIZARD : AJOUTER ÉTUDIANT MANUELLEMENT -->
+        <!-- ══════════════════════════════════════ -->
+        <record id="view_winners_attendance_add_student_wizard_form" model="ir.ui.view">
+            <field name="name">winners.attendance.add.student.wizard.form</field>
+            <field name="model">winners.attendance.add.student.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Ajouter un étudiant manuellement">
+                    <group>
+                        <field name="sheet_id" readonly="1"/>
+                        <field name="student_id"
+                               options="{'no_create': True, 'no_open': True}"/>
+                        <field name="status"/>
+                    </group>
+                    <footer>
+                        <button name="action_confirm"
+                                string="✓ Confirmer"
+                                type="object"
+                                class="btn-primary"/>
+                        <button string="Annuler" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

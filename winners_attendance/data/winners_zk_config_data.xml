@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ══════════════════════════════════════ -->
+        <!-- PARAMÈTRES SYSTÈME ZKTECO              -->
+        <!-- ══════════════════════════════════════ -->
+
+        <!-- URL du service ZK Bridge (Flask) -->
+        <record id="config_zk_bridge_url" model="ir.config_parameter">
+            <field name="key">zk_bridge_url</field>
+            <field name="value">http://localhost:5000</field>
+        </record>
+
+        <!-- Fenêtre d'acceptation du pointage (minutes) -->
+        <record id="config_checkin_window_minutes" model="ir.config_parameter">
+            <field name="key">checkin_window_minutes</field>
+            <field name="value">15</field>
+        </record>
+
+        <!-- Délai anti-doublon (heures) -->
+        <record id="config_checkin_duplicate_block_hours" model="ir.config_parameter">
+            <field name="key">checkin_duplicate_block_hours</field>
+            <field name="value">2</field>
+        </record>
+
+        <!-- Watermark de dernière synchronisation -->
+        <record id="config_zk_last_sync_watermark" model="ir.config_parameter">
+            <field name="key">zk_last_sync_watermark</field>
+            <field name="value"></field>
+        </record>
+
+    </data>
+</odoo>

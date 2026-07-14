@@ -40,6 +40,10 @@ class WinnersTeacher(models.Model):
         string="Actif",
         default=True,
     )
+    base_salary = fields.Float(
+        string="Salaire de base (DA)",
+        default=0.0,
+    )
 
     def action_create_user(self):
         for teacher in self:

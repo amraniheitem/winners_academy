@@ -136,10 +136,10 @@
 
         <menuitem id="menu_winners_session"
                   name="Séances"
-                  parent="winners_branch.menu_winners_pointage"
+                  parent="winners_branch.menu_winners_emploi_seances"
                   action="action_winners_session"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
-                  sequence="20"/>
+                  sequence="10"/>
 
     </data>
 </odoo>

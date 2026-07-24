@@ -263,7 +263,7 @@
 
         <menuitem id="menu_winners_salary"
                   name="Salaires"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_finance"
                   action="action_winners_salary"
                   sequence="20"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>

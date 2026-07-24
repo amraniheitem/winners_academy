@@ -160,9 +160,9 @@
 
         <menuitem id="menu_winners_teacher_earning_sheet"
                   name="Bordereaux enseignants"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_finance"
                   action="action_winners_teacher_earning_sheet"
-                  sequence="21"
+                  sequence="30"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"/>
     </data>
 </odoo>

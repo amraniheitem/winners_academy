@@ -111,18 +111,18 @@
         <!-- Menu -->
         <!-- ============================================================ -->
         <menuitem id="menu_winners_room"
-                  name="Salles"
-                  parent="winners_branch.menu_winners_academy_root"
+                  name="Liste des salles"
+                  parent="winners_branch.menu_winners_salles"
                   action="action_winners_room"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
-                  sequence="65"/>
+                  sequence="10"/>
 
         <menuitem id="menu_winners_room_availability"
                   name="Chercher salle libre"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_salles"
                   action="action_winners_room_availability_wizard"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
-                  sequence="66"/>
+                  sequence="20"/>
 
     </data>
 </odoo>

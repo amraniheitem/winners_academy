@@ -67,10 +67,10 @@
         <!-- ============================================================ -->
         <menuitem id="menu_winners_schedule"
                   name="Emploi du temps"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_emploi_seances"
                   action="action_winners_schedule"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
-                  sequence="70"/>
+                  sequence="20"/>
 
     </data>
 </odoo>

@@ -36,5 +36,16 @@
                 (4, ref('winners_group_cashier')),
             ]"/>
         </record>
+
+        <!-- Access Rights for Super Admin on Branches -->
+        <record id="access_winners_branch_superadmin" model="ir.model.access">
+            <field name="name">winners.branch.superadmin</field>
+            <field name="model_id" ref="winners_branch.model_winners_branch"/>
+            <field name="group_id" ref="winners_group_super_admin"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
     </data>
 </odoo>

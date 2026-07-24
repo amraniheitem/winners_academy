@@ -11,10 +11,12 @@
             <field name="arch" type="xml">
                 <tree string="Paiements">
                     <field name="student_id"/>
-                    <field name="enrollment_id"/>
+                    <field name="group_id"/>
                     <field name="amount"/>
-                    <field name="payment_date"/>
+                    <field name="sessions_count"/>
+                    <field name="date"/>
                     <field name="payment_mode"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -27,15 +29,20 @@
             <field name="model">winners.payment</field>
             <field name="arch" type="xml">
                 <form string="Paiement">
+                    <header>
+                        <button name="action_confirm" string="Confirmer" type="object" class="oe_highlight" invisible="state == 'confirmed'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                    </header>
                     <sheet>
                         <group>
                             <group string="Informations du paiement">
                                 <field name="student_id"/>
-                                <field name="enrollment_id"/>
+                                <field name="group_id"/>
                                 <field name="amount"/>
+                                <field name="sessions_count"/>
                             </group>
                             <group string="Détails">
-                                <field name="payment_date"/>
+                                <field name="date"/>
                                 <field name="payment_mode"/>
                                 <field name="notes"/>
                             </group>
@@ -54,12 +61,14 @@
             <field name="arch" type="xml">
                 <search string="Rechercher paiements">
                     <field name="student_id"/>
+                    <field name="group_id"/>
                     <field name="payment_mode"/>
                     <filter string="Espèces" name="cash" domain="[('payment_mode', '=', 'cash')]"/>
                     <filter string="Virement" name="transfer" domain="[('payment_mode', '=', 'transfer')]"/>
                     <group expand="0" string="Grouper par">
                         <filter string="Mode de paiement" name="group_mode" context="{'group_by': 'payment_mode'}"/>
                         <filter string="Étudiant" name="group_student" context="{'group_by': 'student_id'}"/>
+                        <filter string="Groupe" name="group_group" context="{'group_by': 'group_id'}"/>
                     </group>
                 </search>
             </field>

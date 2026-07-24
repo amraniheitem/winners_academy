@@ -3,6 +3,10 @@ setlocal enabledelayedexpansion
 title Installation Automatique — Winners Academy Desktop
 color 0A
 
+:: =======================================================================
+:: WINNERS ACADEMY DESKTOP — INSTALLATEUR AUTOMATIQUE (Juillet 2026)
+:: =======================================================================
+
 echo =======================================================================
 echo          INSTALLATEUR AUTOMATIQUE — WINNERS ACADEMY DESKTOP
 echo =======================================================================

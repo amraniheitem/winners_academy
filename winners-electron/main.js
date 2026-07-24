@@ -129,10 +129,24 @@ async function launchOdoo() {
 
   console.log('[Odoo] Starting server...');
   odooProcess = spawn(CONFIG.odoo.python, [CONFIG.odoo.bin, '-c', CONFIG.odoo.conf], {
-    stdio: 'ignore',
+    cwd: 'C:\\odoo17',
+    env: { ...process.env, PYTHONPATH: 'C:\\odoo17' },
+    stdio: ['ignore', 'pipe', 'pipe'],
     detached: false,
     windowsHide: true,
   });
+
+  // Log Odoo stdout/stderr for debugging
+  if (odooProcess.stdout) {
+    odooProcess.stdout.on('data', (data) => {
+      console.log('[Odoo]', data.toString().trim());
+    });
+  }
+  if (odooProcess.stderr) {
+    odooProcess.stderr.on('data', (data) => {
+      console.error('[Odoo:err]', data.toString().trim());
+    });
+  }
 
   odooProcess.on('error', (err) => {
     console.error('[Odoo] Failed to start:', err.message);

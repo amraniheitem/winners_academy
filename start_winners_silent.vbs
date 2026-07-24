@@ -1,7 +1,13 @@
 Set WshShell = CreateObject("WScript.Shell")
 Set FSO = CreateObject("Scripting.FileSystemObject")
+Set WshEnv = WshShell.Environment("Process")
+
+' Set PYTHONPATH so Odoo module can be found
+WshEnv("PYTHONPATH") = "C:\odoo17"
 
 ' 1. Lancement silencieux du serveur Odoo 17 (Fenêtre masquée = 0)
+'    On change le répertoire courant vers C:\odoo17 avant de lancer
+WshShell.CurrentDirectory = "C:\odoo17"
 WshShell.Run """C:\odoo17\venv\Scripts\python.exe"" ""C:\odoo17\odoo-bin"" -c ""C:\odoo17\odoo.conf""", 0, False
 
 ' 2. Lancement silencieux du pont biométrique ZKTeco (Fenêtre masquée = 0)

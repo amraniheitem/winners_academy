@@ -56,5 +56,61 @@
             ]"/>
         </record>
 
+        <record id="rule_teacher_earning_super_admin" model="ir.rule">
+            <field name="name">Teacher earnings: Super Admin sees all</field>
+            <field name="model_id" ref="winners_salary.model_winners_teacher_earning_sheet"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
+
+        <record id="rule_teacher_earning_director_branch" model="ir.rule">
+            <field name="name">Teacher earnings: Director own branch</field>
+            <field name="model_id" ref="winners_salary.model_winners_teacher_earning_sheet"/>
+            <field name="domain_force">[('branch_id', '=', user.branch_id.id)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_director'))]"/>
+        </record>
+
+        <record id="rule_teacher_earning_secretary_branch" model="ir.rule">
+            <field name="name">Teacher earnings: Secretary own branch readonly</field>
+            <field name="model_id" ref="winners_salary.model_winners_teacher_earning_sheet"/>
+            <field name="domain_force">[('branch_id', '=', user.branch_id.id)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_secretary'))]"/>
+        </record>
+
+        <record id="rule_teacher_earning_teacher_own" model="ir.rule">
+            <field name="name">Teacher earnings: Teacher own sheets</field>
+            <field name="model_id" ref="winners_salary.model_winners_teacher_earning_sheet"/>
+            <field name="domain_force">[('teacher_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_teacher'))]"/>
+        </record>
+
+        <record id="rule_teacher_earning_line_super_admin" model="ir.rule">
+            <field name="name">Teacher earning lines: Super Admin sees all</field>
+            <field name="model_id" ref="winners_salary.model_winners_teacher_earning_sheet_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
+
+        <record id="rule_teacher_earning_line_director_branch" model="ir.rule">
+            <field name="name">Teacher earning lines: Director own branch</field>
+            <field name="model_id" ref="winners_salary.model_winners_teacher_earning_sheet_line"/>
+            <field name="domain_force">[('earning_sheet_id.branch_id', '=', user.branch_id.id)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_director'))]"/>
+        </record>
+
+        <record id="rule_teacher_earning_line_secretary_branch" model="ir.rule">
+            <field name="name">Teacher earning lines: Secretary own branch readonly</field>
+            <field name="model_id" ref="winners_salary.model_winners_teacher_earning_sheet_line"/>
+            <field name="domain_force">[('earning_sheet_id.branch_id', '=', user.branch_id.id)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_secretary'))]"/>
+        </record>
+
+        <record id="rule_teacher_earning_line_teacher_own" model="ir.rule">
+            <field name="name">Teacher earning lines: Teacher own sheets</field>
+            <field name="model_id" ref="winners_salary.model_winners_teacher_earning_sheet_line"/>
+            <field name="domain_force">[('earning_sheet_id.teacher_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('winners_auth.winners_group_teacher'))]"/>
+        </record>
+
     </data>
 </odoo>

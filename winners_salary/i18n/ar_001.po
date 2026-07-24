@@ -1,0 +1,129 @@
+# Arabic (Algeria) translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: winners_salary
+#: model:ir.ui.menu,name:winners_salary.menu_winners_salary
+#: model:ir.actions.act_window,name:winners_salary.action_winners_salary
+#: model:ir.model,name:winners_salary.model_winners_salary
+msgid "Salaires"
+msgstr "الرواتب"
+
+#. module: winners_salary
+msgid "Bordereau de Salaire"
+msgstr "كشف الراتب"
+
+#. module: winners_salary
+msgid "Imprimer Bordereau"
+msgstr "طباعة الكشف"
+
+#. module: winners_salary
+msgid "Bordereaux enseignant"
+msgstr "كشوف الأساتذة"
+
+#. module: winners_salary
+msgid "Enseignant"
+msgstr "الأستاذ"
+
+#. module: winners_salary
+msgid "Employé"
+msgstr "الموظف"
+
+#. module: winners_salary
+msgid "Poste"
+msgstr "المنصب"
+
+#. module: winners_salary
+msgid "Salaire de base"
+msgstr "الراتب الأساسي"
+
+#. module: winners_salary
+msgid "Nombre de séances"
+msgstr "عدد الحصص"
+
+#. module: winners_salary
+msgid "Prix par séance"
+msgstr "سعر الحصة"
+
+#. module: winners_salary
+msgid "Bonus"
+msgstr "مكافأة"
+
+#. module: winners_salary
+msgid "Déductions"
+msgstr "الخصومات"
+
+#. module: winners_salary
+msgid "Salaire net"
+msgstr "صافي الراتب"
+
+#. module: winners_salary
+msgid "Net à payer"
+msgstr "المبلغ الصافي للصرف"
+
+#. module: winners_salary
+msgid "Période"
+msgstr "الفترة"
+
+#. module: winners_salary
+msgid "Absence"
+msgstr "غياب"
+
+#. module: winners_salary
+msgid "Heures supplémentaires"
+msgstr "ساعات إضافية"
+
+#. module: winners_salary
+msgid "Fiche de paie"
+msgstr "بطاقة الراتب"
+
+#. module: winners_salary
+msgid "Séances prévues"
+msgstr "الحصص المبرمجة"
+
+#. module: winners_salary
+msgid "Séances effectuées"
+msgstr "الحصص المنجزة"
+
+#. module: winners_salary
+msgid "Absences"
+msgstr "الغيابات"
+
+#. module: winners_salary
+msgid "Retenue par absence (DA)"
+msgstr "خصم الغياب (د.ج)"
+
+#. module: winners_salary
+msgid "Prime (DA)"
+msgstr "مكافأة (د.ج)"
+
+#. module: winners_salary
+msgid "Autres retenues (DA)"
+msgstr "خصومات أخرى (د.ج)"
+
+#. module: winners_salary
+msgid "Brouillon"
+msgstr "مسودة"
+
+#. module: winners_salary
+msgid "Validé"
+msgstr "مؤكد"
+
+#. module: winners_salary
+msgid "Payé"
+msgstr "مدفوع"
+
+#. module: winners_salary
+msgid "Non traité"
+msgstr "غير معالج"
+
+#. module: winners_salary
+msgid "Traité"
+msgstr "معالج"

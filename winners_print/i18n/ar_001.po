@@ -1,0 +1,63 @@
+# Arabic (Algeria) translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: winners_print
+#: model:ir.ui.menu,name:winners_print.menu_printer_config
+msgid "Imprimante Thermique"
+msgstr "الطابعة الحرارية"
+
+#. module: winners_print
+msgid "Configuration Imprimante"
+msgstr "إعداد الطابعة"
+
+#. module: winners_print
+msgid "Imprimante principale"
+msgstr "الطابعة الرئيسية"
+
+#. module: winners_print
+msgid "Tester l'impression"
+msgstr "اختبار الطباعة"
+
+#. module: winners_print
+msgid "Identifiant vendeur"
+msgstr "معرّف المورد"
+
+#. module: winners_print
+msgid "Identifiant produit"
+msgstr "معرّف المنتج"
+
+#. module: winners_print
+msgid "Par défaut"
+msgstr "افتراضي"
+
+#. module: winners_print
+msgid "Test réussi"
+msgstr "نجح الاختبار"
+
+#. module: winners_print
+msgid "Aucune imprimante configurée"
+msgstr "لا توجد طابعة مُعدَّة"
+
+#. module: winners_print
+msgid "Aucune imprimante configurée. Veuillez configurer une imprimante dans le menu Imprimante."
+msgstr "لا توجد طابعة مُعدَّة. يرجى إعداد طابعة من قائمة الطابعات."
+
+#. module: winners_print
+msgid "Imprimante non trouvée"
+msgstr "الطابعة غير موجودة"
+
+#. module: winners_print
+msgid "Erreur d'impression"
+msgstr "خطأ في الطباعة"
+
+#. module: winners_print
+msgid "Impression envoyée avec succès"
+msgstr "تم إرسال الطباعة بنجاح"

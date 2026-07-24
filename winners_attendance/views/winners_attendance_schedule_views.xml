@@ -12,7 +12,9 @@
                 <form string="Ajouter un étudiant manuellement">
                     <group>
                         <field name="sheet_id" readonly="1"/>
+                        <field name="available_student_ids" invisible="1"/>
                         <field name="student_id"
+                               domain="[('id', 'in', available_student_ids)]"
                                options="{'no_create': True, 'no_open': True}"/>
                         <field name="status"/>
                     </group>

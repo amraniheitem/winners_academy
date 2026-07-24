@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_winners_payment_form_inherit_thermal_print" model="ir.ui.view">
+            <field name="name">winners.payment.form.inherit.thermal.print</field>
+            <field name="model">winners.payment</field>
+            <field name="inherit_id" ref="winners_payment.view_winners_payment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button string="🖨️ Imprimer Bon (Thermique)"
+                            type="object"
+                            name="action_print_bon_paiement"
+                            class="btn-primary"
+                            icon="fa-print"
+                            invisible="state != 'confirmed'"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

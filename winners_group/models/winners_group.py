@@ -51,6 +51,16 @@ class WinnersGroup(models.Model):
         comodel_name="winners.student",
         string="Élèves",
     )
+    currency_id = fields.Many2one(
+        "res.currency",
+        default=lambda self: self.env.company.currency_id,
+        required=True,
+    )
+    session_price = fields.Monetary(
+        string="Prix d'une séance",
+        currency_field="currency_id",
+        default=0.0,
+    )
     max_students = fields.Integer(
         string="Nombre max d'élèves",
         default=15,

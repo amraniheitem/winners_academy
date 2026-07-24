@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="report_student_schedule_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 12px; color: #333; padding: 20mm 15mm;">
+
+                        <!-- ======== EN-TÊTE ======== -->
+                        <div style="text-align: center; margin-bottom: 25px; border-bottom: 3px solid #1a237e; padding-bottom: 12px;">
+                            <h1 style="color: #1a237e; font-size: 24px; font-weight: 700; margin: 0; letter-spacing: 2px;">
+                                WINNERS ACADEMY
+                            </h1>
+                            <h2 style="color: #424242; font-size: 16px; font-weight: 400; margin: 5px 0 0 0; letter-spacing: 1px;">
+                                EMPLOI DU TEMPS ÉTUDIANT
+                            </h2>
+                        </div>
+
+                        <!-- ======== INFORMATIONS ÉTUDIANT ======== -->
+                        <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 20%; padding: 6px 10px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Nom complet :</strong>
+                                </td>
+                                <td style="width: 30%; padding: 6px 10px; border: 1px solid #bdbdbd; font-size: 13px; font-weight: bold;">
+                                    <span t-esc="'%s %s' % (o.first_name or '', o.name or '')"/>
+                                </td>
+                                <td style="width: 20%; padding: 6px 10px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Niveau scolaire :</strong>
+                                </td>
+                                <td style="width: 30%; padding: 6px 10px; border: 1px solid #bdbdbd;">
+                                    <span t-esc="dict(o._fields['level'].selection).get(o.level, '')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 10px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Branche :</strong>
+                                </td>
+                                <td style="padding: 6px 10px; border: 1px solid #bdbdbd;">
+                                    <span t-field="o.branch_id.name"/>
+                                </td>
+                                <td style="padding: 6px 10px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Date d'impression :</strong>
+                                </td>
+                                <td style="padding: 6px 10px; border: 1px solid #bdbdbd;">
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ======== TABLEAU DES CRÉNEAUX ======== -->
+                        <h3 style="color: #1a237e; font-size: 14px; border-bottom: 2px solid #c5cae9; padding-bottom: 5px; margin: 15px 0 10px 0;">
+                            Créneaux horaires hebdomadaires
+                        </h3>
+                        
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                            <thead>
+                                <tr style="background-color: #1a237e; color: white;">
+                                    <th style="padding: 8px 10px; border: 1px solid #1a237e; text-align: left; width: 15%;">Jour</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #1a237e; text-align: center; width: 15%;">Début</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #1a237e; text-align: center; width: 15%;">Fin</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #1a237e; text-align: left; width: 25%;">Groupe / Matière</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #1a237e; text-align: left; width: 20%;">Enseignant</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #1a237e; text-align: left; width: 15%;">Salle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="sorted_schedules" t-value="o.get_sorted_schedules()"/>
+                                <t t-if="not sorted_schedules">
+                                    <tr>
+                                        <td colspan="6" style="padding: 15px; text-align: center; color: #757575; border: 1px solid #bdbdbd; font-style: italic;">
+                                            Aucun créneau horaire planifié pour cet étudiant.
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-foreach="sorted_schedules" t-as="sched">
+                                    <tr style="border-bottom: 1px solid #bdbdbd;">
+                                        <td style="padding: 8px 10px; border: 1px solid #bdbdbd; font-weight: bold;">
+                                            <span t-esc="dict(sched._fields['day_of_week'].selection).get(sched.day_of_week, '')"/>
+                                        </td>
+                                        <td style="padding: 8px 10px; border: 1px solid #bdbdbd; text-align: center;">
+                                            <span t-field="sched.time_start" t-options="{'widget': 'float_time'}"/>
+                                        </td>
+                                        <td style="padding: 8px 10px; border: 1px solid #bdbdbd; text-align: center;">
+                                            <span t-field="sched.time_end" t-options="{'widget': 'float_time'}"/>
+                                        </td>
+                                        <td style="padding: 8px 10px; border: 1px solid #bdbdbd;">
+                                            <span t-field="sched.group_id.name"/>
+                                            <t t-if="sched.group_id.subject">
+                                                (<span t-esc="dict(sched.group_id._fields['subject'].selection).get(sched.group_id.subject, '')"/>)
+                                            </t>
+                                        </td>
+                                        <td style="padding: 8px 10px; border: 1px solid #bdbdbd;">
+                                            <span t-field="sched.teacher_id.name"/>
+                                        </td>
+                                        <td style="padding: 8px 10px; border: 1px solid #bdbdbd;">
+                                            <span t-field="sched.room_id.name"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- ======== PIED DE PAGE ======== -->
+                        <div style="margin-top: 40px; border-top: 1px solid #c5cae9; padding-top: 10px; font-size: 10px; color: #757575; text-align: center;">
+                            Ce document d'emploi du temps est fourni à titre indicatif et est sujet à modifications.
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

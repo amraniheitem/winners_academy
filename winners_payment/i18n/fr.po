@@ -1,0 +1,119 @@
+# French translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: winners_payment
+#: model:ir.ui.menu,name:winners_payment.menu_winners_payment
+#: model:ir.actions.act_window,name:winners_payment.action_winners_payment
+#: model:ir.model,name:winners_payment.model_winners_payment
+#: field:winners.payment,display_name:0
+msgid "Paiements"
+msgstr "Paiements"
+
+#. module: winners_payment
+msgid "Paiement"
+msgstr "Paiement"
+
+#. module: winners_payment
+msgid "Paiement Winners"
+msgstr "Paiement Winners"
+
+#. module: winners_payment
+msgid "Bon de Paiement"
+msgstr "Bon de Paiement"
+
+#. module: winners_payment
+msgid "Imprimer Bon"
+msgstr "Imprimer Bon"
+
+#. module: winners_payment
+msgid "Étudiant"
+msgstr "Étudiant"
+
+#. module: winners_payment
+msgid "Groupe"
+msgstr "Groupe"
+
+#. module: winners_payment
+msgid "Prix de la séance (DA)"
+msgstr "Prix de la séance (DA)"
+
+#. module: winners_payment
+msgid "Date de paiement"
+msgstr "Date de paiement"
+
+#. module: winners_payment
+msgid "Date"
+msgstr "Date"
+
+#. module: winners_payment
+msgid "Montant"
+msgstr "Montant"
+
+#. module: winners_payment
+msgid "Séances achetées"
+msgstr "Séances achetées"
+
+#. module: winners_payment
+msgid "Mode de paiement"
+msgstr "Mode de paiement"
+
+#. module: winners_payment
+msgid "Espèces"
+msgstr "Espèces"
+
+#. module: winners_payment
+msgid "Virement"
+msgstr "Virement"
+
+#. module: winners_payment
+msgid "Branche"
+msgstr "Branche"
+
+#. module: winners_payment
+msgid "Notes"
+msgstr "Notes"
+
+#. module: winners_payment
+msgid "Statut"
+msgstr "Statut"
+
+#. module: winners_payment
+msgid "Brouillon"
+msgstr "Brouillon"
+
+#. module: winners_payment
+msgid "Confirmé"
+msgstr "Confirmé"
+
+#. module: winners_payment
+msgid "Confirmer"
+msgstr "Confirmer"
+
+#. module: winners_payment
+msgid "Informations du paiement"
+msgstr "Informations du paiement"
+
+#. module: winners_payment
+msgid "Détails"
+msgstr "Détails"
+
+#. module: winners_payment
+msgid "Enregistrer un nouveau paiement"
+msgstr "Enregistrer un nouveau paiement"
+
+#. module: winners_payment
+msgid "Le nombre de séances achetées doit être supérieur à zéro."
+msgstr "Le nombre de séances achetées doit être supérieur à zéro."
+
+#. module: winners_payment
+#, python-format
+msgid "L'étudiant n'a pas d'inscription active ou suspendue dans le groupe %s."
+msgstr "L'étudiant n'a pas d'inscription active ou suspendue dans le groupe %s."

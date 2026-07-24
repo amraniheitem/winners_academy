@@ -11,6 +11,14 @@ class WinnersStudent(models.Model):
     _description = "Élève Winners"
     _rec_name = "name"
 
+    _sql_constraints = [
+        (
+            'unique_zk_device_id',
+            'UNIQUE(zk_device_id)',
+            'Cet UID ZKTeco est déjà associé à un autre étudiant !',
+        ),
+    ]
+
     name = fields.Char(
         string="Nom de famille",
         required=True,
@@ -113,6 +121,23 @@ class WinnersStudent(models.Model):
     def _compute_fingerprint_linked(self):
         for student in self:
             student.fingerprint_linked = bool(student.zk_device_id)
+
+    @api.constrains('zk_device_id')
+    def _check_unique_zk_device_id(self):
+        """Empêche les doublons de zk_device_id (y compris la valeur 0)."""
+        for student in self:
+            if not student.zk_device_id:
+                continue
+            duplicate = self.sudo().search([
+                ('zk_device_id', '=', student.zk_device_id),
+                ('id', '!=', student.id),
+            ], limit=1)
+            if duplicate:
+                raise UserError(
+                    f"L'UID ZKTeco {student.zk_device_id} est déjà associé "
+                    f"à l'étudiant « {duplicate.name} » (id={duplicate.id}). "
+                    "Dissociez-le d'abord avant de l'attribuer."
+                )
 
     # ══════════════════════════════════════
     # ACTIONS BIOMÉTRIQUES

@@ -82,6 +82,12 @@ def _connect_zk():
         if conn is None:
             raise ZKConnectionError("Connexion retournée None")
         logger.info("Connecté à la pointeuse %s:%s", ZK_IP, ZK_PORT)
+        # Synchronisation automatique de l'heure pour éviter tout décalage
+        try:
+            conn.set_time(datetime.now())
+            logger.debug("Heure de la pointeuse synchronisée avec le serveur.")
+        except Exception as te:
+            logger.warning("Impossible de synchroniser l'heure de la pointeuse : %s", str(te))
         return conn
     except ZKConnectionError:
         raise

@@ -1,6 +1,7 @@
 {
+    'sequence': 10,
     "name": "Winners Attendance",
-    "version": "17.0.4.0.0",
+    "version": "17.0.5.0.0",
     "category": "Winners Academy",
     "summary": "Gestion automatique des feuilles de présence Winners Academy",
     "depends": [
@@ -10,10 +11,13 @@
         "winners_student",
         "winners_group",
         "winners_schedule",
+        "winners_enrollment",
     ],
     "data": [
         "security/ir.model.access.csv",
         "security/ir_rules.xml",
+        "report/attendance_report.xml",
+        "report/attendance_report_action.xml",
         "data/winners_zk_config_data.xml",
         "data/ir_cron_data.xml",
         "views/winners_attendance_anomaly_views.xml",
@@ -24,3 +28,4 @@
     "auto_install": False,
     "license": "LGPL-3",
 }
+

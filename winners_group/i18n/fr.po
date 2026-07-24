@@ -1,0 +1,64 @@
+# French translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: winners_group
+#: model:ir.ui.menu,name:winners_group.menu_winners_group
+#: model:ir.actions.act_window,name:winners_group.action_winners_group
+msgid "Groupes"
+msgstr "Groupes"
+
+#. module: winners_group
+msgid "Groupe"
+msgstr "Groupe"
+
+#. module: winners_group
+msgid "Séance"
+msgstr "Séance"
+
+#. module: winners_group
+msgid "Séances"
+msgstr "Séances"
+
+#. module: winners_group
+msgid "Niveau"
+msgstr "Niveau"
+
+#. module: winners_group
+msgid "Primaire"
+msgstr "Primaire"
+
+#. module: winners_group
+msgid "Moyen"
+msgstr "Moyen"
+
+#. module: winners_group
+msgid "Lycée"
+msgstr "Lycée"
+
+#. module: winners_group
+msgid "Mathématiques"
+msgstr "Mathématiques"
+
+#. module: winners_group
+msgid "Français"
+msgstr "Français"
+
+#. module: winners_group
+msgid "Arabe"
+msgstr "Arabe"
+
+#. module: winners_group
+msgid "Sciences"
+msgstr "Sciences"
+
+#. module: winners_group
+msgid "Anglais"
+msgstr "Anglais"

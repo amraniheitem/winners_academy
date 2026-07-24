@@ -307,6 +307,72 @@ body .o_web_client .o_main_navbar .o_menu_sections .dropdown-toggle:hover {
     box-shadow: none !important;
 }
 
+/* Hover-expanded dropdowns for section menu groups */
+body .o_web_client .o_main_navbar .o_menu_sections li.dropdown:hover > .dropdown-menu,
+body .o_web_client .o_main_navbar .o_menu_sections li.dropdown.open > .dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+body .o_web_client .o_main_navbar .o_menu_sections .dropdown-menu {
+    min-width: 220px !important;
+    margin-top: 6px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.12) !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(18px) !important;
+    transition: opacity 0.18s ease, transform 0.18s ease !important;
+    transform: translateY(8px);
+    opacity: 0;
+}
+
+body .o_web_client .o_main_navbar .o_menu_sections > li.dropdown > .dropdown-toggle,
+body .o_web_client .o_main_navbar .o_menu_sections > li.dropdown > button {
+    font-weight: 800 !important;
+    color: var(--winners-blue-dark) !important;
+}
+
+body .o_web_client .o_main_navbar .o_menu_sections > li.dropdown > .dropdown-toggle::after,
+body .o_web_client .o_main_navbar .o_menu_sections > li.dropdown > button::after {
+    margin-left: 8px !important;
+    opacity: 0.55;
+}
+
+body .o_web_client .o_main_navbar .o_menu_sections > li.dropdown:hover > .dropdown-toggle,
+body .o_web_client .o_main_navbar .o_menu_sections > li.dropdown:hover > button {
+    background: rgba(26, 71, 137, 0.08) !important;
+    color: var(--winners-blue) !important;
+}
+
+body .o_web_client .o_main_navbar .o_menu_sections .dropdown-menu .dropdown-item,
+body .o_web_client .o_main_navbar .o_menu_sections .dropdown-menu a {
+    padding: 10px 16px 10px 28px !important;
+    color: var(--winners-gray-700) !important;
+    border-radius: 10px !important;
+    position: relative;
+}
+
+body .o_web_client .o_main_navbar .o_menu_sections .dropdown-menu .dropdown-item::before,
+body .o_web_client .o_main_navbar .o_menu_sections .dropdown-menu a::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(26, 71, 137, 0.28);
+    transform: translateY(-50%);
+}
+
+body .o_web_client .o_main_navbar .o_menu_sections .dropdown-menu .dropdown-item:hover,
+body .o_web_client .o_main_navbar .o_menu_sections .dropdown-menu a:hover {
+    background: rgba(26, 71, 137, 0.08) !important;
+    color: var(--winners-blue) !important;
+}
+
 /* Menu Active — Premium mixed gradient (blue to pink/purple) with soft glow */
 body .o_web_client .o_main_navbar .o_menu_sections>.o_nav_entry.active,
 body .o_web_client .o_main_navbar .o_menu_sections>.active>a,

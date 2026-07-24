@@ -324,36 +324,35 @@ class WinnersSalary(models.Model):
         for rec in self:
             if rec.state == "paid":
                 raise UserError(
-                    "Impossible de recalculer un bulletin déjà payé. "
-                    "Veuillez d'abord le réouvrir."
+                    _("Impossible de recalculer un bulletin déjà payé. Veuillez d'abord le réouvrir.")
                 )
         # Trigger recomputation by invalidating cache
         self.invalidate_recordset(
             fnames=["total_sessions_planned", "total_sessions_done", "absences_count"]
         )
         self._compute_sessions()
-        self.message_post(body="🔄 Bulletin recalculé depuis les séances.")
+        self.message_post(body=_("🔄 Bulletin recalculé depuis les séances."))
 
     def action_validate(self):
         """Validate the salary slip. Only Super Admin and Director allowed."""
         for rec in self:
             if rec.state != "draft":
-                raise UserError("Seuls les bulletins en brouillon peuvent être validés.")
+                raise UserError(_("Seuls les bulletins en brouillon peuvent être validés."))
             # Check justifications
             if rec.bonus > 0 and not rec.bonus_justification:
                 raise UserError(
-                    "Veuillez justifier la prime avant de valider."
+                    _("Veuillez justifier la prime avant de valider.")
                 )
             if rec.other_deductions > 0 and not rec.deductions_justification:
                 raise UserError(
-                    "Veuillez justifier les retenues avant de valider."
+                    _("Veuillez justifier les retenues avant de valider.")
                 )
             rec.write({
                 "state": "validated",
                 "validated_by": self.env.uid,
             })
             rec.message_post(
-                body=f"✅ Bulletin validé par {self.env.user.name}."
+                body=_("✅ Bulletin validé par %s.") % self.env.user.name
             )
 
     def action_pay(self):
@@ -361,28 +360,28 @@ class WinnersSalary(models.Model):
         for rec in self:
             if rec.state != "validated":
                 raise UserError(
-                    "Seuls les bulletins validés peuvent être marqués comme payés."
+                    _("Seuls les bulletins validés peuvent être marqués comme payés.")
                 )
             rec.write({
                 "state": "paid",
                 "payment_date": fields.Date.today(),
             })
             rec.message_post(
-                body=f"💰 Salaire payé le {fields.Date.today()} par {self.env.user.name}."
+                body=_("💰 Salaire payé le %s par %s.") % (fields.Date.today(), self.env.user.name)
             )
 
     def action_reset_to_draft(self):
         """Reset to draft. Only Super Admin allowed (enforced via view attrs)."""
         for rec in self:
             if rec.state not in ("validated", "paid"):
-                raise UserError("Ce bulletin est déjà en brouillon.")
+                raise UserError(_("Ce bulletin est déjà en brouillon."))
             # Check if user is super admin
             is_super_admin = self.env.user.has_group(
                 "winners_auth.winners_group_super_admin"
             )
             if not is_super_admin:
                 raise AccessError(
-                    "Seul le Super Administrateur peut réouvrir un bulletin payé."
+                    _("Seul le Super Administrateur peut réouvrir un bulletin payé.")
                 )
             rec.write({
                 "state": "draft",
@@ -390,7 +389,7 @@ class WinnersSalary(models.Model):
                 "payment_date": False,
             })
             rec.message_post(
-                body=f"🔓 Bulletin réouvert (brouillon) par {self.env.user.name}."
+                body=_("🔓 Bulletin réouvert (brouillon) par %s.") % self.env.user.name
             )
 
     # ══════════════════════════════════════
@@ -410,7 +409,6 @@ class WinnersSalary(models.Model):
                     )
                     if not is_super_admin:
                         raise UserError(
-                            "Ce bulletin est payé et verrouillé. "
-                            "Seul le Super Administrateur peut le modifier."
+                            _("Ce bulletin est payé et verrouillé. Seul le Super Administrateur peut le modifier.")
                         )
         return super().write(vals)

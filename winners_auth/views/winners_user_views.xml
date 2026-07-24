@@ -61,7 +61,7 @@
         <!-- Menu Item -->
         <menuitem id="menu_winners_user"
                   name="Employés"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_personnes"
                   action="action_winners_user"
                   sequence="5"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>

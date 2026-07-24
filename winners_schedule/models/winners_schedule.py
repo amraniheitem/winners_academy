@@ -1,7 +1,7 @@
 # pyrefly: ignore [missing-import]
 from odoo import api, fields, models
 # pyrefly: ignore [missing-import]
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class WinnersSchedule(models.Model):
@@ -73,3 +73,20 @@ class WinnersSchedule(models.Model):
                 raise ValidationError(
                     "L'heure de fin doit être supérieure à l'heure de début."
                 )
+
+    @api.constrains('room_id', 'day_of_week', 'time_start', 'time_end', 'is_active')
+    def _check_schedule_overlap(self):
+        for rec in self:
+            if not rec.room_id or not rec.day_of_week or not rec.is_active:
+                continue
+            is_avail, msg = self.env['winners.room']._check_room_availability(
+                rec.room_id,
+                rec.day_of_week,
+                rec.time_start,
+                rec.time_end,
+                exclude_id=rec.id,
+                exclude_model='winners.schedule',
+                check_sheets=False,
+            )
+            if not is_avail:
+                raise UserError(msg)

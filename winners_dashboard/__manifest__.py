@@ -1,4 +1,5 @@
 {
+    'sequence': 10,
     "name": "Winners Dashboard",
     "version": "17.0.1.0.0",
     "category": "Winners Academy",
@@ -13,6 +14,7 @@
         "views/winners_dashboard_views.xml",
     ],
     "assets": {
+    'sequence': 10,
         "web.assets_backend": [
             "winners_dashboard/static/src/js/dashboard.js",
             "winners_dashboard/static/src/xml/dashboard_template.xml",
@@ -23,3 +25,4 @@
     "auto_install": False,
     "license": "LGPL-3",
 }
+

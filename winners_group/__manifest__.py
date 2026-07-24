@@ -1,4 +1,5 @@
 {
+    'sequence': 10,
     "name": "Winners Group",
     "version": "17.0.1.0.0",
     "category": "Winners Academy",
@@ -9,6 +10,7 @@
         "winners_branch",
         "winners_student",
         "winners_teacher",
+        "winners_room",
     ],
     "data": [
         "security/ir.model.access.csv",
@@ -19,3 +21,4 @@
     "auto_install": False,
     "license": "LGPL-3",
 }
+

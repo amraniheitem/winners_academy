@@ -1,4 +1,5 @@
 {
+    'sequence': 10,
     "name": "Winners Teacher",
     "version": "17.0.1.0.0",
     "category": "Winners Academy",
@@ -11,3 +12,4 @@
     "installable": True,
     "license": "LGPL-3",
 }
+

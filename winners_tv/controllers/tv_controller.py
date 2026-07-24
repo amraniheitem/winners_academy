@@ -3,8 +3,11 @@ import base64
 import os
 from datetime import datetime, timedelta
 
+# pyrefly: ignore [missing-import]
 from odoo import http, fields
+# pyrefly: ignore [missing-import]
 from odoo.http import request
+
 
 
 class TVController(http.Controller):
@@ -191,33 +194,43 @@ class TVController(http.Controller):
             item.pop('_sort_key', None)
             item.pop('source', None)
 
-        # ── Last attendance in the last 10 seconds ──
+        # ── Recent attendances in the last 5 minutes (300 seconds) ──
         Attendance = request.env['winners.attendance.line'].sudo()
-        cutoff = now - timedelta(seconds=10)
-        last_att = Attendance.search(
+        cutoff = now - timedelta(minutes=5)
+        recent_atts = Attendance.search(
             [
                 ('sheet_date', '=', today),
                 ('marked_at', '>=', cutoff),
-                ('status', '=', 'present'),
+                ('status', 'in', ['present', 'late']),
             ],
-            order='marked_at desc',
-            limit=1,
+            order='marked_at asc',
         )
 
-        last_attendance = None
-        if last_att:
-            student = last_att.student_id
+        recent_attendances = []
+        for att in recent_atts:
+            student = att.student_id
             photo_b64 = ''
             if student.photo:
                 photo_b64 = student.photo.decode('utf-8') if isinstance(student.photo, bytes) else str(student.photo)
 
-            last_attendance = {
+            enrollments = []
+            for e in student.enrollment_ids:
+                subject_name = subject_labels.get(e.group_id.subject, e.group_id.subject or '')
+                enrollments.append({
+                    'subject': subject_name,
+                    'group': e.group_id.name or '',
+                    'sessions_remaining': e.sessions_remaining,
+                    'status': e.status,
+                })
+
+            recent_attendances.append({
+                'id': att.id,
                 'student_name': f'{student.first_name or ""} {student.name or ""}'.strip(),
                 'photo': photo_b64,
                 'level': level_labels.get(student.level, student.level or ''),
-                'sessions_remaining': student.sessions_remaining,
-                'timestamp': fields.Datetime.to_string(last_att.marked_at),
-            }
+                'enrollments': enrollments,
+                'timestamp': fields.Datetime.to_string(att.marked_at),
+            })
 
         # ── Branch name (first active branch) ──
         Branch = request.env['winners.branch'].sudo()
@@ -227,7 +240,7 @@ class TVController(http.Controller):
         # ── Build response ──
         data = {
             'schedule': schedule_data,
-            'last_attendance': last_attendance,
+            'recent_attendances': recent_attendances,
             'branch_name': branch_name,
             'current_time': fields.Datetime.to_string(now),
         }

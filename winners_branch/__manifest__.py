@@ -1,4 +1,5 @@
 {
+    'sequence': 10,
     "name": "Winners Branch",
     "version": "17.0.1.0.0",
     "category": "Winners Academy",
@@ -14,3 +15,4 @@
     "auto_install": False,
     "license": "LGPL-3",
 }
+

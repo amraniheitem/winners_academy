@@ -1,0 +1,72 @@
+# French translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: winners_attendance
+#: model:ir.ui.menu,name:winners_attendance.menu_winners_attendance
+#: model:ir.actions.act_window,name:winners_attendance.action_winners_attendance_sheet_today
+msgid "Présences"
+msgstr "Présences"
+
+#. module: winners_attendance
+msgid "Présences du jour"
+msgstr "Présences du jour"
+
+#. module: winners_attendance
+msgid "Feuilles de présence"
+msgstr "Feuilles de présence"
+
+#. module: winners_attendance
+msgid "Feuille de Présence"
+msgstr "Feuille de Présence"
+
+#. module: winners_attendance
+msgid "Heure début"
+msgstr "Heure début"
+
+#. module: winners_attendance
+msgid "Heure fin"
+msgstr "Heure fin"
+
+#. module: winners_attendance
+msgid "Matière"
+msgstr "Matière"
+
+#. module: winners_attendance
+msgid "Salle"
+msgstr "Salle"
+
+#. module: winners_attendance
+msgid "Professeur"
+msgstr "Professeur"
+
+#. module: winners_attendance
+msgid "Groupe / Classe"
+msgstr "Groupe / Classe"
+
+#. module: winners_attendance
+msgid "Présents / Total"
+msgstr "Présents / Total"
+
+#. module: winners_attendance
+msgid "Ouverte"
+msgstr "Ouverte"
+
+#. module: winners_attendance
+msgid "Clôturée"
+msgstr "Clôturée"
+
+#. module: winners_attendance
+msgid "En cours"
+msgstr "En cours"
+
+#. module: winners_attendance
+msgid "Annulée"
+msgstr "Annulée"

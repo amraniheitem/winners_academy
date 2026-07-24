@@ -1,0 +1,64 @@
+# Arabic translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: winners_group
+#: model:ir.ui.menu,name:winners_group.menu_winners_group
+#: model:ir.actions.act_window,name:winners_group.action_winners_group
+msgid "Groupes"
+msgstr "الأفواج"
+
+#. module: winners_group
+msgid "Groupe"
+msgstr "الفوج"
+
+#. module: winners_group
+msgid "Séance"
+msgstr "الحصة"
+
+#. module: winners_group
+msgid "Séances"
+msgstr "الحصص"
+
+#. module: winners_group
+msgid "Niveau"
+msgstr "المستوى"
+
+#. module: winners_group
+msgid "Primaire"
+msgstr "ابتدائي"
+
+#. module: winners_group
+msgid "Moyen"
+msgstr "متوسط"
+
+#. module: winners_group
+msgid "Lycée"
+msgstr "ثانوي"
+
+#. module: winners_group
+msgid "Mathématiques"
+msgstr "الرياضيات"
+
+#. module: winners_group
+msgid "Français"
+msgstr "الفرنسية"
+
+#. module: winners_group
+msgid "Arabe"
+msgstr "العربية"
+
+#. module: winners_group
+msgid "Sciences"
+msgstr "العلوم"
+
+#. module: winners_group
+msgid "Anglais"
+msgstr "الإنجليزية"

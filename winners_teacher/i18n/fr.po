@@ -1,0 +1,52 @@
+# French translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: winners_teacher
+#: model:ir.ui.menu,name:winners_teacher.menu_winners_teacher
+#: model:ir.actions.act_window,name:winners_teacher.action_winners_teacher
+msgid "Enseignants"
+msgstr "Enseignants"
+
+#. module: winners_teacher
+msgid "Enseignant"
+msgstr "Enseignant"
+
+#. module: winners_teacher
+msgid "Professeur"
+msgstr "Professeur"
+
+#. module: winners_teacher
+msgid "Nom"
+msgstr "Nom"
+
+#. module: winners_teacher
+msgid "Prénom"
+msgstr "Prénom"
+
+#. module: winners_teacher
+msgid "Téléphone"
+msgstr "Téléphone"
+
+#. module: winners_teacher
+msgid "Matière"
+msgstr "Matière"
+
+#. module: winners_teacher
+msgid "Statut"
+msgstr "Statut"
+
+#. module: winners_teacher
+msgid "Actif"
+msgstr "Actif"
+
+#. module: winners_teacher
+msgid "Inactif"
+msgstr "Inactif"

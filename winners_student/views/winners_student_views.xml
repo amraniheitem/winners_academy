@@ -120,7 +120,7 @@
         <!-- ============================================================ -->
         <menuitem id="menu_winners_student"
                   name="Étudiants"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_personnes"
                   action="action_winners_student"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary"
                   sequence="30"/>

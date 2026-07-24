@@ -1,6 +1,7 @@
 {
+    'sequence': 10,
     "name": "Winners Room",
-    "version": "17.0.1.0.0",
+    "version": "17.0.2.0.0",
     "category": "Winners Academy",
     "summary": "Gestion des salles Winners Academy",
     "depends": [
@@ -17,3 +18,4 @@
     "auto_install": False,
     "license": "LGPL-3",
 }
+

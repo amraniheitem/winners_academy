@@ -2,30 +2,47 @@
 <templates xml:space="preserve">
 
     <t t-name="winners_dashboard.Dashboard">
-        <div class="winners_dashboard o_action">
+        <div class="winners_dashboard o_action" t-att-dir="state.isArabic ? 'rtl' : 'ltr'">
 
             <!-- ======== EN-TÊTE PREMIUM ======== -->
             <div class="dashboard_header d-flex justify-content-between align-items-center mb-4">
                 <div class="dashboard_header_left">
-                    <h1 class="dashboard_title m-0">
-                        <i class="fa fa-graduation-cap"/> Winners Academy
+                    <h1 class="dashboard_title m-0" style="font-family: 'Cairo', sans-serif;">
+                        <i class="fa fa-graduation-cap"/>
+                        <t t-if="state.isArabic">أكاديمية وينرز (Winners Academy)</t>
+                        <t t-else="">Winners Academy</t>
                     </h1>
-                    <p class="dashboard_subtitle text-muted m-0">Tableau de bord de pilotage</p>
+                    <p class="dashboard_subtitle text-muted m-0" style="font-family: 'Cairo', sans-serif;">
+                        <t t-if="state.isArabic">لوحة التحكم والتسيير</t>
+                        <t t-else="">Tableau de bord de pilotage</t>
+                    </p>
                 </div>
                 <div class="dashboard_header_right d-flex align-items-center gap-2">
+                    <!-- Sélecteur de langue (Français / العربية) -->
+                    <div class="lang_select_container me-2">
+                        <select class="form-select lang_select" t-on-change="onLangChange" t-att-value="state.currentLang" style="border-radius: var(--winners-radius-md, 10px); font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; border: 1.5px solid #CBD5E1;">
+                            <option value="fr_FR">🇫🇷 Français</option>
+                            <option value="ar_001">🇩🇿 العربية</option>
+                        </select>
+                    </div>
+
                     <!-- Sélecteur de branche pour le Super Admin -->
                     <div t-if="state.isSuperAdmin" class="branch_select_container me-2">
                         <select class="form-select branch_select" t-on-change="onBranchChange" t-att-value="state.selectedBranchId" style="border-radius: var(--winners-radius-md, 10px); font-family: 'Cairo', sans-serif; font-size: 0.9rem;">
-                            <option value="all">Toutes les branches (Vue globale)</option>
+                            <option value="all">
+                                <t t-if="state.isArabic">جميع الفروع (عرض شامل)</t>
+                                <t t-else="">Toutes les branches (Vue globale)</t>
+                            </option>
                             <t t-foreach="state.branches" t-as="branch" t-key="branch.id">
                                 <option t-att-value="branch.id" t-esc="branch.name"/>
                             </t>
                         </select>
                     </div>
                     <button class="btn dashboard_refresh_btn" t-on-click="onRefresh"
-                            t-att-disabled="state.isLoading">
+                            t-att-disabled="state.isLoading" style="font-family: 'Cairo', sans-serif;">
                         <i class="fa fa-refresh" t-att-class="{'fa-spin': state.isLoading}"/>
-                        Actualiser
+                        <t t-if="state.isArabic">تحديث</t>
+                        <t t-else="">Actualiser</t>
                     </button>
                 </div>
             </div>
@@ -33,7 +50,10 @@
             <!-- ======== CHARGEMENT ======== -->
             <div t-if="state.isLoading" class="dashboard_loading text-center py-5">
                 <i class="fa fa-spinner fa-spin fa-3x mb-3" style="color: var(--winners-blue, #1A4789);"/>
-                <p class="text-muted font-family-cairo">Chargement des indicateurs en cours...</p>
+                <p class="text-muted font-family-cairo">
+                    <t t-if="state.isArabic">جاري تحميل البيانات والمؤشرات...</t>
+                    <t t-else="">Chargement des indicateurs en cours...</t>
+                </p>
             </div>
 
             <t t-if="!state.isLoading">
@@ -43,25 +63,40 @@
                     <!-- 1. Section Étudiants -->
                     <div class="dashboard_card card_students" t-on-click="() => this.openStudents('all')">
                         <div class="card_header_main">
-                            <span class="card_badge">ÉLÈVES</span>
+                            <span class="card_badge">
+                                <t t-if="state.isArabic">الطلاب</t>
+                                <t t-else="">ÉLÈVES</t>
+                            </span>
                             <div class="card_icon"><i class="fa fa-users"/></div>
                         </div>
                         <div class="card_body_main">
                             <h3 class="card_value" t-esc="state.totalStudents"/>
-                            <p class="card_label">Total Inscrits</p>
+                            <p class="card_label">
+                                <t t-if="state.isArabic">إجمالي المسجلين</t>
+                                <t t-else="">Total Inscrits</t>
+                            </p>
                         </div>
                         <div class="card_footer_details">
                             <div class="footer_sub">
                                 <span class="sub_val text-success" t-esc="state.totalActive"/>
-                                <span class="sub_lbl">Actifs</span>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">نشطون</t>
+                                    <t t-else="">Actifs</t>
+                                </span>
                             </div>
                             <div class="footer_sub">
                                 <span class="sub_val text-warning" t-esc="state.totalAlert"/>
-                                <span class="sub_lbl">Alerte</span>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">تنبيه</t>
+                                    <t t-else="">Alerte</t>
+                                </span>
                             </div>
                             <div class="footer_sub">
                                 <span class="sub_val text-danger" t-esc="state.totalExpired"/>
-                                <span class="sub_lbl">Expirés</span>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">منتهون</t>
+                                    <t t-else="">Expirés</t>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -69,21 +104,40 @@
                     <!-- 2. Section Finances -->
                     <div class="dashboard_card card_revenue" t-on-click="openPayments">
                         <div class="card_header_main">
-                            <span class="card_badge badge_finance">REVENUS</span>
+                            <span class="card_badge badge_finance">
+                                <t t-if="state.isArabic">المالية</t>
+                                <t t-else="">REVENUS</t>
+                            </span>
                             <div class="card_icon icon_finance"><i class="fa fa-money"/></div>
                         </div>
                         <div class="card_body_main">
                             <h3 class="card_value font-family-cairo" t-esc="formatCurrency(state.revenueMonth)"/>
-                            <p class="card_label">Revenus du Mois</p>
+                            <p class="card_label">
+                                <t t-if="state.isArabic">مداخيل الشهر الحالي</t>
+                                <t t-else="">Revenus du Mois</t>
+                            </p>
                         </div>
                         <div class="card_footer_details">
                             <div class="footer_sub">
-                                <span class="sub_val" t-esc="formatCurrency(state.avgPaymentAmount)"/>
-                                <span class="sub_lbl">Moy. Reçu</span>
+                                <span class="sub_val text-primary" t-esc="formatCurrency(state.revenueWeek)"/>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">الأسبوع</t>
+                                    <t t-else="">Semaine</t>
+                                </span>
                             </div>
                             <div class="footer_sub">
-                                <span class="sub_val" t-esc="state.totalConfirmedPayments"/>
-                                <span class="sub_lbl">Bons Confirmés</span>
+                                <span class="sub_val text-success" t-esc="formatCurrency(state.revenueMonth)"/>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">الشهر</t>
+                                    <t t-else="">Mois</t>
+                                </span>
+                            </div>
+                            <div class="footer_sub">
+                                <span class="sub_val text-info" t-esc="formatCurrency(state.revenueYear)"/>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">السنة</t>
+                                    <t t-else="">Année</t>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -91,17 +145,26 @@
                     <!-- 3. Section Enseignants et Classes -->
                     <div class="dashboard_card card_teachers" t-on-click="openTeachers">
                         <div class="card_header_main">
-                            <span class="card_badge badge_teachers">STAFF</span>
+                            <span class="card_badge badge_teachers">
+                                <t t-if="state.isArabic">الأساتذة</t>
+                                <t t-else="">STAFF</t>
+                            </span>
                             <div class="card_icon icon_teachers"><i class="fa fa-graduation-cap"/></div>
                         </div>
                         <div class="card_body_main">
                             <h3 class="card_value" t-esc="state.totalTeachers"/>
-                            <p class="card_label">Enseignants Actifs</p>
+                            <p class="card_label">
+                                <t t-if="state.isArabic">الأساتذة النشطون</t>
+                                <t t-else="">Enseignants Actifs</t>
+                            </p>
                         </div>
                         <div class="card_footer_details justify-content-start">
                             <div class="footer_sub pe-4">
                                 <span class="sub_val" t-esc="state.totalGroups"/>
-                                <span class="sub_lbl">Groupes / Classes</span>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">الأفواج / الأقسام</t>
+                                    <t t-else="">Groupes / Classes</t>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -109,21 +172,33 @@
                     <!-- 4. Section Établissement -->
                     <div class="dashboard_card card_rooms" t-on-click="openRooms">
                         <div class="card_header_main">
-                            <span class="card_badge badge_rooms">SÉANCES</span>
+                            <span class="card_badge badge_rooms">
+                                <t t-if="state.isArabic">الحصص</t>
+                                <t t-else="">SÉANCES</t>
+                            </span>
                             <div class="card_icon icon_rooms"><i class="fa fa-calendar"/></div>
                         </div>
                         <div class="card_body_main">
                             <h3 class="card_value" t-esc="state.sessionsToday"/>
-                            <p class="card_label">Séances Aujourd'hui</p>
+                            <p class="card_label">
+                                <t t-if="state.isArabic">حصص اليوم (<t t-esc="state.currentDayName"/>)</t>
+                                <t t-else="">Séances d'Aujourd'hui (<t t-esc="state.currentDayName"/>)</t>
+                            </p>
                         </div>
                         <div class="card_footer_details">
                             <div class="footer_sub">
-                                <span class="sub_val text-success" t-esc="state.attendanceToday"/>
-                                <span class="sub_lbl">Présences</span>
+                                <span class="sub_val text-success" t-esc="state.scheduleTodayCount"/>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">جدول <t t-esc="state.currentDayName"/></t>
+                                    <t t-else="">Emploi <t t-esc="state.currentDayName"/></t>
+                                </span>
                             </div>
                             <div class="footer_sub">
                                 <span class="sub_val" t-esc="state.totalRooms"/>
-                                <span class="sub_lbl">Salles Disponibles</span>
+                                <span class="sub_lbl">
+                                    <t t-if="state.isArabic">القاعات المتاحة</t>
+                                    <t t-else="">Salles Disponibles</t>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -136,8 +211,15 @@
                     <!-- Graphique 1 : Historique de Facturation -->
                     <div class="chart_card">
                         <div class="chart_header">
-                            <h4 class="chart_title"><i class="fa fa-bar-chart"/> Historique des Encaissements</h4>
-                            <p class="chart_subtitle">Évolution des revenus sur les 6 derniers mois (DA)</p>
+                            <h4 class="chart_title">
+                                <i class="fa fa-bar-chart"/>
+                                <t t-if="state.isArabic">سجل التحصيلات المالية</t>
+                                <t t-else="">Historique des Encaissements</t>
+                            </h4>
+                            <p class="chart_subtitle">
+                                <t t-if="state.isArabic">تطور المداخيل خلال 6 أشهر الأخيرة (د.ج)</t>
+                                <t t-else="">Évolution des revenus sur les 6 derniers mois (DA)</t>
+                            </p>
                         </div>
                         <div class="chart_container">
                             <canvas t-ref="revenueChart"/>
@@ -147,8 +229,15 @@
                     <!-- Graphique 2 : Inscriptions -->
                     <div class="chart_card">
                         <div class="chart_header">
-                            <h4 class="chart_title"><i class="fa fa-pie-chart"/> État des Abonnements</h4>
-                            <p class="chart_subtitle">Répartition active des étudiants</p>
+                            <h4 class="chart_title">
+                                <i class="fa fa-pie-chart"/>
+                                <t t-if="state.isArabic">حالة اشتراكات الطلاب</t>
+                                <t t-else="">État des Abonnements</t>
+                            </h4>
+                            <p class="chart_subtitle">
+                                <t t-if="state.isArabic">توزيع حالة الطلاب النشطين والمنتهية اشتراكاتهم</t>
+                                <t t-else="">Répartition active des étudiants</t>
+                            </p>
                         </div>
                         <div class="chart_container doughnut_container">
                             <canvas t-ref="studentChart"/>
@@ -163,67 +252,111 @@
                     <!-- Table 1 : Derniers Bons Encaissés -->
                     <div class="table_card">
                         <div class="table_header_container">
-                            <h4 class="table_title"><i class="fa fa-usd"/> Reçus Récents (Bons)</h4>
-                            <span class="table_btn_link" t-on-click="openPayments">Tout afficher</span>
+                            <h4 class="table_title">
+                                <i class="fa fa-usd"/>
+                                <t t-if="state.isArabic">أحدث وصولات الدفع</t>
+                                <t t-else="">Reçus Récents (Bons)</t>
+                            </h4>
+                            <span class="table_btn_link" t-on-click="openPayments">
+                                <t t-if="state.isArabic">عرض الكل</t>
+                                <t t-else="">Tout afficher</t>
+                            </span>
                         </div>
                         <div class="table-responsive">
                             <table class="table dashboard_table">
                                 <thead>
                                     <tr>
-                                        <th>Élève</th>
-                                        <th>Date</th>
-                                        <th>Montant</th>
-                                        <th>État</th>
+                                        <th>
+                                            <t t-if="state.isArabic">الطالب</t>
+                                            <t t-else="">Élève</t>
+                                        </th>
+                                        <th>
+                                            <t t-if="state.isArabic">التاريخ</t>
+                                            <t t-else="">Date</t>
+                                        </th>
+                                        <th>
+                                            <t t-if="state.isArabic">المبلغ</t>
+                                            <t t-else="">Montant</t>
+                                        </th>
+                                        <th>
+                                            <t t-if="state.isArabic">الحالة</t>
+                                            <t t-else="">État</t>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <t t-foreach="state.recentPayments" t-as="p" t-key="p.id">
                                         <tr class="table_row_clickable" t-on-click="() => this.openPaymentRecord(p.id)">
-                                            <td class="font-weight-600" t-esc="p.student_id ? p.student_id[1] : 'Inconnu'"/>
+                                            <td class="font-weight-600" t-esc="p.student_id ? p.student_id[1] : (state.isArabic ? 'غير معروف' : 'Inconnu')"/>
                                             <td class="text-muted" t-esc="p.date"/>
                                             <td class="font-weight-bold" t-esc="formatCurrency(p.amount)"/>
                                             <td>
-                                                <span t-attf-class="badge_status status_{{p.state}}" t-esc="p.state == 'confirmed' ? 'Confirmé' : 'Brouillon'"/>
+                                                <span t-attf-class="badge_status status_{{p.state}}" t-esc="p.state == 'confirmed' ? (state.isArabic ? 'مؤكد' : 'Confirmé') : (state.isArabic ? 'مسودة' : 'Brouillon')"/>
                                             </td>
                                         </tr>
                                     </t>
                                     <tr t-if="state.recentPayments.length == 0">
-                                        <td colspan="4" class="text-center text-muted py-3">Aucun reçu de paiement ce mois-ci.</td>
+                                        <td colspan="4" class="text-center text-muted py-3">
+                                            <t t-if="state.isArabic">لا توجد وصولات دفع مسجلة.</t>
+                                            <t t-else="">Aucun reçu de paiement enregistré.</t>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Table 2 : Séances programmées aujourd'hui -->
+                    <!-- Table 2 : Séances programmées aujourd'hui (Emploi du temps) -->
                     <div class="table_card">
                         <div class="table_header_container">
-                            <h4 class="table_title"><i class="fa fa-clock-o"/> Séances du Jour</h4>
-                            <span class="table_btn_link" t-on-click="openSessions">Voir l'emploi du temps</span>
+                            <h4 class="table_title">
+                                <i class="fa fa-clock-o"/>
+                                <t t-if="state.isArabic">حصص اليوم (<t t-esc="state.currentDayName"/>)</t>
+                                <t t-else="">Séances du Jour (<t t-esc="state.currentDayName"/>)</t>
+                            </h4>
+                            <span class="table_btn_link" t-on-click="openSessions">
+                                <t t-if="state.isArabic">عرض جدول الحصص</t>
+                                <t t-else="">Voir l'emploi du temps</t>
+                            </span>
                         </div>
                         <div class="table-responsive">
                             <table class="table dashboard_table">
                                 <thead>
                                     <tr>
-                                        <th>Groupe</th>
-                                        <th>Enseignant</th>
-                                        <th>Salle</th>
-                                        <th>Heure</th>
+                                        <th>
+                                            <t t-if="state.isArabic">الفوج</t>
+                                            <t t-else="">Groupe</t>
+                                        </th>
+                                        <th>
+                                            <t t-if="state.isArabic">الأستاذ</t>
+                                            <t t-else="">Enseignant</t>
+                                        </th>
+                                        <th>
+                                            <t t-if="state.isArabic">القاعة</t>
+                                            <t t-else="">Salle</t>
+                                        </th>
+                                        <th>
+                                            <t t-if="state.isArabic">التوقيت</t>
+                                            <t t-else="">Heure</t>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <t t-foreach="state.todaySessions" t-as="s" t-key="s.id">
-                                        <tr class="table_row_clickable" t-on-click="() => this.openSessionRecord(s.id)">
-                                            <td class="font-weight-600" t-esc="s.group_id ? s.group_id[1] : '-'"/>
-                                            <td class="text-muted" t-esc="s.teacher_id ? s.teacher_id[1] : '-'"/>
+                                        <tr class="table_row_clickable" t-on-click="openSessions">
+                                            <td class="font-weight-600" t-esc="s.group_name"/>
+                                            <td class="text-muted" t-esc="s.teacher_name"/>
                                             <td>
-                                                <span class="badge_room_name" t-esc="s.room_id ? s.room_id[1] : '-'"/>
+                                                <span class="badge_room_name" t-esc="s.room_name"/>
                                             </td>
-                                            <td class="font-weight-bold" t-esc="formatTime(s.date)"/>
+                                            <td class="font-weight-bold" t-esc="s.time_range"/>
                                         </tr>
                                     </t>
                                     <tr t-if="state.todaySessions.length == 0">
-                                        <td colspan="4" class="text-center text-muted py-3">Aucune séance planifiée aujourd'hui.</td>
+                                        <td colspan="4" class="text-center text-muted py-3">
+                                            <t t-if="state.isArabic">لا توجد حصص مبرمجة في جدول اليوم.</t>
+                                            <t t-else="">Aucune séance planifiée dans l'emploi du temps d'aujourd'hui.</t>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

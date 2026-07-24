@@ -1,0 +1,79 @@
+# ==========================================
+# WINNERS ACADEMY — MASTER .GITIGNORE
+# ==========================================
+
+# ── Dependencies ─────────────────────────
+node_modules/
+**/node_modules/
+jspm_packages/
+web_modules/
+
+# ── Build Outputs & Packaging ────────────
+dist/
+**/dist/
+build/
+**/build/
+out/
+**/out/
+release/
+**/release/
+win-unpacked/
+**/win-unpacked/
+*.exe
+*.msi
+*.asar
+*.blockmap
+*.dmg
+*.pkg
+*.deb
+*.rpm
+
+# ── Python & Odoo ────────────────────────
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.log
+**/zk_bridge/*.log
+
+# ── Environment & Secrets ────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ── IDEs & Editors ───────────────────────
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.swp
+*.swo
+
+# ── System Files ─────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Temporary & Cache Files ──────────────
+.cache/
+**/.cache/
+.eslintcache
+.stylelintcache
+*.tmp
+*.temp
+guide_installation_temp.html

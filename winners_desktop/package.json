@@ -1,0 +1,19 @@
+{
+  "name": "winners-academy-desktop",
+  "version": "1.0.0",
+  "description": "Winners Academy Desktop App (ERP & TV)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "odoo",
+    "electron",
+    "zkteco"
+  ],
+  "author": "Winners Academy",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^30.0.0"
+  }
+}

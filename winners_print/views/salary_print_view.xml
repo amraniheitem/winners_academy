@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_winners_salary_form_inherit_thermal_print" model="ir.ui.view">
+            <field name="name">winners.salary.form.inherit.thermal.print</field>
+            <field name="model">winners.salary</field>
+            <field name="inherit_id" ref="winners_salary.view_winners_salary_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button string="🖨️ Imprimer Bulletin (Thermique)"
+                            type="object"
+                            name="action_print_bordereau"
+                            class="btn-primary"
+                            icon="fa-print"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

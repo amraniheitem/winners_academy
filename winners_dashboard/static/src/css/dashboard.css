@@ -20,6 +20,36 @@
     animation: winnersPageFadeIn 0.4s ease;
 }
 
+/* ======== MODE RTL (DE DROITE À GAUCHE) ======== */
+[dir="rtl"] .winners_dashboard.o_action,
+.o_rtl .winners_dashboard.o_action {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir="rtl"] .dashboard_title i,
+.o_rtl .dashboard_title i {
+    margin-right: 0;
+    margin-left: 12px;
+}
+
+[dir="rtl"] .card_header_main,
+.o_rtl .card_header_main {
+    flex-direction: row;
+}
+
+[dir="rtl"] .table_header_container,
+.o_rtl .table_header_container {
+    flex-direction: row;
+}
+
+[dir="rtl"] .dashboard_table th,
+[dir="rtl"] .dashboard_table td,
+.o_rtl .dashboard_table th,
+.o_rtl .dashboard_table td {
+    text-align: right;
+}
+
 @keyframes winnersPageFadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }

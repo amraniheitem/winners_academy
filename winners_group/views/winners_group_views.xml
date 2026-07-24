@@ -77,6 +77,7 @@
                 <tree string="Séances">
                     <field name="group_id"/>
                     <field name="date"/>
+                    <field name="room_id"/>
                     <field name="duration_hours"/>
                     <field name="status"/>
                 </tree>
@@ -96,6 +97,7 @@
                             <group string="Informations de la séance">
                                 <field name="group_id"/>
                                 <field name="date"/>
+                                <field name="room_id" required="1"/>
                                 <field name="duration_hours"/>
                                 <field name="status"/>
                             </group>
@@ -127,17 +129,17 @@
         <!-- ============================================================ -->
         <menuitem id="menu_winners_group"
                   name="Groupes"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_pointage"
                   action="action_winners_group"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
-                  sequence="40"/>
+                  sequence="10"/>
 
         <menuitem id="menu_winners_session"
                   name="Séances"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_pointage"
                   action="action_winners_session"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
-                  sequence="50"/>
+                  sequence="20"/>
 
     </data>
 </odoo>

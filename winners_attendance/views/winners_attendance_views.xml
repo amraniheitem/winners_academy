@@ -13,6 +13,7 @@
                 <tree string="Feuilles de Présence" decoration-info="state == 'in_progress'" decoration-success="state == 'open'" decoration-muted="state == 'closed'">
                     <header>
                         <button name="action_sync_zkteco_button" string="🔄 Synchroniser pointeuse" type="object" class="btn-secondary"/>
+                        <button name="action_reprocess_zkteco_today_button" string="Retraiter pointages du jour" type="object" class="btn-secondary"/>
                         <button name="action_generate_today_button" string="📋 Générer feuilles du jour" type="object" class="btn-secondary"/>
                     </header>
                     <field name="date"/>
@@ -37,8 +38,10 @@
             <field name="arch" type="xml">
                 <form string="Feuille de Présence">
                     <header>
+                        <button name="%(action_report_attendance_sheet)d" string="🖨️ Imprimer Feuille" type="action" class="btn-primary"/>
                         <button name="action_add_student_manually" string="➕ Ajouter un étudiant" type="object" class="btn-secondary" invisible="state == 'closed'"/>
                         <button name="action_sync_zkteco_button" string="🔄 Synchroniser pointeuse" type="object" class="btn-secondary" invisible="state == 'closed'"/>
+                        <button name="action_reprocess_zkteco_today_button" string="Retraiter pointages du jour" type="object" class="btn-secondary" invisible="state == 'closed'"/>
                         <button name="action_close" string="Clôturer la feuille" type="object" class="oe_highlight" invisible="state == 'closed'"/>
                         <button name="action_reopen" string="Réouvrir la feuille" type="object" invisible="state != 'closed'" groups="winners_auth.winners_group_super_admin"/>
                         <field name="state" widget="statusbar" statusbar_visible="open,in_progress,closed"/>
@@ -59,7 +62,7 @@
                             <group string="Planification et localisation">
                                 <field name="time_start" widget="float_time" readonly="state == 'closed'"/>
                                 <field name="time_end" widget="float_time" readonly="state == 'closed'"/>
-                                <field name="room_id" readonly="state == 'closed'"/>
+                                <field name="room_id" readonly="1"/>
                                 <field name="branch_id"/>
                             </group>
                         </group>
@@ -158,6 +161,14 @@
             <field name="code">action = model.action_regenerate_today()</field>
         </record>
 
+        <record id="action_server_open_today_attendance" model="ir.actions.server">
+            <field name="name">Ouvrir feuilles de présence du jour</field>
+            <field name="model_id" ref="model_winners_attendance_sheet"/>
+            <field name="binding_model_id" ref="model_winners_attendance_sheet"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_today_attendance()</field>
+        </record>
+
         <!-- ══════════════════════════════════════ -->
         <!-- ACTION SERVEUR : FORCER SYNCHRO        -->
         <!-- ══════════════════════════════════════ -->
@@ -176,7 +187,7 @@
         <!-- Menu Présences : affiche les feuilles de présence du jour -->
         <menuitem id="winners_attendance.menu_winners_attendance"
                   name="Feuilles de présence"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_pointage"
                   action="action_winners_attendance_sheet_today"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
                   sequence="80"/>
@@ -184,7 +195,7 @@
         <!-- Menu pour les anomalies de pointage -->
         <menuitem id="menu_winners_attendance_anomaly"
                   name="Anomalies de pointage"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_pointage"
                   action="action_winners_attendance_anomaly"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary"
                   sequence="85"/>
@@ -192,7 +203,7 @@
         <!-- Menu pour les logs de synchronisation -->
         <menuitem id="menu_winners_attendance_sync_log"
                   name="Log de synchro ZKTeco"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_pointage"
                   action="action_winners_attendance_sync_log"
                   groups="winners_auth.winners_group_super_admin"
                   sequence="90"/>
@@ -232,7 +243,7 @@
         <!-- Menu pour les transactions traitées -->
         <menuitem id="menu_winners_attendance_processed_txn"
                   name="Transactions traitées"
-                  parent="winners_branch.menu_winners_academy_root"
+                  parent="winners_branch.menu_winners_pointage"
                   action="action_winners_attendance_processed_txn"
                   groups="winners_auth.winners_group_super_admin"
                   sequence="91"/>
@@ -256,6 +267,15 @@
             <field name="model_id" ref="model_winners_attendance_processor"/>
             <field name="state">code</field>
             <field name="code">action = model.action_purge_processed_txn()</field>
+            <field name="groups_id" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
+        </record>
+
+        <!-- Bouton Purge anomalies de test -->
+        <record id="action_server_purge_test_anomalies" model="ir.actions.server">
+            <field name="name">🧹 Purger les anomalies de test</field>
+            <field name="model_id" ref="model_winners_attendance_processor"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_purge_test_anomalies()</field>
             <field name="groups_id" eval="[(4, ref('winners_auth.winners_group_super_admin'))]"/>
         </record>
 

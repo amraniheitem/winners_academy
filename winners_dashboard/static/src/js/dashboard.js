@@ -20,8 +20,11 @@ class WinnersDashboard extends Component {
         this.state = useState({
             isLoading: true,
             isSuperAdmin: false,
+            canSeeTeacherEarnings: false,
             branches: [],
             selectedBranchId: "all",
+            currentLang: "fr_FR",
+            isArabic: false,
 
             // 1. Students KPIs
             totalStudents: 0,
@@ -31,9 +34,13 @@ class WinnersDashboard extends Component {
             newStudentsMonth: 0,
 
             // 2. Financial KPIs
+            revenueWeek: 0,
             revenueMonth: 0,
+            revenueYear: 0,
             avgPaymentAmount: 0,
             totalConfirmedPayments: 0,
+            teacherEarningsMonth: 0,
+            companyEarningsMonth: 0,
 
             // 3. Teachers & Classes KPIs
             totalTeachers: 0,
@@ -42,6 +49,8 @@ class WinnersDashboard extends Component {
             // 4. Rooms & Schedules KPIs
             totalRooms: 0,
             sessionsToday: 0,
+            scheduleTodayCount: 0,
+            currentDayName: "",
             attendanceToday: 0,
 
             // 5. Recent Lists
@@ -56,8 +65,16 @@ class WinnersDashboard extends Component {
 
         onWillStart(async () => {
             await loadBundle("web.chartjs_lib");
+            this.state.currentLang = this.user.lang || "fr_FR";
+            this.state.isArabic = this.state.currentLang.startsWith("ar");
             this.state.isSuperAdmin = await this.user.hasGroup(
                 "winners_auth.winners_group_super_admin"
+            );
+            this.state.canSeeTeacherEarnings = (
+                this.state.isSuperAdmin
+                || await this.user.hasGroup("winners_auth.winners_group_director")
+                || await this.user.hasGroup("winners_auth.winners_group_secretary")
+                || await this.user.hasGroup("winners_auth.winners_group_teacher")
             );
             if (this.state.isSuperAdmin) {
                 this.state.branches = await this.orm.searchRead(
@@ -72,6 +89,29 @@ class WinnersDashboard extends Component {
         onMounted(() => {
             this.renderCharts();
         });
+    }
+
+    formatTimeRange(start, end) {
+        if (!start && start !== 0) return "-";
+        const formatFloat = f => {
+            const hrs = Math.floor(f);
+            const mins = Math.round((f - hrs) * 60);
+            return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+        };
+        return `${formatFloat(start)} - ${formatFloat(end)}`;
+    }
+
+    async onLangChange(ev) {
+        const newLang = ev.target.value;
+        if (newLang === this.state.currentLang) return;
+        this.state.isLoading = true;
+        try {
+            await this.orm.call("res.users", "set_user_language", [newLang]);
+            window.location.reload();
+        } catch (e) {
+            console.error("Erreur changement de langue:", e);
+            this.state.isLoading = false;
+        }
     }
 
     async fetchDashboardData() {
@@ -97,32 +137,49 @@ class WinnersDashboard extends Component {
             this.state.newStudentsMonth = await this.orm.searchCount("winners.student", [...baseDomain, ["create_date", ">=", firstDayOfMonthStr]]);
 
             // ------------------------------------------
-            // 2. FINANCIAL METRICS
+            // 2. FINANCIAL METRICS (WEEK, MONTH, YEAR)
             // ------------------------------------------
-            const firstDayStr = firstDayOfMonthStr;
-            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-            const lastDayStr = lastDay.toISOString().split("T")[0];
+            const weekDay = (now.getDay() + 6) % 7; // Monday = 0
+            const weekStart = new Date(now);
+            weekStart.setDate(now.getDate() - weekDay);
+            weekStart.setHours(0, 0, 0, 0);
 
-            const payments = await this.orm.readGroup(
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            const yearStart = new Date(now.getFullYear(), 0, 1);
+
+            const confirmedPayments = await this.orm.searchRead(
                 "winners.payment",
-                [
-                    ...baseDomain,
-                    ["state", "=", "confirmed"],
-                    ["date", ">=", firstDayStr],
-                    ["date", "<=", lastDayStr],
-                ],
-                ["amount:sum", "amount:avg", "id:count"],
-                []
+                [...baseDomain, ["state", "=", "confirmed"]],
+                ["id", "student_id", "amount", "date", "state"],
+                { order: "date desc, id desc" }
             );
 
-            if (payments.length > 0) {
-                this.state.revenueMonth = payments[0].amount ? payments[0].amount : 0;
-                this.state.avgPaymentAmount = payments[0].amount ? (payments[0].amount / (payments[0].id_count || 1)) : 0;
-                this.state.totalConfirmedPayments = payments[0].id_count || 0;
-            } else {
-                this.state.revenueMonth = 0;
-                this.state.avgPaymentAmount = 0;
-                this.state.totalConfirmedPayments = 0;
+            this.state.totalConfirmedPayments = confirmedPayments.length;
+            const totalRevenue = confirmedPayments.reduce((acc, p) => acc + (p.amount || 0), 0);
+
+            let sumWeek = 0, sumMonth = 0, sumYear = 0;
+            confirmedPayments.forEach(p => {
+                if (p.date) {
+                    const pDate = new Date(p.date);
+                    if (pDate >= weekStart) sumWeek += (p.amount || 0);
+                    if (pDate >= monthStart) sumMonth += (p.amount || 0);
+                    if (pDate >= yearStart) sumYear += (p.amount || 0);
+                }
+            });
+
+            this.state.revenueWeek = sumWeek;
+            this.state.revenueMonth = sumMonth > 0 ? sumMonth : totalRevenue;
+            this.state.revenueYear = sumYear > 0 ? sumYear : totalRevenue;
+            this.state.avgPaymentAmount = confirmedPayments.length > 0 ? (totalRevenue / confirmedPayments.length) : 0;
+
+            if (this.state.canSeeTeacherEarnings) {
+                const teacherSheets = await this.orm.searchRead(
+                    "winners.teacher.earning.sheet",
+                    baseDomain,
+                    ["teacher_amount", "company_amount"]
+                );
+                this.state.teacherEarningsMonth = teacherSheets.reduce((acc, s) => acc + (s.teacher_amount || 0), 0);
+                this.state.companyEarningsMonth = teacherSheets.reduce((acc, s) => acc + (s.company_amount || 0), 0);
             }
 
             // ------------------------------------------
@@ -132,67 +189,63 @@ class WinnersDashboard extends Component {
             this.state.totalGroups = await this.orm.searchCount("winners.group", baseDomain);
 
             // ------------------------------------------
-            // 4. ROOMS & SESSIONS
+            // 4. ROOMS & SESSIONS FOR TODAY
             // ------------------------------------------
             this.state.totalRooms = await this.orm.searchCount("winners.room", baseDomain);
 
-            const todayStr = now.toISOString().split("T")[0];
-            const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-            const tomorrowStr = tomorrow.toISOString().split("T")[0];
+            const daysEng = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const daysAr = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const daysFr = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+            const dayIndex = now.getDay();
+            const currentDayEng = daysEng[dayIndex];
+            this.state.currentDayName = this.state.isArabic ? daysAr[dayIndex] : daysFr[dayIndex];
 
-            this.state.sessionsToday = await this.orm.searchCount(
+            const todayStr = now.toISOString().split("T")[0];
+            const sessionsForTodayCount = await this.orm.searchCount(
                 "winners.session",
-                [
-                    ...baseDomain,
-                    ["date", ">=", todayStr],
-                    ["date", "<", tomorrowStr],
-                    ["status", "=", "planned"],
-                ]
+                [...baseDomain, ["date", ">=", todayStr + " 00:00:00"], ["date", "<=", todayStr + " 23:59:59"]]
             );
+
+            this.state.scheduleTodayCount = await this.orm.searchCount(
+                "winners.schedule",
+                [...baseDomain, ["day_of_week", "=", currentDayEng]]
+            );
+
+            this.state.sessionsToday = sessionsForTodayCount > 0 ? sessionsForTodayCount : this.state.scheduleTodayCount;
 
             this.state.attendanceToday = await this.orm.searchCount(
-                "winners.attendance",
-                [
-                    ...baseDomain,
-                    ["date", "=", todayStr],
-                    ["status", "in", ["present", "late"]],
-                ]
+                "winners.attendance.line",
+                [...baseDomain, ["status", "in", ["present", "late"]]]
             );
 
             // ------------------------------------------
-            // 5. RECENT LISTS (LAST 5 RECORD VALUES)
+            // 5. RECENT LISTS (5 CONFIRMED PAYMENTS & TODAY TIMETABLE)
             // ------------------------------------------
-            this.state.recentPayments = await this.orm.searchRead(
-                "winners.payment",
-                baseDomain,
-                ["id", "student_id", "date", "amount", "state"],
-                { limit: 5, order: "date desc, id desc" }
+            this.state.recentPayments = confirmedPayments.slice(0, 5);
+
+            const timetableEntries = await this.orm.searchRead(
+                "winners.schedule",
+                [...baseDomain, ["day_of_week", "=", currentDayEng]],
+                ["id", "group_id", "teacher_id", "room_id", "time_start", "time_end"],
+                { limit: 10, order: "time_start asc" }
             );
 
-            this.state.todaySessions = await this.orm.searchRead(
-                "winners.session",
-                [...baseDomain, ["date", ">=", todayStr], ["date", "<", tomorrowStr]],
-                ["id", "group_id", "teacher_id", "room_id", "date", "status"],
-                { limit: 5, order: "date asc" }
-            );
+            this.state.todaySessions = timetableEntries.map(s => ({
+                id: s.id,
+                group_name: s.group_id ? s.group_id[1] : '-',
+                teacher_name: s.teacher_id ? s.teacher_id[1] : '-',
+                room_name: s.room_id ? s.room_id[1] : '-',
+                time_range: this.formatTimeRange(s.time_start, s.time_end),
+            }));
 
             // ------------------------------------------
             // 6. CHART DATA (LAST 6 MONTHS REVENUE)
             // ------------------------------------------
-            const sixMonthsAgo = new Date();
-            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-            sixMonthsAgo.setDate(1);
-            const sixMonthsAgoStr = sixMonthsAgo.toISOString().split("T")[0];
-
-            const recentPaymentsData = await this.orm.searchRead(
-                "winners.payment",
-                [...baseDomain, ["state", "=", "confirmed"], ["date", ">=", sixMonthsAgoStr]],
-                ["date", "amount"]
-            );
-
-            const months = ["Janv", "Févr", "Mars", "Avril", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"];
-            const revenueByMonth = {};
+            const months = this.state.isArabic
+                ? ["جانفي", "فيفري", "مارس", "أفريل", "ماي", "جوان", "جويلية", "أوت", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"]
+                : ["Janv", "Févr", "Mars", "Avril", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"];
             
+            const revenueByMonth = {};
             for (let i = 5; i >= 0; i--) {
                 const d = new Date();
                 d.setMonth(d.getMonth() - i);
@@ -200,7 +253,7 @@ class WinnersDashboard extends Component {
                 revenueByMonth[mLabel] = 0;
             }
 
-            recentPaymentsData.forEach(p => {
+            confirmedPayments.forEach(p => {
                 if (p.date && p.amount) {
                     const pDate = new Date(p.date);
                     const mLabel = months[pDate.getMonth()] + " " + pDate.getFullYear().toString().substr(-2);
@@ -243,12 +296,13 @@ class WinnersDashboard extends Component {
         // 1. REVENUE MONTHLY BAR CHART
         const revenueEl = this.revenueChartRef.el;
         if (revenueEl) {
+            const chartLabel = this.state.isArabic ? 'المداخيل الشهرية (د.ج)' : 'Revenus Mensuels (DA)';
             this.revenueChart = new window.Chart(revenueEl, {
                 type: 'bar',
                 data: {
                     labels: this.state.chartData.revenue.labels,
                     datasets: [{
-                        label: 'Revenus Mensuels (DA)',
+                        label: chartLabel,
                         data: this.state.chartData.revenue.values,
                         backgroundColor: 'rgba(26, 71, 137, 0.85)',
                         borderColor: '#1A4789',
@@ -287,10 +341,14 @@ class WinnersDashboard extends Component {
         // 2. STUDENT STATUS DONUT CHART
         const studentEl = this.studentChartRef.el;
         if (studentEl) {
+            const donutLabels = this.state.isArabic
+                ? ['نشطون', 'تنبيه (≤2 حصص)', 'منتهون']
+                : ['Actifs', 'Alerte (≤2 séanc.)', 'Expirés'];
+
             this.studentChart = new window.Chart(studentEl, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Actifs', 'Alerte (≤2 séanc.)', 'Expirés'],
+                    labels: donutLabels,
                     datasets: [{
                         data: [this.state.totalActive, this.state.totalAlert, this.state.totalExpired],
                         backgroundColor: [
@@ -447,6 +505,12 @@ class WinnersDashboard extends Component {
     }
 
     formatCurrency(value) {
+        if (this.state.isArabic) {
+            return new Intl.NumberFormat("ar-DZ", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value) + " د.ج";
+        }
         return new Intl.NumberFormat("fr-DZ", {
             style: 'currency',
             currency: 'DZD',

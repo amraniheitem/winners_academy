@@ -8,7 +8,8 @@
         <template id="report_payment_document">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <div class="page" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; color: #333; padding: 10mm 15mm; max-height: 140mm;">
+                    <div class="page" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; color: #333; padding: 10mm 5mm; width: 100%;">
+                        <meta charset="utf-8"/>
 
                         <!-- ======== EN-TÊTE ======== -->
                         <div style="text-align: center; margin-bottom: 12px; border-bottom: 3px solid #1a237e; padding-bottom: 8px;">
@@ -40,10 +41,10 @@
                         </h3>
                         <table style="width: 100%; margin-bottom: 10px; border-collapse: collapse;">
                             <tr>
-                                <td style="width: 30%; padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                <td style="width: 35%; padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
                                     <strong>Nom complet</strong>
                                 </td>
-                                <td style="width: 70%; padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                <td style="width: 65%; padding: 5px 8px; border: 1px solid #bdbdbd;">
                                     <span t-esc="'%s %s' % (o.student_id.first_name or '', o.student_id.name or '')"/>
                                 </td>
                             </tr>
@@ -71,11 +72,20 @@
                         </h3>
                         <table style="width: 100%; margin-bottom: 10px; border-collapse: collapse;">
                             <tr>
-                                <td style="width: 30%; padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                <td style="width: 35%; padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
                                     <strong>Date de paiement</strong>
                                 </td>
-                                <td style="width: 70%; padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                <td style="width: 65%; padding: 5px 8px; border: 1px solid #bdbdbd;">
                                     <span t-field="o.date" t-options='{"format": "dd/MM/yyyy"}'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd; background-color: #f5f5f5;">
+                                    <strong>Groupe</strong>
+                                </td>
+                                <td style="padding: 5px 8px; border: 1px solid #bdbdbd;">
+                                    <span t-field="o.group_id.name"/>
+                                    (<span t-esc="dict(o.group_id._fields['subject'].selection).get(o.group_id.subject, '')"/>)
                                 </td>
                             </tr>
                             <tr>
@@ -106,13 +116,30 @@
                         </table>
 
                         <!-- ======== SÉANCES RESTANTES ======== -->
-                        <div style="background-color: #e8f5e9; border: 2px solid #66bb6a; border-radius: 5px; padding: 8px 12px; margin-bottom: 15px; text-align: center;">
-                            <strong style="font-size: 12px; color: #2e7d32;">
-                                Séances restantes après paiement :
+                        <div style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 5px; padding: 8px 12px; margin-bottom: 15px;">
+                            <strong style="font-size: 11px; color: #1a237e; display: block; margin-bottom: 6px; text-align: center;">
+                                SOLDE DES SÉANCES PAR MATIÈRE
                             </strong>
-                            <span style="font-size: 16px; font-weight: 700; color: #1b5e20; margin-left: 8px;">
-                                <t t-esc="o.student_id.sessions_remaining"/>
-                            </span>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                                <t t-foreach="o.student_id.enrollment_ids" t-as="e">
+                                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                                        <td style="padding: 3px 0;">
+                                            <span t-field="e.group_id.name"/>
+                                            (<span t-esc="dict(e.group_id._fields['subject'].selection).get(e.group_id.subject, '')"/>)
+                                        </td>
+                                        <td style="text-align: right; padding: 3px 0; font-weight: bold;">
+                                            <span t-attf-style="color: #{'#2e7d32' if e.status == 'active' else '#ef6c00' if e.status == 'alert' else '#c62828' if e.status == 'expired' else '#757575'};">
+                                                <t t-if="e.sessions_remaining &gt; 0">
+                                                    <t t-esc="e.sessions_remaining"/> séance(s) restante(s)
+                                                </t>
+                                                <t t-else="">
+                                                    Aucune séance restante
+                                                </t>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
                         </div>
 
                         <!-- ======== PIED DE PAGE : SIGNATURE / CACHET ======== -->

@@ -11,6 +11,7 @@
             <field name="arch" type="xml">
                 <tree string="Paiements">
                     <field name="student_id"/>
+                    <field name="group_id"/>
                     <field name="date"/>
                     <field name="amount"/>
                     <field name="sessions_count"/>
@@ -40,6 +41,8 @@
                         <group>
                             <group string="Informations du paiement">
                                 <field name="student_id"/>
+                                <field name="group_id" readonly="state == 'confirmed'"/>
+                                <field name="session_price"/>
                                 <field name="date"/>
                                 <field name="amount"/>
                                 <field name="sessions_count"/>

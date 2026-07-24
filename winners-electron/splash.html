@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Winners Academy</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 480px;
+      height: 360px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-app-region: drag;
+      user-select: none;
+    }
+
+    .splash-container {
+      width: 440px;
+      height: 320px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #0B1120 0%, #0F1D3B 40%, #132044 100%);
+      box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.7),
+        0 0 80px rgba(26, 71, 137, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle animated glow behind logo */
+    .splash-container::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(26, 71, 137, 0.35) 0%, transparent 70%);
+      top: 30px;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 0.9; }
+    }
+
+    /* Animated border shimmer */
+    .splash-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      padding: 1px;
+      background: linear-gradient(135deg,
+        rgba(230, 9, 125, 0.4) 0%,
+        transparent 30%,
+        transparent 70%,
+        rgba(26, 71, 137, 0.4) 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: borderRotate 6s linear infinite;
+    }
+
+    @keyframes borderRotate {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    .logo-wrapper {
+      position: relative;
+      z-index: 2;
+      margin-bottom: 20px;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #1A4789 0%, #E6097D 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(26, 71, 137, 0.4);
+    }
+
+    .logo-icon svg {
+      width: 44px;
+      height: 44px;
+      fill: #fff;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .app-title {
+      position: relative;
+      z-index: 2;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .app-subtitle {
+      position: relative;
+      z-index: 2;
+      font-size: 11px;
+      color: #64748B;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
+
+    /* Loading bar */
+    .loading-container {
+      position: relative;
+      z-index: 2;
+      width: 260px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .loading-bar {
+      height: 100%;
+      width: 40%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #1A4789, #E6097D, #1A4789);
+      background-size: 200% 100%;
+      animation: loadSlide 1.8s ease-in-out infinite, loadGradient 3s linear infinite;
+    }
+
+    @keyframes loadSlide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(350%); }
+    }
+
+    @keyframes loadGradient {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    .loading-text {
+      position: relative;
+      z-index: 2;
+      font-size: 11px;
+      color: #475569;
+      letter-spacing: 0.5px;
+    }
+
+    .loading-text span {
+      animation: dotPulse 1.4s infinite;
+    }
+    .loading-text span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-text span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes dotPulse {
+      0%, 60%, 100% { opacity: 0.3; }
+      30% { opacity: 1; }
+    }
+
+    .version-badge {
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      font-size: 9px;
+      color: #334155;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-container">
+    <div class="logo-wrapper">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="app-title">Winners Academy</div>
+    <div class="app-subtitle">Système de Gestion</div>
+
+    <div class="loading-container">
+      <div class="loading-bar"></div>
+    </div>
+
+    <div class="loading-text">
+      Démarrage du serveur<span>.</span><span>.</span><span>.</span>
+    </div>
+
+    <div class="version-badge">v1.0.0</div>
+  </div>
+</body>
+</html>

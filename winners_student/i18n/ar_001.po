@@ -1,0 +1,88 @@
+# Arabic (Algeria) translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: winners_student
+#: model:ir.ui.menu,name:winners_student.menu_winners_student
+#: model:ir.actions.act_window,name:winners_student.action_winners_student
+msgid "Étudiants"
+msgstr "الطلاب والمسجلون"
+
+#. module: winners_student
+msgid "Étudiant"
+msgstr "الطالب"
+
+#. module: winners_student
+msgid "Nom"
+msgstr "الاسم"
+
+#. module: winners_student
+msgid "Prénom"
+msgstr "اللقب"
+
+#. module: winners_student
+msgid "Téléphone"
+msgstr "الهاتف"
+
+#. module: winners_student
+msgid "Adresse"
+msgstr "العنوان"
+
+#. module: winners_student
+msgid "Statut"
+msgstr "الحالة"
+
+#. module: winners_student
+msgid "Matricule"
+msgstr "رقم التسجيل"
+
+#. module: winners_student
+msgid "Niveau scolaire"
+msgstr "المستوى الدراسي"
+
+#. module: winners_student
+msgid "Niveau d'étude"
+msgstr "المستوى الدراسي"
+
+#. module: winners_student
+msgid "Parent / Tuteur"
+msgstr "ولي الأمر"
+
+#. module: winners_student
+msgid "Téléphone tuteur"
+msgstr "هاتف الولي"
+
+#. module: winners_student
+msgid "Solde restant"
+msgstr "الرصيد المتبقي"
+
+#. module: winners_student
+msgid "Séances restantes"
+msgstr "الحصص المتبقية"
+
+#. module: winners_student
+msgid "Séances utilisées"
+msgstr "الحصص المستعملة"
+
+#. module: winners_student
+msgid "Actif"
+msgstr "نشط"
+
+#. module: winners_student
+msgid "Suspendu"
+msgstr "موقوف"
+
+#. module: winners_student
+msgid "Expiré"
+msgstr "منتهي"
+
+#. module: winners_student
+msgid "Alerte"
+msgstr "تنبيه"

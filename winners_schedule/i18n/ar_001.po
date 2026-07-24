@@ -1,0 +1,72 @@
+# Arabic (Algeria) translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: winners_schedule
+#: model:ir.ui.menu,name:winners_schedule.menu_winners_schedule
+#: model:ir.actions.act_window,name:winners_schedule.action_winners_schedule
+msgid "Emploi du temps"
+msgstr "جدول الحصص"
+
+#. module: winners_schedule
+msgid "Créneaux horaires"
+msgstr "المواعيد الحصص"
+
+#. module: winners_schedule
+msgid "Heure début"
+msgstr "وقت البداية"
+
+#. module: winners_schedule
+msgid "Heure fin"
+msgstr "وقت النهاية"
+
+#. module: winners_schedule
+msgid "Jour"
+msgstr "اليوم"
+
+#. module: winners_schedule
+msgid "Lundi"
+msgstr "الإثنين"
+
+#. module: winners_schedule
+msgid "Mardi"
+msgstr "الثلاثاء"
+
+#. module: winners_schedule
+msgid "Mercredi"
+msgstr "الأربعاء"
+
+#. module: winners_schedule
+msgid "Jeudi"
+msgstr "الخميس"
+
+#. module: winners_schedule
+msgid "Vendredi"
+msgstr "الجمعة"
+
+#. module: winners_schedule
+msgid "Samedi"
+msgstr "السبت"
+
+#. module: winners_schedule
+msgid "Dimanche"
+msgstr "الأحد"
+
+#. module: winners_schedule
+msgid "Chercher salle libre"
+msgstr "البحث عن قاعة"
+
+#. module: winners_schedule
+msgid "Report de cours"
+msgstr "تأجيل الدرس"
+
+#. module: winners_schedule
+msgid "Annulation de cours"
+msgstr "إلغاء الدرس"

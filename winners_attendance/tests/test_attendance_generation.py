@@ -3,7 +3,7 @@ from odoo.tests.common import TransactionCase
 # pyrefly: ignore [missing-import]
 from odoo.exceptions import AccessError, UserError
 from odoo import fields
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 
 
 class TestAttendanceGeneration(TransactionCase):
@@ -46,30 +46,37 @@ class TestAttendanceGeneration(TransactionCase):
             "name": "Ben",
             "first_name": "Ali",
             "level": "cem_4",
-            "sessions_remaining": 5,
-            "status": "active",
             "branch_id": cls.branch.id,
         })
         cls.student_2 = cls.env["winners.student"].create({
             "name": "Bouzid",
             "first_name": "Fatima",
             "level": "cem_4",
-            "sessions_remaining": 10,
-            "status": "active",
             "branch_id": cls.branch.id,
         })
         cls.student_suspended = cls.env["winners.student"].create({
             "name": "Mourad",
             "first_name": "Ahmed",
             "level": "cem_4",
-            "sessions_remaining": 5,
-            "status": "suspended",
             "branch_id": cls.branch.id,
         })
 
-        # Assigner les étudiants au groupe
-        cls.group.write({
-            "student_ids": [(6, 0, [cls.student_1.id, cls.student_2.id, cls.student_suspended.id])]
+        # Créer les inscriptions
+        cls.env["winners.student.enrollment"].create({
+            "student_id": cls.student_1.id,
+            "group_id": cls.group.id,
+            "sessions_remaining": 5,
+        })
+        cls.env["winners.student.enrollment"].create({
+            "student_id": cls.student_2.id,
+            "group_id": cls.group.id,
+            "sessions_remaining": 10,
+        })
+        cls.env["winners.student.enrollment"].create({
+            "student_id": cls.student_suspended.id,
+            "group_id": cls.group.id,
+            "sessions_remaining": 5,
+            "status": "suspended",
         })
 
         # ── 6. Créer un créneau récurrent (schedule) ──
@@ -129,14 +136,14 @@ class TestAttendanceGeneration(TransactionCase):
             "name": "Khelif",
             "first_name": "Salima",
             "level": "cem_4",
-            "sessions_remaining": 8,
-            "status": "active",
             "branch_id": self.branch.id,
         })
 
-        # L'ajouter au groupe
-        self.group.write({
-            "student_ids": [(4, new_student.id)]
+        # Créer l'inscription correspondante (ce qui déclenche l'ajout dynamique aux feuilles)
+        self.env["winners.student.enrollment"].create({
+            "student_id": new_student.id,
+            "group_id": self.group.id,
+            "sessions_remaining": 8,
         })
 
         # Vérifier s'il a été ajouté automatiquement à la feuille du jour ouverte
@@ -197,3 +204,22 @@ class TestAttendanceGeneration(TransactionCase):
             line.with_user(teacher_user).write({
                 "status": "present",
             })
+
+    def test_05_session_time_independent_from_schedule(self):
+        """Verifie qu'une seance ponctuelle ne bloque pas sur l'emploi du temps."""
+        session_start = datetime.combine(self.today_date, time(hour=14, minute=0))
+
+        session = self.env["winners.session"].create({
+            "group_id": self.group.id,
+            "room_id": self.room.id,
+            "date": fields.Datetime.to_string(session_start),
+            "duration_hours": 1.5,
+        })
+
+        self.assertTrue(session)
+        sheet = self.env["winners.attendance.sheet"].search([
+            ("date", "=", self.today_date),
+            ("group_id", "=", self.group.id),
+            ("time_start", "=", 14.0),
+        ], limit=1)
+        self.assertTrue(sheet, "La seance ponctuelle devrait creer sa feuille de presence.")

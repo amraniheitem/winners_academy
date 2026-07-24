@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================================ -->
+        <!-- ir.actions.report : Feuille de Présence PDF                  -->
+        <!-- ============================================================ -->
+        <record id="action_report_attendance_sheet" model="ir.actions.report">
+            <field name="name">Feuille de Présence PDF</field>
+            <field name="model">winners.attendance.sheet</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">winners_print.report_attendance_sheet_document</field>
+            <field name="report_file">winners_print.report_attendance_sheet_document</field>
+            <field name="print_report_name">'Feuille_de_Presence_%s' % (object.display_name)</field>
+            <field name="binding_model_id" ref="winners_attendance.model_winners_attendance_sheet"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="base.paperformat_euro"/>
+        </record>
+
+    </data>
+</odoo>

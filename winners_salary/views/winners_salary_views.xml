@@ -116,6 +116,12 @@
                             </group>
                         </group>
 
+                        <group string="Commissions enseignement">
+                            <group>
+                                <field name="teaching_commission" readonly="1"/>
+                            </group>
+                        </group>
+
                         <!-- Résultat final -->
                         <group string="Salaire net">
                             <group>
@@ -172,6 +178,7 @@
                     <field name="absence_deduction" string="Ret. abs. (DA)"/>
                     <field name="overtime_amount" string="H.Supp. (DA)"/>
                     <field name="bonus" string="Prime (DA)"/>
+                    <field name="teaching_commission" string="Com. ens. (DA)"/>
                     <field name="net_salary" string="Net (DA)" decoration-bf="1"/>
                     <field name="state"
                            widget="badge"

@@ -690,8 +690,8 @@
             </div>
             <div class="popup-name" id="popupName"></div>
             <div class="popup-level" id="popupLevel"></div>
-            <div class="popup-sessions" id="popupSessions"></div>
-            <div class="popup-sessions-label">الحصص المتبقية / Séances restantes</div>
+            <div class="popup-sessions" id="popupSessions" style="font-size: 2.2vh; font-weight: normal; margin-top: 1.5vh; margin-bottom: 1.5vh;"></div>
+            <div class="popup-sessions-label" id="popupSessionsLabel">الحصص المتبقية / Séances restantes</div>
         </div>
     </div>
 
@@ -699,7 +699,8 @@
         // ═══════════════════════════════════════════════════
         // STATE
         // ═══════════════════════════════════════════════════
-        let lastAttendanceTimestamp = null;
+        let displayedAttendanceIds = new Set();
+        let attendanceQueue = [];
         let popupTimeout = null;
         let isPopupVisible = false;
         let currentScheduleJson = '';
@@ -871,7 +872,6 @@
         // ATTENDANCE POPUP
         // ═══════════════════════════════════════════════════
         function showAttendancePopup(data) {
-            if (isPopupVisible) return;
             isPopupVisible = true;
 
             const overlay = document.getElementById('popupOverlay');
@@ -889,14 +889,32 @@
                 container.innerHTML = `<div class="popup-photo-placeholder">👤</div>`;
             }
 
-            // Sessions remaining with color
-            const sessions = data.sessions_remaining || 0;
-            let colorClass = 'sessions-green';
-            if (sessions === 0) colorClass = 'sessions-red';
-            else if (sessions <= 2) colorClass = 'sessions-orange';
-
-            document.getElementById('popupSessions').innerHTML =
-                `<span class="${colorClass}">${sessions}</span>`;
+            // Sessions remaining with color per subject
+            const enrollments = data.enrollments || [];
+            let htmlContent = '';
+            if (enrollments.length > 0) {
+                document.getElementById('popupSessionsLabel').style.display = 'none';
+                htmlContent = '<div style="text-align: left; padding: 0 2vh; max-width: 45vh; margin: 0 auto;">';
+                enrollments.forEach(e => {
+                    const sessions = e.sessions_remaining || 0;
+                    let colorStyle = '#10B981'; // green
+                    if (sessions === 0) colorStyle = '#EF4444'; // red
+                    else if (sessions <= 2) colorStyle = '#F59E0B'; // orange
+                    
+                    const sessionsText = sessions > 0 ? `${sessions} séance(s)` : 'Aucune séance';
+                    htmlContent += `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.8vh; border-bottom: 1px solid var(--border); padding-bottom: 0.4vh; font-size: 2.2vh;">
+                            <span style="font-weight: 600;">${e.subject || e.group} :</span>
+                            <span style="color: ${colorStyle}; font-weight: 800; margin-left: 1.5vh;">${sessionsText}</span>
+                        </div>
+                    `;
+                });
+                htmlContent += '</div>';
+            } else {
+                document.getElementById('popupSessionsLabel').style.display = 'block';
+                htmlContent = '<span class="sessions-red" style="font-size: 4.2vh; font-weight: 800;">Aucune inscription</span>';
+            }
+            document.getElementById('popupSessions').innerHTML = htmlContent;
 
             // Add confetti
             addConfetti(card);
@@ -912,8 +930,16 @@
                     isPopupVisible = false;
                     // Clean confetti
                     card.querySelectorAll('.confetti').forEach(c => c.remove());
+                    // Process next in queue
+                    processAttendanceQueue();
                 }, 500);
             }, 5000);
+        }
+
+        function processAttendanceQueue() {
+            if (isPopupVisible || attendanceQueue.length === 0) return;
+            const nextAtt = attendanceQueue.shift();
+            showAttendancePopup(nextAtt);
         }
 
         function addConfetti(container) {
@@ -960,11 +986,17 @@
                 renderSchedule(data.schedule);
 
                 // Check for new attendance
-                if (data.last_attendance) {
-                    const ts = data.last_attendance.timestamp;
-                    if (ts !== lastAttendanceTimestamp) {
-                        lastAttendanceTimestamp = ts;
-                        showAttendancePopup(data.last_attendance);
+                if (data.recent_attendances && data.recent_attendances.length > 0) {
+                    let hasNew = false;
+                    data.recent_attendances.forEach(att => {
+                        if (!displayedAttendanceIds.has(att.id)) {
+                            displayedAttendanceIds.add(att.id);
+                            attendanceQueue.push(att);
+                            hasNew = true;
+                        }
+                    });
+                    if (hasNew) {
+                        processAttendanceQueue();
                     }
                 }
             } catch (err) {

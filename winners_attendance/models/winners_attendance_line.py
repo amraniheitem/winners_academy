@@ -35,6 +35,7 @@ class WinnersAttendanceLine(models.Model):
         comodel_name="winners.student",
         string="Étudiant",
         required=True,
+        ondelete="cascade",
         index=True,
     )
 
@@ -147,7 +148,7 @@ class WinnersAttendanceLine(models.Model):
             # Décrémenter les séances uniquement si
             # passage de absent/late → present
             if old_status != 'present':
-                line._deduct_session()
+                line._deduct_session(source=source)
 
     def mark_late(self, source='manual'):
         """Marquer comme en retard (compte comme présent pour la déduction)."""
@@ -175,7 +176,7 @@ class WinnersAttendanceLine(models.Model):
             })
 
             if old_status == 'absent':
-                line._deduct_session()
+                line._deduct_session(source=source)
 
     def mark_absent(self):
         """Remettre à absent (annulation de marquage)."""
@@ -226,36 +227,67 @@ class WinnersAttendanceLine(models.Model):
     # GESTION DES SÉANCES RESTANTES
     # ══════════════════════════════════════
 
-    def _deduct_session(self):
-        """Décrémente les séances restantes et met à jour le statut étudiant."""
+    def _deduct_session(self, source='manual'):
+        """Décrémente les séances restantes sur l'enrollment correspondant."""
         self.ensure_one()
-        student = self.student_id
-        if student.sessions_remaining <= 0:
-            raise UserError(
-                "L'étudiant %s n'a plus de séances restantes !"
-                % student.name
-            )
-        student.sessions_remaining -= 1
-        # Mise à jour du statut de l'étudiant
-        if student.sessions_remaining > 2:
-            student.status = "active"
-        elif student.sessions_remaining >= 1:
-            student.status = "alert"
-        else:
-            student.status = "expired"
+        enrollment = self.env['winners.student.enrollment'].search([
+            ('student_id', '=', self.student_id.id),
+            ('group_id', '=', self.sheet_id.group_id.id),
+        ], limit=1)
+
+        subject_label = dict(self.sheet_id.group_id._fields['subject'].selection or []).get(
+            self.sheet_id.group_id.subject, self.sheet_id.group_id.subject or ''
+        )
+
+        if not enrollment:
+            if source == 'zkteco':
+                self.env['winners.attendance.anomaly'].sudo().create({
+                    'student_id': self.student_id.id,
+                    'timestamp': fields.Datetime.now(),
+                    'reason': 'no_enrollment',
+                    'reason_detail': (
+                        f"L'étudiant {self.student_id.name} a pointé mais n'a pas d'inscription "
+                        f"dans le groupe {self.sheet_id.group_id.name}."
+                    ),
+                    'sheet_id': self.sheet_id.id,
+                })
+                return
+            else:
+                raise UserError(
+                    f"L'étudiant {self.student_id.name} n'est pas inscrit "
+                    f"dans le groupe {self.sheet_id.group_id.name}."
+                )
+
+        if enrollment.sessions_remaining <= 0:
+            if source == 'zkteco':
+                self.env['winners.attendance.anomaly'].sudo().create({
+                    'student_id': self.student_id.id,
+                    'timestamp': fields.Datetime.now(),
+                    'reason': 'no_sessions_remaining',
+                    'reason_detail': (
+                        f"L'étudiant {self.student_id.name} n'a plus de séances "
+                        f"restantes en {subject_label} ({self.sheet_id.group_id.name}) !"
+                    ),
+                    'sheet_id': self.sheet_id.id,
+                })
+                return
+            else:
+                raise UserError(
+                    f"L'étudiant {self.student_id.name} n'a plus de séances "
+                    f"restantes en {subject_label} !"
+                )
+
+        enrollment.sessions_remaining -= 1
 
     def _credit_session(self):
-        """Recrédite une séance (en cas d'annulation de marquage)."""
+        """Recrédite une séance sur l'enrollment correspondant."""
         self.ensure_one()
-        student = self.student_id
-        student.sessions_remaining += 1
-        # Recalculer le statut
-        if student.sessions_remaining > 2:
-            student.status = "active"
-        elif student.sessions_remaining >= 1:
-            student.status = "alert"
-        else:
-            student.status = "expired"
+        enrollment = self.env['winners.student.enrollment'].search([
+            ('student_id', '=', self.student_id.id),
+            ('group_id', '=', self.sheet_id.group_id.id),
+        ], limit=1)
+        if enrollment:
+            enrollment.sessions_remaining += 1
 
     # ══════════════════════════════════════
     # PROTECTION ÉCRITURE

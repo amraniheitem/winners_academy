@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Menu Configuration Imprimante -->
+        <menuitem id="menu_winners_printer_config"
+                  name="Imprimante Thermique"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_printer_config"
+                  sequence="95"/>
+
+    </data>
+</odoo>

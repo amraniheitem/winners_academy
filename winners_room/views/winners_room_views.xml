@@ -2,6 +2,13 @@
 <odoo>
     <data>
 
+        <record id="action_winners_room_availability_wizard" model="ir.actions.act_window">
+            <field name="name">Chercher salle libre</field>
+            <field name="res_model">winners.room.availability.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
         <!-- ============================================================ -->
         <!-- Tree View -->
         <!-- ============================================================ -->
@@ -10,6 +17,12 @@
             <field name="model">winners.room</field>
             <field name="arch" type="xml">
                 <tree string="Salles">
+                    <header>
+                        <button name="%(action_winners_room_availability_wizard)d"
+                                string="Chercher salle libre"
+                                type="action"
+                                class="btn-primary"/>
+                    </header>
                     <field name="name"/>
                     <field name="branch_id"/>
                     <field name="capacity"/>
@@ -59,6 +72,41 @@
             </field>
         </record>
 
+        <record id="view_winners_room_availability_wizard_form" model="ir.ui.view">
+            <field name="name">winners.room.availability.wizard.form</field>
+            <field name="model">winners.room.availability.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Chercher salle libre">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="branch_id"/>
+                                <field name="room_id"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="time_start" widget="float_time"/>
+                                <field name="time_end" widget="float_time"/>
+                            </group>
+                        </group>
+                        <field name="result_message" readonly="1" invisible="not result_message"/>
+                        <separator string="Salles disponibles"/>
+                        <field name="available_room_ids" readonly="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="capacity"/>
+                                <field name="branch_id"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                    <footer>
+                        <button name="action_check_availability" string="Verifier" type="object" class="btn-primary"/>
+                        <button string="Fermer" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
         <!-- ============================================================ -->
         <!-- Menu -->
         <!-- ============================================================ -->
@@ -68,6 +116,13 @@
                   action="action_winners_room"
                   groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
                   sequence="65"/>
+
+        <menuitem id="menu_winners_room_availability"
+                  name="Chercher salle libre"
+                  parent="winners_branch.menu_winners_academy_root"
+                  action="action_winners_room_availability_wizard"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director,winners_auth.winners_group_secretary,winners_auth.winners_group_teacher"
+                  sequence="66"/>
 
     </data>
 </odoo>

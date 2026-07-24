@@ -1,4 +1,5 @@
 {
+    'sequence': 10,
     "name": "Winners Payment",
     "version": "17.0.1.0.0",
     "category": "Winners Academy",
@@ -8,6 +9,7 @@
         "winners_auth",
         "winners_branch",
         "winners_student",
+        "winners_enrollment",
     ],
     "data": [
         "security/ir.model.access.csv",

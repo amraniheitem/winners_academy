@@ -62,6 +62,16 @@
                   name="Winners Academy"
                   sequence="10"/>
 
+        <menuitem id="menu_winners_personnes"
+                  name="Personnes"
+                  parent="menu_winners_academy_root"
+                  sequence="15"/>
+
+        <menuitem id="menu_winners_pointage"
+                  name="Pointage"
+                  parent="menu_winners_academy_root"
+                  sequence="60"/>
+
         <menuitem id="menu_winners_branch"
                   name="Branches"
                   parent="menu_winners_academy_root"

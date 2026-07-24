@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_winners_enrollment_super_admin,winners.student.enrollment super admin,model_winners_student_enrollment,winners_auth.winners_group_super_admin,1,1,1,1
+access_winners_enrollment_director,winners.student.enrollment director,model_winners_student_enrollment,winners_auth.winners_group_director,1,1,1,1
+access_winners_enrollment_secretary,winners.student.enrollment secretary,model_winners_student_enrollment,winners_auth.winners_group_secretary,1,1,1,1
+access_winners_enrollment_cashier,winners.student.enrollment cashier,model_winners_student_enrollment,winners_auth.winners_group_cashier,1,1,1,0
+access_winners_enrollment_teacher,winners.student.enrollment teacher,model_winners_student_enrollment,winners_auth.winners_group_teacher,1,0,0,0

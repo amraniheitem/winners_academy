@@ -1,0 +1,32 @@
+# Arabic (Algeria) translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: winners_room
+#: model:ir.ui.menu,name:winners_room.menu_winners_room
+#: model:ir.actions.act_window,name:winners_room.action_winners_room
+msgid "Salles"
+msgstr "القاعات"
+
+#. module: winners_room
+msgid "Salle"
+msgstr "القاعة"
+
+#. module: winners_room
+msgid "Chercher salle libre"
+msgstr "البحث عن قاعة"
+
+#. module: winners_room
+msgid "Nom de la salle"
+msgstr "اسم القاعة"
+
+#. module: winners_room
+msgid "Capacité"
+msgstr "السعة"

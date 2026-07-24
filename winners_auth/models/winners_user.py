@@ -87,3 +87,40 @@ class ResUsers(models.Model):
             super(ResUsers, self).write({
                 'action_id': dashboard_action.id,
             })
+
+    @api.model
+    def set_user_language(self, lang_code):
+        """
+        Définit la langue de l'utilisateur connecté ('fr_FR', 'ar_001', 'ar_SA', etc.).
+        Active automatiquement la langue dans la base Odoo si nécessaire.
+        """
+        user = self.env.user
+        ResLang = self.env['res.lang'].sudo()
+
+        # Si le code demandé est un code arabe générique ou spécifique
+        target_code = lang_code
+        lang = ResLang.search([('code', '=', target_code)], limit=1)
+
+        if not lang and target_code.startswith('ar'):
+            # Chercher n'importe quelle variante arabe disponible
+            lang = ResLang.search([('code', '=like', 'ar%')], limit=1)
+            if lang:
+                target_code = lang.code
+
+        if not lang:
+            try:
+                ResLang._activate_lang(target_code)
+                lang = ResLang.search([('code', '=', target_code)], limit=1)
+            except Exception:
+                pass
+
+        if lang and not lang.active:
+            lang.write({'active': True})
+
+        if user.lang != target_code:
+            user.sudo().write({'lang': target_code})
+        return {
+            'success': True,
+            'lang': target_code,
+        }
+

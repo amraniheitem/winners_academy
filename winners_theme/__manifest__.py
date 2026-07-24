@@ -1,4 +1,5 @@
 {
+    'sequence': 10,
     'name': 'Winners Theme',
     'version': '17.0.1.0.0',
     'summary': 'Thème SaaS moderne Winners Academy pour Odoo 17',
@@ -11,6 +12,7 @@
         - Cartes avec élévation au hover
         - Badges de statut pill avec point coloré
         - Scrollbar fine et discrète
+        - Formatage des nombres et dates en chiffres occidentaux (123...)
     """,
     'author': 'Winners Academy',
     'category': 'Theme',
@@ -22,6 +24,7 @@
     'assets': {
         'web.assets_backend': [
             'winners_theme/static/src/css/winners_theme.css',
+            'winners_theme/static/src/js/force_latin_numbers.js',
             'winners_theme/static/src/xml/navbar_templates.xml',
         ],
     },

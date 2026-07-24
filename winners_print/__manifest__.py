@@ -1,16 +1,30 @@
 {
+    'sequence': 10,
     "name": "Winners Print",
-    "version": "17.0.1.0.0",
+    "version": "17.0.2.0.0",
     "category": "Winners Academy",
-    "summary": "Impression des bons de paiement Winners Academy",
+    "summary": "Impression thermique ESC/POS pour Winners Academy",
     "depends": [
+        "base",
         "winners_payment",
+        "winners_salary",
+        "winners_schedule",
     ],
     "data": [
+        "security/ir.model.access.csv",
+        "data/default_config.xml",
+        "views/printer_config_view.xml",
+        "views/payment_print_view.xml",
+        "views/salary_print_view.xml",
+        "views/teacher_earning_print_view.xml",
+        "views/menu.xml",
         "report/payment_report.xml",
         "report/payment_report_action.xml",
+        "report/schedule_report.xml",
+        "report/schedule_report_action.xml",
     ],
     "installable": True,
     "auto_install": False,
     "license": "LGPL-3",
 }
+

@@ -1,0 +1,63 @@
+# French translation for Winners Academy
+# Copyright (C) 2026 Winners Academy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Winners Academy 17.0\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. module: winners_print
+#: model:ir.ui.menu,name:winners_print.menu_printer_config
+msgid "Imprimante Thermique"
+msgstr "Imprimante Thermique"
+
+#. module: winners_print
+msgid "Configuration Imprimante"
+msgstr "Configuration Imprimante"
+
+#. module: winners_print
+msgid "Imprimante principale"
+msgstr "Imprimante principale"
+
+#. module: winners_print
+msgid "Tester l'impression"
+msgstr "Tester l'impression"
+
+#. module: winners_print
+msgid "Identifiant vendeur"
+msgstr "Identifiant vendeur"
+
+#. module: winners_print
+msgid "Identifiant produit"
+msgstr "Identifiant produit"
+
+#. module: winners_print
+msgid "Par défaut"
+msgstr "Par défaut"
+
+#. module: winners_print
+msgid "Test réussi"
+msgstr "Test réussi"
+
+#. module: winners_print
+msgid "Aucune imprimante configurée"
+msgstr "Aucune imprimante configurée"
+
+#. module: winners_print
+msgid "Aucune imprimante configurée. Veuillez configurer une imprimante dans le menu Imprimante."
+msgstr "Aucune imprimante configurée. Veuillez configurer une imprimante dans le menu Imprimante."
+
+#. module: winners_print
+msgid "Imprimante non trouvée"
+msgstr "Imprimante non trouvée"
+
+#. module: winners_print
+msgid "Erreur d'impression"
+msgstr "Erreur d'impression"
+
+#. module: winners_print
+msgid "Impression envoyée avec succès"
+msgstr "Impression envoyée avec succès"

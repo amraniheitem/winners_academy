@@ -35,6 +35,8 @@ class WinnersAttendanceAnomaly(models.Model):
             ("no_sheet", "Aucune feuille de présence trouvée"),
             ("out_of_window", "Hors fenêtre d'acceptation"),
             ("unknown_device_id", "UID inconnu (non associé à un étudiant)"),
+            ("no_sessions_remaining", "Aucune séance restante dans ce groupe"),
+            ("no_enrollment", "Pas d'inscription dans ce groupe"),
         ],
         string="Raison",
         required=True,

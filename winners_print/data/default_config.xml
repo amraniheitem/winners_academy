@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="default_winners_printer_config" model="winners.printer.config">
+            <field name="name">Imprimante Principale</field>
+            <field name="vendor_id">0x0483</field>
+            <field name="product_id">0x5743</field>
+            <field name="academy_name">WINNERS ACADEMY</field>
+            <field name="is_default">True</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

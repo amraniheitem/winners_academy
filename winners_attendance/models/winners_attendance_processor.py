@@ -9,6 +9,7 @@ from odoo import api, fields, models
 # pyrefly: ignore [missing-import]
 from odoo.exceptions import UserError
 
+import json
 import logging
 import requests
 import traceback
@@ -41,6 +42,22 @@ class WinnersAttendanceProcessor(models.AbstractModel):
         ICP = self.env['ir.config_parameter'].sudo()
         url = ICP.get_param('zk_bridge_url', 'http://localhost:5000')
         return url.rstrip('/')
+
+    def _save_last_sync_report(self, report):
+        self.env['ir.config_parameter'].sudo().set_param(
+            'winners_attendance.last_sync_report',
+            json.dumps(report, default=str),
+        )
+
+    def get_last_sync_report(self):
+        raw_report = self.env['ir.config_parameter'].sudo().get_param(
+            'winners_attendance.last_sync_report',
+            '{}',
+        )
+        try:
+            return json.loads(raw_report or '{}')
+        except Exception:
+            return {}
 
     # ══════════════════════════════════════════════════════════
     # DÉDUPLICATION PAR (user_id, timestamp)
@@ -82,7 +99,7 @@ class WinnersAttendanceProcessor(models.AbstractModel):
     # ══════════════════════════════════════════════════════════
 
     @api.model
-    def process_checkin(self, zk_device_id, timestamp):
+    def process_checkin(self, zk_device_id, timestamp, _already_utc=False):
         """
         Traite un pointage ZKTeco individuel.
 
@@ -95,6 +112,8 @@ class WinnersAttendanceProcessor(models.AbstractModel):
         Args:
             zk_device_id (int): UID de l'utilisateur sur la pointeuse.
             timestamp (datetime): Horodatage du pointage.
+            _already_utc (bool): Si True, timestamp est déjà en UTC
+                (ex: relu depuis la base Odoo). Pas de reconversion.
 
         Returns:
             str: Résultat du traitement ('accepted', 'duplicate_ignored',
@@ -126,18 +145,31 @@ class WinnersAttendanceProcessor(models.AbstractModel):
                 return 'unknown_id'
 
         # Conserver local_timestamp et générer utc_timestamp pour les écritures Odoo
-        local_timestamp = timestamp
-        tz_name = self.env.user.tz or self.env.context.get('tz') or 'Africa/Algiers'
-        try:
-            local_tz = pytz.timezone(tz_name)
-            local_dt = local_tz.localize(local_timestamp)
-            utc_timestamp = local_dt.astimezone(pytz.utc).replace(tzinfo=None)
-        except Exception:
-            utc_timestamp = local_timestamp - timedelta(hours=1)
+        # Si _already_utc=True, le timestamp est déjà en UTC (relu depuis la base)
+        # → pas de reconversion, sinon on double-décale d'1h
+        if _already_utc:
+            utc_timestamp = timestamp
+            # Reconvertir en heure locale pour la logique de fenêtre
+            tz_name = self.env.user.tz or self.env.context.get('tz') or 'Africa/Algiers'
+            try:
+                local_tz = pytz.timezone(tz_name)
+                utc_dt = pytz.utc.localize(utc_timestamp)
+                local_timestamp = utc_dt.astimezone(local_tz).replace(tzinfo=None)
+            except Exception:
+                local_timestamp = utc_timestamp + timedelta(hours=1)
+        else:
+            local_timestamp = timestamp
+            tz_name = self.env.user.tz or self.env.context.get('tz') or 'Africa/Algiers'
+            try:
+                local_tz = pytz.timezone(tz_name)
+                local_dt = local_tz.localize(local_timestamp)
+                utc_timestamp = local_dt.astimezone(pytz.utc).replace(tzinfo=None)
+            except Exception:
+                utc_timestamp = local_timestamp - timedelta(hours=1)
 
         _logger.info(
-            "Traitement pointage reçu : UID=%s, timestamp=%s (UTC: %s)",
-            zk_device_id, local_timestamp, utc_timestamp,
+            "Traitement pointage reçu : UID=%s, local=%s, UTC=%s (already_utc=%s)",
+            zk_device_id, local_timestamp, utc_timestamp, _already_utc,
         )
 
         # ────────────────────────────────────────
@@ -147,11 +179,20 @@ class WinnersAttendanceProcessor(models.AbstractModel):
             ('zk_device_id', '=', zk_device_id),
         ], limit=1)
 
-        if not student:
+        # ── LOG RÉSOLUTION UID (point 4 du ticket) ──
+        if student:
+            _logger.info(
+                "Résolution UID=%s → student_id=%s (%s %s)",
+                zk_device_id, student.id,
+                student.first_name or '', student.name,
+            )
+        else:
             _logger.warning(
-                "Aucun étudiant trouvé pour UID=%s",
+                "Résolution UID=%s → AUCUN",
                 zk_device_id,
             )
+
+        if not student:
             # Créer une anomalie
             Anomaly.create({
                 'zk_device_id': zk_device_id,
@@ -170,11 +211,6 @@ class WinnersAttendanceProcessor(models.AbstractModel):
                 'details': f"UID {zk_device_id} non trouvé dans Odoo.",
             })
             return 'unknown_id'
-
-        _logger.info(
-            "Étudiant trouvé: %s %s",
-            student.first_name or '', student.name,
-        )
 
         # ────────────────────────────────────────
         # ÉTAPE 2 : Anti-doublon (Règle B)
@@ -215,10 +251,10 @@ class WinnersAttendanceProcessor(models.AbstractModel):
         # ÉTAPE 3 : Chercher feuille(s) éligibles (Règle A)
         # ────────────────────────────────────────
         window_minutes = self._get_checkin_window_minutes()
-        checkin_date = timestamp.date()
+        checkin_date = local_timestamp.date()
 
         # Convertir le timestamp en heure float pour comparaison
-        checkin_float = timestamp.hour + timestamp.minute / 60.0
+        checkin_float = local_timestamp.hour + local_timestamp.minute / 60.0
 
         # Fenêtre en heures float
         window_float = window_minutes / 60.0
@@ -234,12 +270,18 @@ class WinnersAttendanceProcessor(models.AbstractModel):
         eligible_sheets = Sheet.browse()
         for sheet in today_sheets:
             # L'étudiant doit être dans le groupe de la feuille
-            if student.id not in sheet.group_id.student_ids.ids:
+            active_enrollment = sheet.group_id.enrollment_ids.filtered(
+                lambda enrollment: enrollment.student_id.id == student.id
+                and enrollment.status == 'active'
+            )
+            if not active_enrollment and student.id not in sheet.group_id.student_ids.ids:
                 continue
 
             # Vérifier la fenêtre de temps
             time_start = sheet.time_start
-            if abs(checkin_float - time_start) <= window_float:
+            if abs(checkin_float - time_start) <= window_float or (
+                sheet.time_start <= checkin_float <= sheet.time_end
+            ):
                 eligible_sheets |= sheet
 
         # ────────────────────────────────────────
@@ -304,6 +346,8 @@ class WinnersAttendanceProcessor(models.AbstractModel):
             # Déterminer la raison précise
             student_sheets_today = Sheet.search([
                 ('date', '=', checkin_date),
+                '|',
+                ('group_id.enrollment_ids.student_id', '=', student.id),
                 ('group_id.student_ids', 'in', [student.id]),
             ])
 
@@ -369,6 +413,19 @@ class WinnersAttendanceProcessor(models.AbstractModel):
         )
 
         new_checkins = []
+        report = {
+            'bridge_url': bridge_url,
+            'bridge_count': 0,
+            'oldest_timestamp': '',
+            'latest_timestamp': '',
+            'processed': 0,
+            'skipped_dedup': 0,
+            'skipped_invalid': 0,
+            'accepted_count': 0,
+            'reprocessed_count': 0,
+            'reprocess_results': {},
+            'error': '',
+        }
 
         # Appeler le bridge
         try:
@@ -382,11 +439,15 @@ class WinnersAttendanceProcessor(models.AbstractModel):
                 "Vérifiez que le service est démarré.",
                 bridge_url,
             )
+            report['error'] = "Bridge inaccessible"
+            self._save_last_sync_report(report)
             return new_checkins
         except requests.Timeout:
             _logger.error(
                 "Sync ZKTeco: timeout du bridge (%s).", bridge_url,
             )
+            report['error'] = "Timeout bridge"
+            self._save_last_sync_report(report)
             return new_checkins
 
         if response.status_code != 200:
@@ -394,6 +455,8 @@ class WinnersAttendanceProcessor(models.AbstractModel):
                 "Sync ZKTeco: erreur HTTP %s du bridge.",
                 response.status_code,
             )
+            report['error'] = f"Erreur HTTP bridge {response.status_code}"
+            self._save_last_sync_report(report)
             return new_checkins
 
         data = response.json()
@@ -405,10 +468,13 @@ class WinnersAttendanceProcessor(models.AbstractModel):
             return new_checkins
 
         transactions = data.get('data', {}).get('transactions', [])
+        report['bridge_count'] = len(transactions)
 
         # ── Diagnostic : afficher les bornes des transactions reçues ──
         if transactions:
             timestamps_str = [t.get('timestamp', '') for t in transactions]
+            report['oldest_timestamp'] = min(timestamps_str) if timestamps_str else ''
+            report['latest_timestamp'] = max(timestamps_str) if timestamps_str else ''
             _logger.info(
                 "Sync ZKTeco: %d transaction(s) reçue(s) — "
                 "plus ancienne: %s, plus récente: %s",
@@ -487,7 +553,70 @@ class WinnersAttendanceProcessor(models.AbstractModel):
             "%d invalide(s), %d nouveau(x) présent(s).",
             processed, skipped_dedup, skipped_invalid, len(new_checkins),
         )
+        reprocess_report = self.reprocess_today_not_accepted()
+        for full_name in reprocess_report.get('accepted_names', []):
+            if full_name not in new_checkins:
+                new_checkins.append(full_name)
+
+        if reprocess_report.get('accepted_names'):
+            _logger.info(
+                "Sync ZKTeco: retraitement auto — %d présence(s) récupérée(s).",
+                len(reprocess_report.get('accepted_names')),
+            )
+        report.update({
+            'processed': processed,
+            'skipped_dedup': skipped_dedup,
+            'skipped_invalid': skipped_invalid,
+            'accepted_count': len(new_checkins),
+            'reprocessed_count': len(reprocess_report.get('accepted_names', [])),
+            'reprocess_results': reprocess_report.get('results', {}),
+        })
+        self._save_last_sync_report(report)
         return new_checkins
+
+    @api.model
+    def reprocess_today_not_accepted(self):
+        """
+        Retraite les transactions du jour qui ont ete sauvegardees mais
+        n'ont pas donne une presence acceptee.
+
+        IMPORTANT : les timestamps dans processed.txn sont stockés en UTC
+        (valeur naive, convention Odoo). On passe _already_utc=True pour
+        éviter une double conversion local→UTC.
+        """
+        ProcessedTxn = self.env['winners.attendance.processed.txn'].sudo()
+        today = fields.Date.today()
+        start_dt = fields.Datetime.from_string(f'{today} 00:00:00')
+        end_dt = fields.Datetime.from_string(f'{today} 23:59:59')
+
+        transactions = ProcessedTxn.search([
+            ('timestamp', '>=', start_dt),
+            ('timestamp', '<=', end_dt),
+            ('result', '!=', 'accepted'),
+        ], order='timestamp asc')
+
+        accepted_names = []
+        results = {}
+        for txn in transactions:
+            result = self.process_checkin(
+                txn.zk_user_id, txn.timestamp,
+            )
+            txn.result = result
+            results[result] = results.get(result, 0) + 1
+
+            if result == 'accepted':
+                student = self.env['winners.student'].sudo().search([
+                    ('zk_device_id', '=', txn.zk_user_id),
+                ], limit=1)
+                if student:
+                    full_name = f"{student.first_name or ''} {student.name}"
+                    accepted_names.append(full_name.strip())
+
+        return {
+            'count': len(transactions),
+            'accepted_names': accepted_names,
+            'results': results,
+        }
 
     @api.model
     def _cron_sync_zkteco(self):
@@ -571,6 +700,53 @@ class WinnersAttendanceProcessor(models.AbstractModel):
                     f"{count} entrée(s) supprimée(s). "
                     "La prochaine synchronisation re-traitera toutes les "
                     "transactions depuis la pointeuse."
+                ),
+                'type': 'warning',
+                'sticky': True,
+            },
+        }
+
+    @api.model
+    def action_purge_test_anomalies(self):
+        """
+        Supprime les anomalies de test (Super Admin uniquement).
+        Par défaut : toutes les anomalies antérieures à aujourd'hui.
+        """
+        if not self.env.user.has_group('winners_auth.winners_group_super_admin'):
+            raise UserError(
+                "Seul le Super Administrateur peut purger les anomalies."
+            )
+        Anomaly = self.env['winners.attendance.anomaly'].sudo()
+        today_start = fields.Datetime.from_string(
+            f'{fields.Date.today()} 00:00:00'
+        )
+        old_anomalies = Anomaly.search([
+            ('timestamp', '<', today_start),
+        ])
+        count = len(old_anomalies)
+        old_anomalies.unlink()
+
+        # Aussi supprimer les sync_logs correspondants
+        SyncLog = self.env['winners.attendance.sync.log'].sudo()
+        old_logs = SyncLog.search([
+            ('timestamp', '<', today_start),
+        ])
+        log_count = len(old_logs)
+        old_logs.unlink()
+
+        _logger.warning(
+            "SUPER ADMIN: Purge anomalies de test — "
+            "%d anomalie(s) et %d log(s) supprimé(s) (avant %s)",
+            count, log_count, today_start,
+        )
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Purge terminée',
+                'message': (
+                    f"{count} anomalie(s) et {log_count} log(s) de synchro "
+                    f"supprimé(s) (antérieurs à aujourd'hui)."
                 ),
                 'type': 'warning',
                 'sticky': True,

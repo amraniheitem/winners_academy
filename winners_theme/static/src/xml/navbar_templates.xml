@@ -8,9 +8,7 @@
 
     <t t-inherit="web.NavBar.SectionsMenu" t-inherit-mode="extension">
         <xpath expr="//DropdownItem" position="attributes">
-            <attribute name="class">{ 
-                'o_nav_entry': true, 
-                'active': env.services.router.current &amp;&amp; (
+            <attribute name="class">'o_nav_entry' + ((env.services.router.current &amp;&amp; (
                     env.services.router.current.hash.menu_id == section.id || 
                     (section.childrenTree &amp;&amp; section.childrenTree.some(c =&gt; 
                         env.services.router.current.hash.menu_id == c.id || 
@@ -18,12 +16,10 @@
                             env.services.router.current.hash.menu_id == cc.id
                         ))
                     ))
-                )
-            }</attribute>
+                )) ? ' active' : '')</attribute>
         </xpath>
         <xpath expr="//MenuDropdown" position="attributes">
-            <attribute name="class">{ 
-                'active': env.services.router.current &amp;&amp; (
+            <attribute name="class">(env.services.router.current &amp;&amp; (
                     env.services.router.current.hash.menu_id == section.id || 
                     (section.childrenTree &amp;&amp; section.childrenTree.some(c =&gt; 
                         env.services.router.current.hash.menu_id == c.id || 
@@ -31,8 +27,7 @@
                             env.services.router.current.hash.menu_id == cc.id
                         ))
                     ))
-                )
-            }</attribute>
+                )) ? 'active' : ''</attribute>
         </xpath>
     </t>
 </templates>

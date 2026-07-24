@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_winners_teacher_earning_sheet_form_inherit_print" model="ir.ui.view">
+            <field name="name">winners.teacher.earning.sheet.form.inherit.print</field>
+            <field name="model">winners.teacher.earning.sheet</field>
+            <field name="inherit_id" ref="winners_salary.view_winners_teacher_earning_sheet_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button string="🖨️ Imprimer Bordereau (Thermique)"
+                            type="object"
+                            name="action_print_bordereau"
+                            class="btn-primary"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

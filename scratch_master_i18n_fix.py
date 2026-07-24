@@ -7,7 +7,7 @@ import odoo
 sys.stdout.reconfigure(encoding='utf-8')
 
 config_file = r"C:\odoo17\odoo.conf"
-odoo.tools.config.parse_config(["-c", config_file, "-d", "odoo-test"])
+odoo.tools.config.parse_config(["-c", config_file])
 
 # ═══════════════════════════════════════════════════════════════
 # COMPLETE TRANSLATION MAP  — Every visible French string → Arabic
@@ -361,14 +361,26 @@ def fix_arabic_numerals(cr):
     print("[res_lang] Fixed Arabic locale to use Western numerals and dd/mm/yyyy format")
 
 
+def grant_admin_role(cr, env):
+    """Grant Super Admin role to user admin (ID 2)."""
+    admin_user = env['res.users'].browse(2)
+    if admin_user.exists():
+        admin_user.write({'winners_role': 'super_admin'})
+        admin_user._sync_winners_groups()
+        print("[res.users] Granted Super Admin role to user admin (ID 2)")
+
+
 def main():
-    db_name = "odoo-test"
+    db_name = odoo.tools.config['db_name'] or "winners_db"
+    print(f"Targeting database: {db_name}")
     registry = odoo.registry(db_name)
     with registry.cursor() as cr:
+        env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
         print("=" * 60)
-        print("  MASTER i18n FIX — All tables + Views + Numerals")
+        print("  MASTER i18n & ROLES FIX — All tables + Views + Admin Role")
         print("=" * 60)
 
+        grant_admin_role(cr, env)
         fix_table_column(cr, "ir_ui_menu", "name")
         fix_table_column(cr, "ir_model_fields", "field_description")
         fix_table_column(cr, "ir_model_fields", "help")

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!-- Override branch menu: restrict to Super Admin -->
+        <menuitem id="winners_branch.menu_winners_branch"
+                  name="Branches"
+                  groups="winners_auth.winners_group_super_admin"/>
 
         <!-- Form View Inheritance -->
         <record id="view_users_form_winners_inherit" model="ir.ui.view">
@@ -54,5 +58,12 @@
             </field>
         </record>
 
+        <!-- Menu Item -->
+        <menuitem id="menu_winners_user"
+                  name="Employés"
+                  parent="winners_branch.menu_winners_personnes"
+                  action="action_winners_user"
+                  sequence="5"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>
     </data>
 </odoo>

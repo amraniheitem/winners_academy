@@ -1,6 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_winners_branch_super_admin,winners.branch super admin,model_winners_branch,winners_auth.winners_group_super_admin,1,1,1,1
-access_winners_branch_director,winners.branch director,model_winners_branch,winners_auth.winners_group_director,1,1,1,1
-access_winners_branch_secretary,winners.branch secretary,model_winners_branch,winners_auth.winners_group_secretary,1,0,0,0
-access_winners_branch_teacher,winners.branch teacher,model_winners_branch,winners_auth.winners_group_teacher,1,0,0,0
-access_winners_branch_cashier,winners.branch cashier,model_winners_branch,winners_auth.winners_group_cashier,1,0,0,0
+access_winners_branch_user,winners.branch user,model_winners_branch,base.group_user,1,0,0,0
+access_winners_branch_admin,winners.branch admin,model_winners_branch,base.group_system,1,1,1,1

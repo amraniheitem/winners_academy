@@ -6,15 +6,12 @@
     "summary": "Gestion des branches Winners Academy",
     "depends": [
         "base",
-        "winners_auth",
     ],
     "data": [
         "security/ir.model.access.csv",
-        "security/ir_rules.xml",
         "views/winners_branch_views.xml",
     ],
     "installable": True,
     "auto_install": False,
     "license": "LGPL-3",
 }
-

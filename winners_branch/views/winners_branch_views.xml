@@ -67,6 +67,13 @@
                   parent="menu_winners_academy_root"
                   sequence="15"/>
 
+        <menuitem id="menu_winners_user"
+                  name="Employés"
+                  parent="menu_winners_personnes"
+                  action="winners_auth.action_winners_user"
+                  sequence="5"
+                  groups="winners_auth.winners_group_super_admin,winners_auth.winners_group_director"/>
+
         <menuitem id="menu_winners_pointage"
                   name="Pointage"
                   parent="menu_winners_academy_root"
@@ -76,7 +83,8 @@
                   name="Branches"
                   parent="menu_winners_academy_root"
                   action="action_winners_branch"
-                  sequence="10"/>
+                  sequence="10"
+                  groups="winners_auth.winners_group_super_admin"/>
 
     </data>
 </odoo>

@@ -92,6 +92,14 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+REM Sanity check: fail early if a required import is still missing
+"%BRIDGE_PYTHON%" -c "import flask, requests, waitress, zk"
+if %errorlevel% neq 0 (
+    echo ERROR: One or more bridge dependencies are still missing.
+    pause
+    exit /b 1
+)
+
 echo Installing %SERVICE_NAME%...
 echo System Python: %PYTHON_EXE%
 echo Bridge Python: %BRIDGE_PYTHON%

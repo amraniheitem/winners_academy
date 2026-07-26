@@ -1,3 +1,4 @@
 flask
 pyzk
 waitress
+requests

@@ -72,7 +72,27 @@ if exist "C:\odoo17\odoo.conf" (
     echo [ATTENTION] C:\odoo17\odoo.conf est introuvable.
 )
 
-:: 2. Creation automatique du venv C:\odoo17\venv si necessaire
+:: 2. Installation du service ZK Bridge en arriere-plan
+echo.
+echo [2/5] Installation et demarrage du service ZK Bridge...
+if exist "%~dp0zk_bridge\install_service.bat" (
+    call "%~dp0zk_bridge\install_service.bat"
+) else (
+    echo [ATTENTION] Script ZK Bridge introuvable: "%~dp0zk_bridge\install_service.bat"
+)
+
+echo [INFO] Attente de la disponibilite du bridge ZK...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ok = $false; for ($i = 0; $i -lt 30; $i++) { try { $r = Invoke-RestMethod 'http://localhost:5000/device/status' -TimeoutSec 2; if ($r.success) { $ok = $true; break } } catch {} ; Start-Sleep -Seconds 1 }; if (-not $ok) { exit 1 }"
+if %errorlevel% neq 0 (
+    echo [ATTENTION] Le bridge ZK n'a pas repondu a temps.
+    echo Verifiez le service ZKBridgeService et les logs dans zk_bridge.
+)
+
+if exist "%~dp0zk_bridge\setup_zk_task.ps1" (
+    powershell -ExecutionPolicy Bypass -File "%~dp0zk_bridge\setup_zk_task.ps1"
+)
+
+:: 3. Creation automatique du venv C:\odoo17\venv si necessaire
 if not exist "C:\odoo17\venv\Scripts\python.exe" (
     echo [INFO] Creation automatique de l'environnement virtuel C:\odoo17\venv...
     if not exist "C:\odoo17" mkdir "C:\odoo17"
@@ -81,14 +101,14 @@ if not exist "C:\odoo17\venv\Scripts\python.exe" (
 
 set "PYTHON_EXE=C:\odoo17\venv\Scripts\python.exe"
 
-:: 3. Verification Odoo
+:: 4. Verification Odoo
 if not exist "C:\odoo17\odoo-bin" (
     echo [INFO] Odoo 17 initialise dans C:\odoo17.
 )
 
-:: 4. Installation / mise a jour des modules Winners
+:: 5. Installation / mise a jour des modules Winners
 echo.
-echo [2/4] Installation et mise a jour des modules custom Winners...
+echo [3/5] Installation et mise a jour des modules custom Winners...
 set "PYTHONPATH=C:\odoo17"
 if exist "C:\odoo17\odoo-bin" (
     pushd "C:\odoo17"
@@ -96,31 +116,18 @@ if exist "C:\odoo17\odoo-bin" (
     popd
 )
 
-:: 5. Traduction & Formatage Chiffres (123)
+:: 6. Traduction & Formatage Chiffres (123)
 echo.
-echo [3/4] Application des traductions bilingues et formatage des chiffres 123...
+echo [4/5] Application des traductions bilingues et formatage des chiffres 123...
 if exist "%~dp0scratch_master_i18n_fix.py" (
     "%PYTHON_EXE%" "%~dp0scratch_master_i18n_fix.py"
 )
 
-:: 6. Creation du Raccourci Bureau Application Native
+:: 7. Creation du Raccourci Bureau Application Native
 echo.
-echo [4/4] Creation du raccourci Bureau Application Native...
+echo [5/5] Creation du raccourci Bureau Application Native...
 if exist "%~dp0create_desktop_shortcut.ps1" (
     powershell -ExecutionPolicy Bypass -File "%~dp0create_desktop_shortcut.ps1"
-)
-
-:: 7. Installation du service ZK Bridge en arriere-plan
-echo.
-echo [5/5] Installation et demarrage du service ZK Bridge...
-if exist "%~dp0zk_bridge\install_service.bat" (
-    call "%~dp0zk_bridge\install_service.bat"
-) else (
-    echo [ATTENTION] Script ZK Bridge introuvable: "%~dp0zk_bridge\install_service.bat"
-)
-
-if exist "%~dp0zk_bridge\setup_zk_task.ps1" (
-    powershell -ExecutionPolicy Bypass -File "%~dp0zk_bridge\setup_zk_task.ps1"
 )
 
 echo.

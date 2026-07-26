@@ -1,6 +1,6 @@
 // ============================================================================
-// Winners Academy — Electron Main Process
-// Application de bureau native pour Winners Academy (Odoo 17)
+// Winners Academy & Winners TV — Electron Main Process
+// Application de bureau native pour Winners Academy (Odoo 17) & Affichage TV (/tv)
 // ============================================================================
 
 const { app, BrowserWindow, Menu, Tray, shell, dialog, nativeImage } = require('electron');
@@ -9,6 +9,14 @@ const { spawn } = require('child_process');
 const net = require('net');
 const fs = require('fs');
 
+// ── App Mode Detection (Academy vs TV) ──────────────────────────────────────
+const appNameLower = (app.name || app.getName() || '').toLowerCase();
+const isTV = appNameLower.includes('tv') ||
+             process.argv.includes('--tv') ||
+             process.env.APP_MODE === 'tv';
+
+console.log('[App] Mode initialisé:', isTV ? 'WINNERS TV (/tv)' : 'WINNERS ACADEMY (/web)');
+
 // ── Configuration ───────────────────────────────────────────────────────────
 const CONFIG = {
   odoo: {
@@ -16,20 +24,23 @@ const CONFIG = {
     bin: 'C:\\odoo17\\odoo-bin',
     conf: 'C:\\odoo17\\odoo.conf',
     url: 'http://localhost:8069',
-    webPath: '/web',
+    webPath: isTV ? '/tv' : '/web',
     host: 'localhost',
     port: 8069,
   },
   zkBridge: {
-    // Use absolute path — the zk_bridge lives in the winners project folder
     script: 'C:\\Users\\dell\\Desktop\\winners\\zk_bridge\\zk_bridge_service.py',
   },
   app: {
-    title: 'Winners Academy',
-    width: 1380,
-    height: 860,
+    title: isTV ? 'Winners TV — Écran d\'Affichage' : 'Winners Academy',
+    width: isTV ? 1920 : 1380,
+    height: isTV ? 1080 : 860,
     minWidth: 1024,
     minHeight: 700,
+    kiosk: isTV,
+    fullscreen: isTV,
+    frame: !isTV,
+    splashHtml: isTV ? 'splash_tv.html' : 'splash.html',
   },
 };
 
@@ -70,7 +81,7 @@ function waitForOdoo(maxAttempts = 60, interval = 1500) {
       socket.on('timeout', () => {
         socket.destroy();
         if (attempts >= maxAttempts) {
-          reject(new Error('Odoo server did not start in time'));
+          reject(new Error('Le serveur Odoo n\'a pas répondu à temps'));
         } else {
           setTimeout(tryConnect, interval);
         }
@@ -78,7 +89,7 @@ function waitForOdoo(maxAttempts = 60, interval = 1500) {
       socket.on('error', () => {
         socket.destroy();
         if (attempts >= maxAttempts) {
-          reject(new Error('Odoo server did not start in time'));
+          reject(new Error('Le serveur Odoo n\'a pas répondu à temps'));
         } else {
           setTimeout(tryConnect, interval);
         }
@@ -114,7 +125,7 @@ function isOdooRunning() {
 async function launchOdoo() {
   const alreadyRunning = await isOdooRunning();
   if (alreadyRunning) {
-    console.log('[Odoo] Server is already running on port', CONFIG.odoo.port);
+    console.log('[Odoo] Serveur déjà en cours d\'exécution sur le port', CONFIG.odoo.port);
     return;
   }
 
@@ -127,7 +138,7 @@ async function launchOdoo() {
     return;
   }
 
-  console.log('[Odoo] Starting server...');
+  console.log('[Odoo] Démarrage du serveur Odoo...');
   odooProcess = spawn(CONFIG.odoo.python, [CONFIG.odoo.bin, '-c', CONFIG.odoo.conf], {
     cwd: 'C:\\odoo17',
     env: { ...process.env, PYTHONPATH: 'C:\\odoo17' },
@@ -136,7 +147,6 @@ async function launchOdoo() {
     windowsHide: true,
   });
 
-  // Log Odoo stdout/stderr for debugging
   if (odooProcess.stdout) {
     odooProcess.stdout.on('data', (data) => {
       console.log('[Odoo]', data.toString().trim());
@@ -149,23 +159,54 @@ async function launchOdoo() {
   }
 
   odooProcess.on('error', (err) => {
-    console.error('[Odoo] Failed to start:', err.message);
+    console.error('[Odoo] Échec de démarrage:', err.message);
   });
 
   odooProcess.on('exit', (code) => {
-    console.log('[Odoo] Process exited with code', code);
+    console.log('[Odoo] Processus terminé avec le code', code);
     odooProcess = null;
   });
 }
 
-// ── Launch ZK Bridge ────────────────────────────────────────────────────────
-function launchZKBridge() {
+// ── ZK Bridge Configuration ─────────────────────────────────────────────────
+const ZK_BRIDGE_PORT = 5000;
+const ZK_BRIDGE_HOST = 'localhost';
+const ZK_WATCHDOG_INTERVAL = 30000;
+let zkWatchdogTimer = null;
+
+function isZKBridgeRunning() {
+  return new Promise((resolve) => {
+    const socket = new net.Socket();
+    socket.setTimeout(1500);
+    socket.on('connect', () => {
+      socket.destroy();
+      resolve(true);
+    });
+    socket.on('timeout', () => {
+      socket.destroy();
+      resolve(false);
+    });
+    socket.on('error', () => {
+      socket.destroy();
+      resolve(false);
+    });
+    socket.connect(ZK_BRIDGE_PORT, ZK_BRIDGE_HOST);
+  });
+}
+
+async function launchZKBridge() {
   if (!fs.existsSync(CONFIG.zkBridge.script)) {
-    console.log('[ZKBridge] Script not found, skipping:', CONFIG.zkBridge.script);
+    console.log('[ZKBridge] Script introuvable:', CONFIG.zkBridge.script);
     return;
   }
 
-  console.log('[ZKBridge] Starting bridge service...');
+  const alreadyRunning = await isZKBridgeRunning();
+  if (alreadyRunning) {
+    console.log('[ZKBridge] Service déjà en cours sur le port', ZK_BRIDGE_PORT);
+    return;
+  }
+
+  console.log('[ZKBridge] Démarrage du service ZK Bridge...');
   zkBridgeProcess = spawn(CONFIG.odoo.python, [CONFIG.zkBridge.script], {
     stdio: 'ignore',
     detached: false,
@@ -173,13 +214,34 @@ function launchZKBridge() {
   });
 
   zkBridgeProcess.on('error', (err) => {
-    console.error('[ZKBridge] Failed to start:', err.message);
+    console.error('[ZKBridge] Échec de démarrage:', err.message);
+    zkBridgeProcess = null;
   });
 
   zkBridgeProcess.on('exit', (code) => {
-    console.log('[ZKBridge] Process exited with code', code);
+    console.log('[ZKBridge] Processus terminé avec le code', code);
     zkBridgeProcess = null;
   });
+}
+
+function startZKBridgeWatchdog() {
+  if (zkWatchdogTimer) return;
+  console.log('[ZKBridge] Watchdog démarré — surveillance toutes les 30s');
+  zkWatchdogTimer = setInterval(async () => {
+    if (isQuitting) return;
+    const running = await isZKBridgeRunning();
+    if (!running) {
+      console.warn('[ZKBridge] Watchdog: service DOWN — redémarrage auto...');
+      await launchZKBridge();
+    }
+  }, ZK_WATCHDOG_INTERVAL);
+}
+
+function stopZKBridgeWatchdog() {
+  if (zkWatchdogTimer) {
+    clearInterval(zkWatchdogTimer);
+    zkWatchdogTimer = null;
+  }
 }
 
 // ── Create Splash Screen ───────────────────────────────────────────────────
@@ -193,30 +255,27 @@ function createSplashWindow() {
     alwaysOnTop: true,
     skipTaskbar: false,
     center: true,
-    title: 'Winners Academy',
+    title: CONFIG.app.title,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
     },
   });
 
-  splashWindow.loadFile(path.join(__dirname, 'splash.html'));
+  splashWindow.loadFile(path.join(__dirname, CONFIG.app.splashHtml));
   splashWindow.on('closed', () => {
     splashWindow = null;
   });
 }
 
-// ── Resolve icon path (works in dev and packaged mode) ──────────────────────
+// ── Resolve icon path ──────────────────────────────────────────────────────
 function getIconPath() {
-  // In packaged app, __dirname is inside app.asar
-  // Assets are also packed, so use path within asar
   const devIconPng = path.join(__dirname, 'assets', 'icon.png');
   const devIconIco = path.join(__dirname, 'assets', 'icon.ico');
 
   if (fs.existsSync(devIconPng)) return devIconPng;
   if (fs.existsSync(devIconIco)) return devIconIco;
 
-  // Fallback: try extraResources location
   const extraPng = path.join(process.resourcesPath, 'assets', 'icon.png');
   const extraIco = path.join(process.resourcesPath, 'assets', 'icon.ico');
   if (fs.existsSync(extraPng)) return extraPng;
@@ -238,7 +297,9 @@ function createMainWindow() {
     title: CONFIG.app.title,
     icon: iconPath || undefined,
     show: false,
-    frame: true,
+    frame: CONFIG.app.frame,
+    fullscreen: CONFIG.app.fullscreen,
+    kiosk: CONFIG.app.kiosk,
     autoHideMenuBar: true,
     backgroundColor: '#0F172A',
     webPreferences: {
@@ -252,7 +313,7 @@ function createMainWindow() {
   // ── Custom Application Menu ───────────────────────────────────────────
   const menuTemplate = [
     {
-      label: 'Winners Academy',
+      label: CONFIG.app.title,
       submenu: [
         {
           label: 'Rafraîchir',
@@ -260,32 +321,26 @@ function createMainWindow() {
           click: () => mainWindow.webContents.reload(),
         },
         {
-          label: 'Plein écran',
+          label: isTV ? 'Basculer Plein Écran' : 'Plein Écran',
           accelerator: 'F11',
-          click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()),
-        },
-        { type: 'separator' },
-        {
-          label: 'Zoom +',
-          accelerator: 'CmdOrCtrl+=',
           click: () => {
-            const zoom = mainWindow.webContents.getZoomFactor();
-            mainWindow.webContents.setZoomFactor(Math.min(zoom + 0.1, 2.0));
+            if (isTV) {
+              const isK = mainWindow.isKiosk();
+              mainWindow.setKiosk(!isK);
+              mainWindow.setFullScreen(!isK);
+            } else {
+              mainWindow.setFullScreen(!mainWindow.isFullScreen());
+            }
           },
         },
-        {
-          label: 'Zoom -',
-          accelerator: 'CmdOrCtrl+-',
+        ...(isTV ? [{
+          label: 'Quitter le Mode Kiosque (Échap)',
+          accelerator: 'Escape',
           click: () => {
-            const zoom = mainWindow.webContents.getZoomFactor();
-            mainWindow.webContents.setZoomFactor(Math.max(zoom - 0.1, 0.5));
+            mainWindow.setKiosk(false);
+            mainWindow.setFullScreen(false);
           },
-        },
-        {
-          label: 'Zoom par défaut',
-          accelerator: 'CmdOrCtrl+0',
-          click: () => mainWindow.webContents.setZoomFactor(1.0),
-        },
+        }] : []),
         { type: 'separator' },
         {
           label: 'Quitter',
@@ -302,9 +357,10 @@ function createMainWindow() {
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
 
-  // ── Load Odoo Web ─────────────────────────────────────────────────────
-  console.log('[App] Loading URL:', CONFIG.odoo.url + CONFIG.odoo.webPath);
-  mainWindow.loadURL(CONFIG.odoo.url + CONFIG.odoo.webPath);
+  // ── Load Target URL ───────────────────────────────────────────────────
+  const targetUrl = CONFIG.odoo.url + CONFIG.odoo.webPath;
+  console.log('[App] Chargement de l\'URL:', targetUrl);
+  mainWindow.loadURL(targetUrl);
 
   // ── Show window once content is ready ─────────────────────────────────
   let windowShown = false;
@@ -316,33 +372,28 @@ function createMainWindow() {
       splashWindow.close();
     }
     mainWindow.show();
-    mainWindow.maximize();
+    if (!isTV) {
+      mainWindow.maximize();
+    }
     mainWindow.focus();
-    console.log('[App] Main window shown');
+    console.log('[App] Fenêtre affichée avec succès');
   };
 
   mainWindow.once('ready-to-show', () => {
-    console.log('[App] ready-to-show fired');
     showMainWindow();
   });
 
-  // Fallback: force show after 8 seconds even if ready-to-show hasn't fired
   setTimeout(() => {
-    console.log('[App] Timeout fallback — forcing window display');
     showMainWindow();
   }, 8000);
 
-  // Handle page load errors
   mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
-    console.error('[App] Page load failed:', errorCode, errorDescription);
-    // Retry after 3 seconds
+    console.error('[App] Échec de chargement:', errorCode, errorDescription);
     setTimeout(() => {
-      console.log('[App] Retrying page load...');
-      mainWindow.loadURL(CONFIG.odoo.url + CONFIG.odoo.webPath);
+      mainWindow.loadURL(targetUrl);
     }, 3000);
   });
 
-  // Prevent navigating away from Odoo domain
   mainWindow.webContents.on('will-navigate', (event, url) => {
     if (!url.startsWith(CONFIG.odoo.url)) {
       event.preventDefault();
@@ -350,7 +401,6 @@ function createMainWindow() {
     }
   });
 
-  // Open external links in default browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (!url.startsWith(CONFIG.odoo.url)) {
       shell.openExternal(url);
@@ -359,7 +409,6 @@ function createMainWindow() {
     return { action: 'allow' };
   });
 
-  // Minimize to tray instead of closing (only if tray exists)
   mainWindow.on('close', (event) => {
     if (!isQuitting) {
       event.preventDefault();
@@ -371,7 +420,6 @@ function createMainWindow() {
     mainWindow = null;
   });
 
-  // Always show "Winners Academy" as window title
   mainWindow.webContents.on('page-title-updated', (event) => {
     event.preventDefault();
     mainWindow.setTitle(CONFIG.app.title);
@@ -386,22 +434,18 @@ function createTray() {
 
     if (iconPath) {
       trayIcon = nativeImage.createFromPath(iconPath);
-      if (trayIcon.isEmpty()) {
-        console.warn('[Tray] Icon loaded but is empty, skipping tray');
-        return;
-      }
+      if (trayIcon.isEmpty()) return;
       trayIcon = trayIcon.resize({ width: 16, height: 16 });
     } else {
-      console.warn('[Tray] No icon found, skipping tray creation');
       return;
     }
 
     tray = new Tray(trayIcon);
-    tray.setToolTip('Winners Academy');
+    tray.setToolTip(CONFIG.app.title);
 
     const contextMenu = Menu.buildFromTemplate([
       {
-        label: 'Ouvrir Winners Academy',
+        label: `Ouvrir ${CONFIG.app.title}`,
         click: () => {
           if (mainWindow) {
             mainWindow.show();
@@ -426,59 +470,51 @@ function createTray() {
         mainWindow.focus();
       }
     });
-    console.log('[Tray] System tray created successfully');
   } catch (err) {
-    console.warn('[Tray] Failed to create system tray:', err.message);
-    // App works fine without tray
+    console.warn('[Tray] Erreur création tray:', err.message);
   }
 }
 
-// ── Cleanup background processes ────────────────────────────────────────────
+// ── Cleanup ─────────────────────────────────────────────────────────────────
 function cleanupProcesses() {
+  stopZKBridgeWatchdog();
   if (odooProcess && !odooProcess.killed) {
-    console.log('[Cleanup] Killing Odoo process...');
-    try { process.kill(odooProcess.pid); } catch (e) { /* ignore */ }
+    try { process.kill(odooProcess.pid); } catch (e) {}
   }
   if (zkBridgeProcess && !zkBridgeProcess.killed) {
-    console.log('[Cleanup] Killing ZKBridge process...');
-    try { process.kill(zkBridgeProcess.pid); } catch (e) { /* ignore */ }
+    try { process.kill(zkBridgeProcess.pid); } catch (e) {}
   }
 }
 
 // ── App Lifecycle ───────────────────────────────────────────────────────────
 app.on('ready', async () => {
-  console.log('[App] Winners Academy Desktop starting...');
-  console.log('[App] __dirname:', __dirname);
-  console.log('[App] resourcesPath:', process.resourcesPath);
+  console.log(`[App] Démarrage de ${CONFIG.app.title}...`);
 
-  // 1. Show splash screen
   createSplashWindow();
 
-  // 2. Launch backend services
   await launchOdoo();
-  launchZKBridge();
+  await launchZKBridge();
 
-  // 3. Wait for Odoo to be ready
   try {
-    console.log('[App] Waiting for Odoo server...');
     await waitForOdoo(60, 1500);
-    console.log('[App] Odoo server is ready!');
+    console.log('[App] Serveur Odoo prêt !');
   } catch (err) {
     console.error('[App]', err.message);
     if (splashWindow && !splashWindow.isDestroyed()) {
       splashWindow.close();
     }
     dialog.showErrorBox(
-      'Erreur de Démarrage',
-      'Le serveur Odoo n\'a pas répondu dans le délai imparti (90 secondes).\n\nVérifiez que :\n1. PostgreSQL est démarré\n2. La base de données est initialisée\n3. Le fichier odoo.conf est correct'
+      `Erreur de Démarrage — ${CONFIG.app.title}`,
+      'Le serveur Odoo n\'a pas répondu dans le délai imparti.\n\nVérifiez PostgreSQL et la configuration.'
     );
     app.quit();
     return;
   }
 
-  // 4. Create main window and system tray
   createMainWindow();
   createTray();
+
+  startZKBridgeWatchdog();
 });
 
 app.on('before-quit', () => {

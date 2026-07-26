@@ -28,9 +28,9 @@ class WinnersAttendanceProcessor(models.AbstractModel):
     # ══════════════════════════════════════════════════════════
 
     def _get_checkin_window_minutes(self):
-        """Récupère la fenêtre d'acceptation en minutes (défaut: 15)."""
+        """Récupère la fenêtre d'acceptation en minutes (défaut: 45)."""
         ICP = self.env['ir.config_parameter'].sudo()
-        return int(ICP.get_param('checkin_window_minutes', '15'))
+        return int(ICP.get_param('checkin_window_minutes', '45'))
 
     def _get_duplicate_block_hours(self):
         """Récupère le délai anti-doublon en heures (défaut: 2)."""
@@ -42,6 +42,25 @@ class WinnersAttendanceProcessor(models.AbstractModel):
         ICP = self.env['ir.config_parameter'].sudo()
         url = ICP.get_param('zk_bridge_url', 'http://localhost:5000')
         return url.rstrip('/')
+
+    def _update_bridge_status(self, is_reachable):
+        """Met à jour le statut de connectivité du bridge dans ir.config_parameter."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        now_str = fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        ICP.set_param('zk_bridge.last_check_time', now_str)
+        ICP.set_param('zk_bridge.is_reachable', 'True' if is_reachable else 'False')
+        if is_reachable:
+            ICP.set_param('zk_bridge.last_success_time', now_str)
+
+    @api.model
+    def get_bridge_status(self):
+        """Retourne le statut du bridge pour affichage dans l'UI."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        return {
+            'last_check_time': ICP.get_param('zk_bridge.last_check_time', ''),
+            'last_success_time': ICP.get_param('zk_bridge.last_success_time', ''),
+            'is_reachable': ICP.get_param('zk_bridge.is_reachable', 'True') == 'True',
+        }
 
     def _save_last_sync_report(self, report):
         self.env['ir.config_parameter'].sudo().set_param(
@@ -309,10 +328,9 @@ class WinnersAttendanceProcessor(models.AbstractModel):
                         'status': 'absent',
                     })
 
-                # Marquer présent via la méthode centralisée
-                if line.status not in ('present', 'late'):
-                    line.mark_present(source='zkteco')
-                    marked_sheets.append(sheet.display_name)
+                # Marquer présent via la méthode centralisée (rafraîchit marked_at pour winners_tv)
+                line.mark_present(source='zkteco')
+                marked_sheets.append(sheet.display_name)
 
             # Mettre à jour le last_valid_checkin_time
             student.write({
@@ -439,6 +457,7 @@ class WinnersAttendanceProcessor(models.AbstractModel):
                 "Vérifiez que le service est démarré.",
                 bridge_url,
             )
+            self._update_bridge_status(False)
             report['error'] = "Bridge inaccessible"
             self._save_last_sync_report(report)
             return new_checkins
@@ -446,6 +465,7 @@ class WinnersAttendanceProcessor(models.AbstractModel):
             _logger.error(
                 "Sync ZKTeco: timeout du bridge (%s).", bridge_url,
             )
+            self._update_bridge_status(False)
             report['error'] = "Timeout bridge"
             self._save_last_sync_report(report)
             return new_checkins
@@ -458,6 +478,9 @@ class WinnersAttendanceProcessor(models.AbstractModel):
             report['error'] = f"Erreur HTTP bridge {response.status_code}"
             self._save_last_sync_report(report)
             return new_checkins
+
+        # Bridge a répondu avec succès — marquer comme joignable
+        self._update_bridge_status(True)
 
         data = response.json()
         if not data.get('success'):
@@ -749,6 +772,96 @@ class WinnersAttendanceProcessor(models.AbstractModel):
                     f"supprimé(s) (antérieurs à aujourd'hui)."
                 ),
                 'type': 'warning',
+                'sticky': True,
+            },
+        }
+
+    @api.model
+    def action_cleanup_orphan_uids(self):
+        """
+        Nettoie les associations UID orphelines (Super Admin).
+        Pour chaque UID en doublon sur plusieurs étudiants :
+        - Conserve le lien sur l'étudiant ACTIF le plus récent
+        - Vide zk_device_id sur tous les autres
+        """
+        if not self.env.user.has_group('winners_auth.winners_group_super_admin'):
+            raise UserError(
+                "Seul le Super Administrateur peut exécuter cet outil."
+            )
+
+        Student = self.env['winners.student'].sudo().with_context(active_test=False)
+        all_with_uid = Student.search([
+            ('zk_device_id', '!=', False),
+            ('zk_device_id', '!=', 0),
+        ])
+
+        # Grouper par zk_device_id
+        uid_map = {}
+        for student in all_with_uid:
+            uid_map.setdefault(student.zk_device_id, []).append(student)
+
+        cleaned_count = 0
+        cleaned_details = []
+
+        for uid, students in uid_map.items():
+            if len(students) <= 1:
+                continue
+
+            # Trier : actifs d'abord, puis par fingerprint_linked_date décroissante
+            students_sorted = sorted(
+                students,
+                key=lambda s: (
+                    not s.active if hasattr(s, 'active') else False,  # actif en premier
+                    -(s.fingerprint_linked_date or datetime.min).timestamp()
+                    if s.fingerprint_linked_date else 0,
+                ),
+            )
+
+            # Garder le premier (actif + plus récent), nettoyer les autres
+            keeper = students_sorted[0]
+            for student in students_sorted[1:]:
+                old_name = f"{student.first_name or ''} {student.name}".strip()
+                student.write({
+                    'zk_device_id': False,
+                    'zk_device_name_snapshot': False,
+                    'fingerprint_linked_date': False,
+                })
+                cleaned_count += 1
+                active_str = 'actif' if getattr(student, 'active', True) else 'archivé'
+                cleaned_details.append(
+                    f"UID {uid} libéré de {old_name} (id={student.id}, {active_str})"
+                )
+                _logger.info(
+                    "Cleanup UID: UID %s libéré de l'étudiant %s (id=%s, %s) — "
+                    "conservé sur %s (id=%s)",
+                    uid, old_name, student.id, active_str,
+                    keeper.name, keeper.id,
+                )
+
+        # Rapport
+        if cleaned_count:
+            details_str = "\n".join(cleaned_details[:20])  # Limiter à 20 lignes
+            if len(cleaned_details) > 20:
+                details_str += f"\n... et {len(cleaned_details) - 20} autres"
+            message = (
+                f"{cleaned_count} association(s) UID orpheline(s) nettoyée(s).\n"
+                f"{details_str}"
+            )
+        else:
+            message = "Aucun doublon UID trouvé. La base est propre."
+
+        _logger.warning(
+            "SUPER ADMIN: Nettoyage UID orphelines — %d nettoyé(s)",
+            cleaned_count,
+        )
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Nettoyage UID terminé',
+                'message': message,
+                'type': 'success' if cleaned_count else 'info',
                 'sticky': True,
             },
         }

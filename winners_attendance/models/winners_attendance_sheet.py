@@ -163,6 +163,45 @@ class WinnersAttendanceSheet(models.Model):
         store=True,
     )
 
+    # ── Statut Bridge ZK ──
+    bridge_status_html = fields.Html(
+        string="Statut Bridge",
+        compute="_compute_bridge_status_html",
+        sanitize=False,
+    )
+
+    def _compute_bridge_status_html(self):
+        Processor = self.env['winners.attendance.processor']
+        status = Processor.get_bridge_status()
+        is_reachable = status.get('is_reachable', True)
+        last_check = status.get('last_check_time', '')
+        last_success = status.get('last_success_time', '')
+
+        if is_reachable:
+            html = (
+                '<div class="alert alert-success d-flex align-items-center mb-2 p-2" role="alert">'
+                '<span class="badge rounded-pill bg-success me-2">●</span>'
+                '<div>'
+                '<strong>Bridge ZK : Joignable</strong>'
+                f'<small class="d-block text-muted">Dernière vérification : {last_check or "Récemment"}</small>'
+                '</div>'
+                '</div>'
+            )
+        else:
+            html = (
+                '<div class="alert alert-danger d-flex align-items-center mb-2 p-2" role="alert">'
+                '<span class="badge rounded-pill bg-danger me-2">●</span>'
+                '<div>'
+                '<strong>⚠️ Bridge ZK : INJOIGNABLE !</strong>'
+                f'<small class="d-block">Injoignable depuis : {last_success or "Inconnu"} (Dernier test : {last_check})</small>'
+                '</div>'
+                '</div>'
+            )
+
+        for sheet in self:
+            sheet.bridge_status_html = html
+
+
     # ══════════════════════════════════════
     # COMPUTED
     # ══════════════════════════════════════
@@ -187,6 +226,43 @@ class WinnersAttendanceSheet(models.Model):
                 f"{sheet.group_id.name or '?'} — "
                 f"{sheet.date or '?'} {time_str}"
             )
+
+    # ══════════════════════════════════════
+    # ONCHANGE
+    # ══════════════════════════════════════
+
+    @api.onchange('schedule_id')
+    def _onchange_schedule_id(self):
+        """Remplit la salle et les heures à partir du créneau sélectionné."""
+        if self.schedule_id:
+            if self.schedule_id.room_id:
+                self.room_id = self.schedule_id.room_id
+            if self.schedule_id.time_start:
+                self.time_start = self.schedule_id.time_start
+            if self.schedule_id.time_end:
+                self.time_end = self.schedule_id.time_end
+            if self.schedule_id.group_id and not self.group_id:
+                self.group_id = self.schedule_id.group_id
+
+    @api.onchange('group_id', 'date')
+    def _onchange_group_id_date(self):
+        """Tente de trouver le créneau et la salle correspondants pour le groupe et la date."""
+        if self.group_id and self.date:
+            weekday_str = WEEKDAY_MAP.get(self.date.weekday())
+            schedules = self.env['winners.schedule'].search([
+                ('group_id', '=', self.group_id.id),
+                ('day_of_week', '=', weekday_str),
+                ('is_active', '=', True),
+            ], limit=1)
+            if schedules:
+                if not self.schedule_id:
+                    self.schedule_id = schedules[0]
+                if not self.room_id:
+                    self.room_id = schedules[0].room_id
+                if not self.time_start:
+                    self.time_start = schedules[0].time_start
+                if not self.time_end:
+                    self.time_end = schedules[0].time_end
 
     # ══════════════════════════════════════
     # ACTIONS (WORKFLOW)
@@ -532,7 +608,8 @@ class WinnersAttendanceSheet(models.Model):
 
     @api.model
     def action_open_today_attendance(self):
-        """Ouvre la vue des feuilles de présence du jour sans régénérer les feuilles supprimées."""
+        """Ouvre la vue des feuilles de présence du jour après avoir généré les feuilles manquantes du jour."""
+        self._generate_daily_sheets()
         action = self.env.ref('winners_attendance.action_winners_attendance_sheet_today').read()[0]
         context = action.get('context') or {}
         if isinstance(context, str):

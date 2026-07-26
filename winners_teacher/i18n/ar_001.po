@@ -25,11 +25,11 @@ msgstr "الأستاذ"
 
 #. module: winners_teacher
 msgid "Nom"
-msgstr "الاسم"
+msgstr "اللقب"
 
 #. module: winners_teacher
 msgid "Prénom"
-msgstr "اللقب"
+msgstr "الاسم"
 
 #. module: winners_teacher
 msgid "Téléphone"
@@ -50,3 +50,431 @@ msgstr "نشط"
 #. module: winners_teacher
 msgid "Inactif"
 msgstr "غير نشط"
+
+#. module: auto_generated
+msgid "Informations scolaires"
+msgstr "المعلومات الدراسية"
+
+#. module: auto_generated
+msgid "Nom de famille"
+msgstr "اللقب"
+
+#. module: auto_generated
+msgid "Date de naissance"
+msgstr "تاريخ الميلاد"
+
+#. module: auto_generated
+msgid "Niveau scolaire"
+msgstr "المستوى الدراسي"
+
+#. module: auto_generated
+msgid "Niveau d'étude"
+msgstr "المستوى الدراسي"
+
+#. module: auto_generated
+msgid "Date d'inscription"
+msgstr "تاريخ التسجيل"
+
+#. module: auto_generated
+msgid "Photo & Contact parent"
+msgstr "الصورة والاتصال بالولي"
+
+#. module: auto_generated
+msgid "Photo"
+msgstr "الصورة"
+
+#. module: auto_generated
+msgid "Nom du parent"
+msgstr "اسم الولي"
+
+#. module: auto_generated
+msgid "Téléphone parent"
+msgstr "هاتف الولي"
+
+#. module: auto_generated
+msgid "Adresse parent"
+msgstr "عنوان الولي"
+
+#. module: auto_generated
+msgid "Biométrie"
+msgstr "البصمة"
+
+#. module: auto_generated
+msgid "Détails de l'association"
+msgstr "تفاصيل الربط"
+
+#. module: auto_generated
+msgid "UID sur la pointeuse"
+msgstr "المعرف على جهاز البصمة"
+
+#. module: auto_generated
+msgid "Nom sur la pointeuse"
+msgstr "الاسم على جهاز البصمة"
+
+#. module: auto_generated
+msgid "Date d'association"
+msgstr "تاريخ الربط"
+
+#. module: auto_generated
+msgid "Dernier pointage valide"
+msgstr "آخر تسجيل حضور صحيح"
+
+#. module: auto_generated
+msgid "Empreinte associée"
+msgstr "البصمة المرتبطة"
+
+#. module: auto_generated
+msgid "Aucune empreinte associée"
+msgstr "لا توجد بصمة مرتبطة"
+
+#. module: auto_generated
+msgid "Associer une empreinte"
+msgstr "ربط بصمة"
+
+#. module: auto_generated
+msgid "Dissocier l'empreinte"
+msgstr "إلغاء ربط البصمة"
+
+#. module: auto_generated
+msgid "Parent / Tuteur"
+msgstr "ولي الأمر"
+
+#. module: auto_generated
+msgid "Téléphone tuteur"
+msgstr "هاتف الولي"
+
+#. module: auto_generated
+msgid "Solde restant"
+msgstr "الرصيد المتبقي"
+
+#. module: auto_generated
+msgid "Séances restantes"
+msgstr "الحصص المتبقية"
+
+#. module: auto_generated
+msgid "Séances utilisées"
+msgstr "الحصص المستعملة"
+
+#. module: auto_generated
+msgid "Commission enseignant (%)"
+msgstr "نسبة عمولة الأستاذ (%)"
+
+#. module: auto_generated
+msgid "Commission (%)"
+msgstr "نسبة العمولة (%)"
+
+#. module: auto_generated
+msgid "Commissions enseignement (DA)"
+msgstr "عمولات التدريس (د.ج)"
+
+#. module: auto_generated
+msgid "Commissions enseignement"
+msgstr "عمولات التدريس"
+
+#. module: auto_generated
+msgid "Rémunération de base"
+msgstr "الأجر الأساسي"
+
+#. module: auto_generated
+msgid "Primes & Retenues"
+msgstr "المكافآت والخصومات"
+
+#. module: auto_generated
+msgid "Net à payer"
+msgstr "صافي الراتب"
+
+#. module: auto_generated
+msgid "Salaire net"
+msgstr "صافي الراتب (د.ج)"
+
+#. module: auto_generated
+msgid "Absences"
+msgstr "الغيابات"
+
+#. module: auto_generated
+msgid "Retenue par absence (DA)"
+msgstr "خصم الغياب (د.ج)"
+
+#. module: auto_generated
+msgid "Retenue absence (DA)"
+msgstr "خصم الغياب (د.ج)"
+
+#. module: auto_generated
+msgid "Retenues absences (DA)"
+msgstr "خصم الغيابات (د.ج)"
+
+#. module: auto_generated
+msgid "Heures supplémentaires"
+msgstr "ساعات إضافية"
+
+#. module: auto_generated
+msgid "Montant heures supplémentaires (DA)"
+msgstr "مبلغ الساعات الإضافية (د.ج)"
+
+#. module: auto_generated
+msgid "Taux heure supplémentaire (DA/h)"
+msgstr "أجرة الساعة الإضافية (د.ج/سا)"
+
+#. module: auto_generated
+msgid "Prime (DA)"
+msgstr "مكافأة (د.ج)"
+
+#. module: auto_generated
+msgid "Justification prime"
+msgstr "تبرير المكافأة"
+
+#. module: auto_generated
+msgid "Autres retenues (DA)"
+msgstr "خصومات أخرى (د.ج)"
+
+#. module: auto_generated
+msgid "Justification retenues"
+msgstr "تبرير الخصومات"
+
+#. module: auto_generated
+msgid "Contexte"
+msgstr "السياق"
+
+#. module: auto_generated
+msgid "Teacher"
+msgstr "الأستاذ"
+
+#. module: auto_generated
+msgid "Group"
+msgstr "الفوج"
+
+#. module: auto_generated
+msgid "Period Start"
+msgstr "بداية الفترة"
+
+#. module: auto_generated
+msgid "Period End"
+msgstr "نهاية الفترة"
+
+#. module: auto_generated
+msgid "Snapshots"
+msgstr "اللقطات الحسابية"
+
+#. module: auto_generated
+msgid "Commission Percentage"
+msgstr "نسبة العمولة (%)"
+
+#. module: auto_generated
+msgid "Session Price"
+msgstr "سعر الحصة"
+
+#. module: auto_generated
+msgid "Montants"
+msgstr "المبالغ"
+
+#. module: auto_generated
+msgid "Total Present Count"
+msgstr "مجموع الحاضرين"
+
+#. module: auto_generated
+msgid "Total Amount"
+msgstr "المبلغ الإجمالي"
+
+#. module: auto_generated
+msgid "Teacher Amount"
+msgstr "مبلغ الأستاذ"
+
+#. module: auto_generated
+msgid "Company Amount"
+msgstr "مبلغ المؤسسة"
+
+#. module: auto_generated
+msgid "Seances du lot"
+msgstr "حصص الدفعة"
+
+#. module: auto_generated
+msgid "Traitement"
+msgstr "المعالجة"
+
+#. module: auto_generated
+msgid "Salle a verifier"
+msgstr "القاعة المراد التحقق منها"
+
+#. module: auto_generated
+msgid "Salle à vérifier"
+msgstr "القاعة المراد التحقق منها"
+
+#. module: auto_generated
+msgid "Heure debut"
+msgstr "وقت البداية"
+
+#. module: auto_generated
+msgid "Heure début"
+msgstr "وقت البداية"
+
+#. module: auto_generated
+msgid "Heure de début"
+msgstr "وقت البداية"
+
+#. module: auto_generated
+msgid "Heure de fin"
+msgstr "وقت النهاية"
+
+#. module: auto_generated
+msgid "Salles disponibles"
+msgstr "القاعات المتاحة"
+
+#. module: auto_generated
+msgid "Informations de la séance"
+msgstr "معلومات الحصة"
+
+#. module: auto_generated
+msgid "Duree (heures)"
+msgstr "المدة (ساعات)"
+
+#. module: auto_generated
+msgid "Durée (heures)"
+msgstr "المدة (ساعات)"
+
+#. module: auto_generated
+msgid "Informations du créneau"
+msgstr "معلومات الوقت"
+
+#. module: auto_generated
+msgid "Horaire"
+msgstr "الجدول الزمني"
+
+#. module: auto_generated
+msgid "Jour"
+msgstr "اليوم"
+
+#. module: auto_generated
+msgid "Informations du groupe"
+msgstr "معلومات الفوج"
+
+#. module: auto_generated
+msgid "Nom du groupe"
+msgstr "اسم الفوج"
+
+#. module: auto_generated
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: auto_generated
+msgid "Branche"
+msgstr "الفرع"
+
+#. module: auto_generated
+msgid "Capacité maximale"
+msgstr "العدد الأقصى للتلاميذ"
+
+#. module: auto_generated
+msgid "Nombre max d'élèves"
+msgstr "العدد الأقصى للتلاميذ"
+
+#. module: auto_generated
+msgid "Nombre d'élèves"
+msgstr "عدد التلاميذ"
+
+#. module: auto_generated
+msgid "Étudiants inscrits"
+msgstr "الطلاب المسجلون"
+
+#. module: auto_generated
+msgid "Ajouter une ligne"
+msgstr "إضافة بند"
+
+#. module: auto_generated
+msgid "Ajouter un étudiant"
+msgstr "إضافة طالب"
+
+#. module: auto_generated
+msgid "Horodatage du pointage"
+msgstr "وقت وتاريخ Pointage"
+
+#. module: auto_generated
+msgid "UID Appareil"
+msgstr "معرف الجهاز"
+
+#. module: auto_generated
+msgid "Étudiant"
+msgstr "الطالب"
+
+#. module: auto_generated
+msgid "Raison"
+msgstr "السبب"
+
+#. module: auto_generated
+msgid "Résolution"
+msgstr "المعالجة والحل"
+
+#. module: auto_generated
+msgid "Résolu"
+msgstr "تم الحل"
+
+#. module: auto_generated
+msgid "Résolu par"
+msgstr "تم الحل بواسطة"
+
+#. module: auto_generated
+msgid "Résolu le"
+msgstr "تم الحل بتاريخ"
+
+#. module: auto_generated
+msgid "Feuille rattachée"
+msgstr "ورقة الحضور المرتبطة"
+
+#. module: auto_generated
+msgid "Détails"
+msgstr "التفاصيل"
+
+#. module: auto_generated
+msgid "Détail"
+msgstr "التفاصيل"
+
+#. module: auto_generated
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: auto_generated
+msgid "Raison de l'anomalie"
+msgstr "سبب التنبيه"
+
+#. module: auto_generated
+msgid "UID inconnu (non associé à un étudiant)"
+msgstr "معرف غير معروف (غير مرتبط بطالب)"
+
+#. module: auto_generated
+msgid "Statut Bridge"
+msgstr "حالة جهاز البصمة"
+
+#. module: auto_generated
+msgid "Configuration Imprimante"
+msgstr "إعدادات الطابعة"
+
+#. module: auto_generated
+msgid "Imprimante Principale"
+msgstr "الطابعة الرئيسية"
+
+#. module: auto_generated
+msgid "Identifiants USB (XP80C)"
+msgstr "معرفات USB (XP80C)"
+
+#. module: auto_generated
+msgid "Vendor ID (HEX)"
+msgstr "معرف المصنّع (HEX)"
+
+#. module: auto_generated
+msgid "Product ID (HEX)"
+msgstr "معرف المنتج (HEX)"
+
+#. module: auto_generated
+msgid "Par défaut"
+msgstr "افتراضي"
+
+#. module: auto_generated
+msgid "En-tête des tickets"
+msgstr "ترويسة التذاكر"
+
+#. module: auto_generated
+msgid "Nom de l'académie"
+msgstr "اسم الأكاديمية"
+
+#. module: auto_generated
+msgid "Nom de la branche"
+msgstr "اسم الفرع"

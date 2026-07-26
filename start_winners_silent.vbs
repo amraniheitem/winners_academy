@@ -12,10 +12,10 @@ WshEnv("PYTHONPATH") = "C:\odoo17"
 WshShell.CurrentDirectory = "C:\odoo17"
 WshShell.Run """C:\odoo17\venv\Scripts\python.exe"" ""C:\odoo17\odoo-bin"" -c ""C:\odoo17\odoo.conf""", 0, False
 
-' 2. Lancement silencieux du pont biométrique ZKTeco (Fenêtre masquée = 0)
-ZkScript = ScriptDir & "\zk_bridge\zk_bridge_service.py"
-If FSO.FileExists(ZkScript) Then
-    WshShell.Run """C:\odoo17\venv\Scripts\python.exe"" """ & ZkScript & """", 0, False
+' 2. Vérification et notification silencieuse du pont ZKTeco (Fenêtre masquée = 0)
+ZkNotifier = ScriptDir & "\zk_bridge\zk_notifier.ps1"
+If FSO.FileExists(ZkNotifier) Then
+    WshShell.Run "powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & ZkNotifier & """ -Watch", 0, False
 End If
 
 ' 3. Pause d'initialisation de 3 secondes

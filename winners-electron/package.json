@@ -1,14 +1,19 @@
 {
   "name": "winners-academy",
   "version": "1.0.0",
-  "description": "Winners Academy — Système de gestion d'académie de langues avec pointeuse biométrique",
+  "description": "Winners Academy — Application de bureau Odoo 17 & Affichage TV",
   "main": "main.js",
   "author": "Winners Academy",
   "license": "UNLICENSED",
   "scripts": {
     "start": "electron .",
+    "start:tv": "electron main_tv.js",
     "dev": "electron . --dev",
-    "dist": "electron-builder --win --x64",
+    "dev:tv": "electron main_tv.js --dev",
+    "dist:app": "electron-builder --win --x64 -c.extraMetadata.main=main.js -c.extraMetadata.name=winners-academy -c.productName=\"Winners Academy\" -c.appId=\"com.winners.academy\" -c.artifactName=\"Winners-Academy-Setup-${version}.${ext}\" -c.nsis.shortcutName=\"Winners Academy\"",
+    "dist:tv": "electron-builder --win --x64 -c.extraMetadata.main=main_tv.js -c.extraMetadata.name=winners-tv -c.productName=\"Winners TV\" -c.appId=\"com.winners.tv\" -c.artifactName=\"Winners-TV-Setup-${version}.${ext}\" -c.nsis.shortcutName=\"Winners TV\"",
+    "dist:all": "npm run dist:app && npm run dist:tv",
+    "dist": "npm run dist:all",
     "pack": "electron-builder --dir"
   },
   "build": {
@@ -22,7 +27,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "assets/icon.ico"
@@ -40,8 +47,10 @@
     },
     "files": [
       "main.js",
+      "main_tv.js",
       "preload.js",
       "splash.html",
+      "splash_tv.html",
       "assets/**/*"
     ],
     "asarUnpack": [

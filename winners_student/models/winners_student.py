@@ -11,13 +11,6 @@ class WinnersStudent(models.Model):
     _description = "Élève Winners"
     _rec_name = "name"
 
-    _sql_constraints = [
-        (
-            'unique_zk_device_id',
-            'UNIQUE(zk_device_id)',
-            'Cet UID ZKTeco est déjà associé à un autre étudiant !',
-        ),
-    ]
 
     name = fields.Char(
         string="Nom de famille",
@@ -57,6 +50,10 @@ class WinnersStudent(models.Model):
     )
     parent_address = fields.Text(
         string="Adresse parent",
+    )
+    active = fields.Boolean(
+        string="Actif",
+        default=True,
     )
     status = fields.Selection(
         selection=[
@@ -114,7 +111,7 @@ class WinnersStudent(models.Model):
     )
 
     # ══════════════════════════════════════
-    # COMPUTED
+    # COMPUTED & CONSTRAINTS
     # ══════════════════════════════════════
 
     @api.depends('zk_device_id')
@@ -122,22 +119,69 @@ class WinnersStudent(models.Model):
         for student in self:
             student.fingerprint_linked = bool(student.zk_device_id)
 
-    @api.constrains('zk_device_id')
+    @api.constrains('zk_device_id', 'active')
     def _check_unique_zk_device_id(self):
-        """Empêche les doublons de zk_device_id (y compris la valeur 0)."""
+        """
+        Empêche les doublons de zk_device_id parmi les étudiants ACTIFS.
+        Recherche avec active_test=False pour identifier d'éventuels conflits.
+        """
         for student in self:
             if not student.zk_device_id:
                 continue
-            duplicate = self.sudo().search([
+            # Chercher dans TOUS les étudiants (actifs + archivés)
+            duplicate = self.sudo().with_context(active_test=False).search([
                 ('zk_device_id', '=', student.zk_device_id),
                 ('id', '!=', student.id),
+                ('active', '=', True),  # Conflit seulement si l'autre est actif
             ], limit=1)
             if duplicate:
                 raise UserError(
                     f"L'UID ZKTeco {student.zk_device_id} est déjà associé "
-                    f"à l'étudiant « {duplicate.name} » (id={duplicate.id}). "
+                    f"à l'étudiant actif « {duplicate.name} {duplicate.first_name or ''} » (id={duplicate.id}). "
                     "Dissociez-le d'abord avant de l'attribuer."
                 )
+
+    # ══════════════════════════════════════
+    # SURCHARGE WRITE & UNLINK (LIBÉRATION AUTO UID)
+    # ══════════════════════════════════════
+
+    def write(self, vals):
+        """
+        À l'archivage (active=False) ou la suspension (status='suspended'),
+        libère automatiquement l'UID ZKTeco pour éviter les conflits fantômes.
+        """
+        releasing_archived = 'active' in vals and not vals['active']
+        releasing_suspended = vals.get('status') == 'suspended'
+
+        if releasing_archived or releasing_suspended:
+            for student in self:
+                if student.zk_device_id:
+                    _logger.info(
+                        "Auto-release UID: libération de l'UID %s de l'étudiant %s (id=%s) suite à %s",
+                        student.zk_device_id, student.name, student.id,
+                        'archivage' if releasing_archived else 'suspension',
+                    )
+            # Ajouter la réinitialisation des champs biométriques aux vals
+            vals.update({
+                'zk_device_id': False,
+                'zk_device_name_snapshot': False,
+                'fingerprint_linked_date': False,
+            })
+
+        return super().write(vals)
+
+    def unlink(self):
+        """
+        À la suppression de l'étudiant, libère l'UID ZKTeco avant suppression.
+        """
+        for student in self:
+            if student.zk_device_id:
+                _logger.info(
+                    "Auto-release UID: libération de l'UID %s de l'étudiant %s (id=%s) avant suppression",
+                    student.zk_device_id, student.name, student.id,
+                )
+        return super().unlink()
+
 
     # ══════════════════════════════════════
     # ACTIONS BIOMÉTRIQUES

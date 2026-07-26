@@ -101,8 +101,8 @@ class WinnersStudentZkWizard(models.TransientModel):
 
         device_users = data.get('data', {}).get('users', [])
 
-        # Chercher les UIDs déjà associés dans Odoo
-        Student = self.env['winners.student'].sudo()
+        # Chercher les UIDs déjà associés dans Odoo (y compris étudiants archivés)
+        Student = self.env['winners.student'].sudo().with_context(active_test=False)
         linked_students = Student.search([
             ('zk_device_id', '!=', False),
             ('zk_device_id', '!=', 0),
@@ -117,6 +117,23 @@ class WinnersStudentZkWizard(models.TransientModel):
         for du in device_users:
             uid = du.get('uid', 0)
             linked_student = linked_map.get(uid)
+
+            # Si l'étudiant lié est archivé ou suspendu, libérer automatiquement l'UID
+            if linked_student:
+                is_archived = not getattr(linked_student, 'active', True)
+                is_suspended = (linked_student.status == 'suspended')
+                if is_archived or is_suspended:
+                    _logger.info(
+                        "Wizard ZK: auto-libération de l'UID %s de l'étudiant non actif %s (id=%s)",
+                        uid, linked_student.name, linked_student.id,
+                    )
+                    linked_student.write({
+                        'zk_device_id': False,
+                        'zk_device_name_snapshot': False,
+                        'fingerprint_linked_date': False,
+                    })
+                    linked_student = None
+
             already_linked = bool(linked_student)
             is_self = (
                 already_linked
@@ -124,7 +141,7 @@ class WinnersStudentZkWizard(models.TransientModel):
                 and linked_student.id == student_id
             )
 
-            # Exclure les UIDs déjà liés à un AUTRE étudiant
+            # Exclure les UIDs déjà liés à un AUTRE étudiant actif
             # sauf pour le Super Admin qui peut forcer
             if already_linked and not is_self and not is_super_admin:
                 continue
@@ -194,8 +211,8 @@ class WinnersStudentZkWizard(models.TransientModel):
                     f"{line.linked_student_name}. "
                     "Seul le Super Administrateur peut forcer un remplacement."
                 )
-            # Super Admin force le remplacement : dissocier l'ancien étudiant
-            old_student = self.env['winners.student'].sudo().search([
+            # Super Admin force le remplacement : dissocier l'ancien étudiant (actif ou archivé)
+            old_student = self.env['winners.student'].sudo().with_context(active_test=False).search([
                 ('zk_device_id', '=', line.device_uid),
             ], limit=1)
             if old_student:

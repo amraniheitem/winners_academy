@@ -132,10 +132,6 @@ class WinnersAttendanceLine(models.Model):
                         "Contactez le Super Administrateur."
                     )
 
-            # Éviter le double comptage
-            if line.status == 'present':
-                continue
-
             old_status = line.status
 
             line.write({

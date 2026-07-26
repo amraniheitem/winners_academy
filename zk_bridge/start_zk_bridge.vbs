@@ -1,2 +1,5 @@
 Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "C:\Users\dell\AppData\Local\Programs\Python\Python312\python.exe c:\Users\dell\Desktop\winners\zk_bridge\zk_bridge_service.py", 0, False
+Set FSO = CreateObject("Scripting.FileSystemObject")
+ScriptDir = FSO.GetParentFolderName(WScript.ScriptFullName)
+WshShell.Run "powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & ScriptDir & "\zk_notifier.ps1"" -Watch", 0, False
+

@@ -59,13 +59,13 @@ if not exist "C:\odoo17\odoo-bin" (
     echo [INFO] Odoo 17 initialise dans C:\odoo17.
 )
 
-:: 4. Installation / Initialisation des 16 modules Winners
+:: 4. Installation / mise a jour des modules Winners
 echo.
-echo [2/4] Initialisation et installation des 16 modules custom Winners...
+echo [2/4] Installation et mise a jour des modules custom Winners...
 set "PYTHONPATH=C:\odoo17"
 if exist "C:\odoo17\odoo-bin" (
     pushd "C:\odoo17"
-    "%PYTHON_EXE%" "C:\odoo17\odoo-bin" -c "C:\odoo17\odoo.conf" -d winners_db -i winners_auth,winners_branch,winners_student,winners_enrollment,winners_teacher,winners_room,winners_group,winners_schedule,winners_attendance,winners_payment,winners_salary,winners_desktop,winners_print,winners_dashboard,winners_tv,winners_theme
+    "%PYTHON_EXE%" "C:\odoo17\odoo-bin" -c "C:\odoo17\odoo.conf" -d winners_db -i winners_auth,winners_branch,winners_student,winners_enrollment,winners_teacher,winners_room,winners_group,winners_schedule,winners_attendance,winners_payment,winners_salary,winners_print,winners_dashboard,winners_tv,winners_theme -u winners_auth,winners_branch,winners_student,winners_enrollment,winners_teacher,winners_room,winners_group,winners_schedule,winners_attendance,winners_payment,winners_salary,winners_print,winners_dashboard,winners_tv,winners_theme
     popd
 )
 

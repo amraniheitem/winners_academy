@@ -1,11 +1,9 @@
 {
-    'sequence': 10,
     "name": "Winners Student",
-    "version": "17.0.2.0.0",
+    "version": "17.0.2.0.1",
     "category": "Winners Academy",
     "depends": ["base", "winners_auth", "winners_branch"],
     "external_dependencies": {
-    'sequence': 10,
         "python": ["requests"],
     },
     "data": [

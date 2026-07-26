@@ -53,6 +53,24 @@ if not defined PYTHON_EXE (
 
 echo [OK] Python detecte : "%PYTHON_EXE%"
 
+:: 1.b Correction du chemin addons_path dans odoo.conf
+set "REPO_ROOT=%~dp0"
+if "%REPO_ROOT:~-1%"=="\" set "REPO_ROOT=%REPO_ROOT:~0,-1%"
+
+if exist "C:\odoo17\odoo.conf" (
+    echo [INFO] Mise a jour du chemin des addons dans odoo.conf...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+        "$conf = 'C:\odoo17\odoo.conf';" ^
+        "$repo = '%REPO_ROOT%';" ^
+        "$lines = Get-Content -LiteralPath $conf;" ^
+        "$updated = $false;" ^
+        "$out = foreach ($line in $lines) { if ($line -match '^\s*addons_path\s*=') { $updated = $true; 'addons_path = C:\odoo17\addons,' + $repo } else { $line } };" ^
+        "if (-not $updated) { $out += 'addons_path = C:\odoo17\addons,' + $repo }" ^
+        "Set-Content -LiteralPath $conf -Value $out -Encoding UTF8"
+) else (
+    echo [ATTENTION] C:\odoo17\odoo.conf est introuvable.
+)
+
 :: 2. Creation automatique du venv C:\odoo17\venv si necessaire
 if not exist "C:\odoo17\venv\Scripts\python.exe" (
     echo [INFO] Creation automatique de l'environnement virtuel C:\odoo17\venv...

@@ -1,6 +1,6 @@
 # Setup ZK Bridge Task Scheduler Trigger for Logon and Screen Unlock (Veille)
 $taskName = "Winners_ZKBridge_Notifier"
-$scriptPath = "C:\Users\dell\Desktop\winners\zk_bridge\zk_notifier.ps1"
+$scriptPath = Join-Path $PSScriptRoot "zk_notifier.ps1"
 
 $xmlContent = @"
 <?xml version="1.0" encoding="UTF-16"?>

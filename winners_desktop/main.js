@@ -4,6 +4,13 @@ const { spawn } = require('child_process');
 const http = require('http');
 const fs = require('fs');
 
+function resolveZkBridgeScript() {
+  if (process.env.WINNERS_ROOT) {
+    return path.join(process.env.WINNERS_ROOT, 'zk_bridge', 'zk_bridge_service.py');
+  }
+  return path.join(__dirname, '..', 'zk_bridge', 'zk_bridge_service.py');
+}
+
 
 
 // ── CONFIGURATION DES SERVICES ──
@@ -18,7 +25,7 @@ const CONFIG = {
   ADDONS: 'winners_auth,winners_branch,winners_student,winners_enrollment,winners_teacher,winners_room,winners_group,winners_schedule,winners_attendance,winners_payment,winners_salary,winners_dashboard,winners_tv,winners_theme,winners_print',
 
   // Script ZK Bridge
-  ZK_BRIDGE_SCRIPT: 'C:\\Users\\dell\\Desktop\\winners\\zk_bridge\\zk_bridge_service.py',
+  ZK_BRIDGE_SCRIPT: resolveZkBridgeScript(),
   // Python système à utiliser pour le Bridge ZK
   PYTHON_SYSTEM: 'python',
 

@@ -9,6 +9,13 @@ const { spawn } = require('child_process');
 const net = require('net');
 const fs = require('fs');
 
+function resolveZkBridgeScript() {
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, 'zk_bridge', 'zk_bridge_service.py');
+  }
+  return path.join(__dirname, '..', 'zk_bridge', 'zk_bridge_service.py');
+}
+
 // ── Configuration ───────────────────────────────────────────────────────────
 const CONFIG = {
   odoo: {
@@ -21,7 +28,7 @@ const CONFIG = {
     port: 8069,
   },
   zkBridge: {
-    script: 'C:\\Users\\dell\\Desktop\\winners\\zk_bridge\\zk_bridge_service.py',
+    script: resolveZkBridgeScript(),
   },
   app: {
     title: 'Winners TV — Écran d\'Affichage',

@@ -12,6 +12,14 @@ echo          INSTALLATEUR AUTOMATIQUE — WINNERS ACADEMY DESKTOP
 echo =======================================================================
 echo.
 
+:: Relaunch as administrator if needed
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [INFO] Redemarrage en administrateur requis...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+    exit /b
+)
+
 :: 1. Detection de Python
 echo [1/4] Detection de l'environnement Python...
 set "PYTHON_EXE="
@@ -81,6 +89,19 @@ echo.
 echo [4/4] Creation du raccourci Bureau Application Native...
 if exist "%~dp0create_desktop_shortcut.ps1" (
     powershell -ExecutionPolicy Bypass -File "%~dp0create_desktop_shortcut.ps1"
+)
+
+:: 7. Installation du service ZK Bridge en arriere-plan
+echo.
+echo [5/5] Installation et demarrage du service ZK Bridge...
+if exist "%~dp0zk_bridge\install_service.bat" (
+    call "%~dp0zk_bridge\install_service.bat"
+) else (
+    echo [ATTENTION] Script ZK Bridge introuvable: "%~dp0zk_bridge\install_service.bat"
+)
+
+if exist "%~dp0zk_bridge\setup_zk_task.ps1" (
+    powershell -ExecutionPolicy Bypass -File "%~dp0zk_bridge\setup_zk_task.ps1"
 )
 
 echo.

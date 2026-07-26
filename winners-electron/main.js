@@ -9,6 +9,13 @@ const { spawn } = require('child_process');
 const net = require('net');
 const fs = require('fs');
 
+function resolveZkBridgeScript() {
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, 'zk_bridge', 'zk_bridge_service.py');
+  }
+  return path.join(__dirname, '..', 'zk_bridge', 'zk_bridge_service.py');
+}
+
 // ── App Mode Detection (Academy vs TV) ──────────────────────────────────────
 const appNameLower = (app.name || app.getName() || '').toLowerCase();
 const isTV = appNameLower.includes('tv') ||
@@ -29,7 +36,7 @@ const CONFIG = {
     port: 8069,
   },
   zkBridge: {
-    script: 'C:\\Users\\dell\\Desktop\\winners\\zk_bridge\\zk_bridge_service.py',
+    script: resolveZkBridgeScript(),
   },
   app: {
     title: isTV ? 'Winners TV — Écran d\'Affichage' : 'Winners Academy',

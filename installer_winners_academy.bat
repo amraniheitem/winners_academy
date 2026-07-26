@@ -66,7 +66,8 @@ if exist "C:\odoo17\odoo.conf" (
         "$updated = $false;" ^
         "$out = foreach ($line in $lines) { if ($line -match '^\s*addons_path\s*=') { $updated = $true; 'addons_path = C:\odoo17\addons,' + $repo } else { $line } };" ^
         "if (-not $updated) { $out += 'addons_path = C:\odoo17\addons,' + $repo }" ^
-        "Set-Content -LiteralPath $conf -Value $out -Encoding UTF8"
+        "$utf8NoBom = New-Object System.Text.UTF8Encoding($false);" ^
+        "[System.IO.File]::WriteAllLines($conf, $out, $utf8NoBom)"
 ) else (
     echo [ATTENTION] C:\odoo17\odoo.conf est introuvable.
 )

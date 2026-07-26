@@ -16,6 +16,8 @@ if %errorlevel% neq 0 (
 set "SERVICE_NAME=ZKBridgeService"
 set "SCRIPT_DIR=%~dp0"
 set "SERVICE_SCRIPT=%SCRIPT_DIR%zk_bridge_service.py"
+set "VENV_DIR=%SCRIPT_DIR%.venv"
+set "REQUIREMENTS_FILE=%SCRIPT_DIR%requirements.txt"
 
 REM Prefer the local nssm.exe shipped with the project
 set "NSSM="
@@ -35,7 +37,7 @@ if not defined NSSM (
     exit /b 1
 )
 
-REM Detect Python
+REM Detect Python available on the machine
 set "PYTHON_EXE="
 py -3 -c "import sys; print(sys.executable)" > "%TEMP%\python_path.tmp" 2>nul
 if %errorlevel% equ 0 (
@@ -51,8 +53,14 @@ if not defined PYTHON_EXE (
     )
 )
 
-if not defined PYTHON_EXE if exist "C:\Users\dell\AppData\Local\Programs\Python\Python312\python.exe" (
-    set "PYTHON_EXE=C:\Users\dell\AppData\Local\Programs\Python\Python312\python.exe"
+if not defined PYTHON_EXE if exist "%LOCALAPPDATA%\Programs\Python\Python312\python.exe" (
+    set "PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python312\python.exe"
+) else if not defined PYTHON_EXE if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
+    set "PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe"
+) else if not defined PYTHON_EXE if exist "C:\Python312\python.exe" (
+    set "PYTHON_EXE=C:\Python312\python.exe"
+) else if not defined PYTHON_EXE if exist "C:\Python311\python.exe" (
+    set "PYTHON_EXE=C:\Python311\python.exe"
 )
 
 if not defined PYTHON_EXE (
@@ -62,8 +70,31 @@ if not defined PYTHON_EXE (
     exit /b 1
 )
 
+REM Create or reuse a local virtual environment for the bridge
+if not exist "%VENV_DIR%\Scripts\python.exe" (
+    echo Creating local bridge virtual environment...
+    "%PYTHON_EXE%" -m venv "%VENV_DIR%"
+    if %errorlevel% neq 0 (
+        echo ERROR: Unable to create the bridge virtual environment.
+        pause
+        exit /b 1
+    )
+)
+
+set "BRIDGE_PYTHON=%VENV_DIR%\Scripts\python.exe"
+
+echo Updating bridge dependencies...
+"%BRIDGE_PYTHON%" -m pip install --upgrade pip >nul 2>&1
+"%BRIDGE_PYTHON%" -m pip install -r "%REQUIREMENTS_FILE%"
+if %errorlevel% neq 0 (
+    echo ERROR: Could not install bridge dependencies from requirements.txt.
+    pause
+    exit /b 1
+)
+
 echo Installing %SERVICE_NAME%...
-echo Python: %PYTHON_EXE%
+echo System Python: %PYTHON_EXE%
+echo Bridge Python: %BRIDGE_PYTHON%
 echo Script: %SERVICE_SCRIPT%
 
 REM Remove an existing service first
@@ -75,7 +106,7 @@ if %errorlevel% equ 0 (
     timeout /t 2 /nobreak >nul
 )
 
-"%NSSM%" install %SERVICE_NAME% "%PYTHON_EXE%" "%SERVICE_SCRIPT%"
+"%NSSM%" install %SERVICE_NAME% "%BRIDGE_PYTHON%" "%SERVICE_SCRIPT%"
 if %errorlevel% neq 0 (
     echo ERROR: service installation failed.
     pause

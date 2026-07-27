@@ -7,7 +7,6 @@ if %errorlevel% neq 0 (
     echo.
     echo ERROR: Please run this script as Administrator.
     echo.
-    pause
     exit /b 1
 )
 
@@ -31,7 +30,6 @@ if defined NSSM (
     "%NSSM%" status %SERVICE_NAME% >nul 2>&1
     if %errorlevel% neq 0 (
         echo Service %SERVICE_NAME% is not installed.
-        pause
         exit /b 0
     )
 
@@ -40,7 +38,6 @@ if defined NSSM (
     "%NSSM%" remove %SERVICE_NAME% confirm
     if %errorlevel% neq 0 (
         echo ERROR: service removal failed.
-        pause
         exit /b 1
     )
 ) else (
@@ -48,7 +45,6 @@ if defined NSSM (
     sc query %SERVICE_NAME% >nul 2>&1
     if %errorlevel% neq 0 (
         echo Service %SERVICE_NAME% is not installed.
-        pause
         exit /b 0
     )
 
@@ -60,4 +56,4 @@ if defined NSSM (
 echo.
 echo SUCCESS: %SERVICE_NAME% removed.
 echo.
-pause
+exit /b 0

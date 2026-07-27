@@ -9,7 +9,6 @@ if %errorlevel% neq 0 (
     echo ERROR: Please run this script as Administrator.
     echo Right-click the file and choose "Run as administrator".
     echo.
-    pause
     exit /b 1
 )
 
@@ -33,7 +32,6 @@ if not defined NSSM (
     echo ERROR: nssm.exe was not found.
     echo Keep nssm.exe inside the zk_bridge folder or add it to PATH.
     echo.
-    pause
     exit /b 1
 )
 
@@ -66,7 +64,6 @@ if not defined PYTHON_EXE if exist "%LOCALAPPDATA%\Programs\Python\Python312\pyt
 if not defined PYTHON_EXE (
     echo.
     echo ERROR: Python was not found.
-    pause
     exit /b 1
 )
 
@@ -76,7 +73,6 @@ if not exist "%VENV_DIR%\Scripts\python.exe" (
     "%PYTHON_EXE%" -m venv "%VENV_DIR%"
     if %errorlevel% neq 0 (
         echo ERROR: Unable to create the bridge virtual environment.
-        pause
         exit /b 1
     )
 )
@@ -88,7 +84,6 @@ echo Updating bridge dependencies...
 "%BRIDGE_PYTHON%" -m pip install -r "%REQUIREMENTS_FILE%"
 if %errorlevel% neq 0 (
     echo ERROR: Could not install bridge dependencies from requirements.txt.
-    pause
     exit /b 1
 )
 
@@ -96,7 +91,6 @@ REM Sanity check: fail early if a required import is still missing
 "%BRIDGE_PYTHON%" -c "import flask, requests, waitress, zk"
 if %errorlevel% neq 0 (
     echo ERROR: One or more bridge dependencies are still missing.
-    pause
     exit /b 1
 )
 
@@ -117,7 +111,6 @@ if %errorlevel% equ 0 (
 "%NSSM%" install %SERVICE_NAME% "%BRIDGE_PYTHON%" "%SERVICE_SCRIPT%"
 if %errorlevel% neq 0 (
     echo ERROR: service installation failed.
-    pause
     exit /b 1
 )
 
@@ -145,4 +138,4 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-pause
+exit /b 0

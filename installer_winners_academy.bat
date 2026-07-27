@@ -72,9 +72,9 @@ if exist "C:\odoo17\odoo.conf" (
     echo [ATTENTION] C:\odoo17\odoo.conf est introuvable.
 )
 
-:: 2. Installation du service ZK Bridge en arriere-plan
+:: 2. Installation du pont ZK portable en arriere-plan
 echo.
-echo [2/5] Installation et demarrage du service ZK Bridge...
+echo [2/5] Installation et demarrage du pont ZK portable...
 if exist "%~dp0zk_bridge\install_service.bat" (
     call "%~dp0zk_bridge\install_service.bat"
 ) else (
@@ -85,7 +85,7 @@ echo [INFO] Attente de la disponibilite du bridge ZK...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$ok = $false; for ($i = 0; $i -lt 30; $i++) { try { $r = Invoke-RestMethod 'http://localhost:5000/device/status' -TimeoutSec 2; if ($r.success) { $ok = $true; break } } catch {} ; Start-Sleep -Seconds 1 }; if (-not $ok) { exit 1 }"
 if %errorlevel% neq 0 (
     echo [ATTENTION] Le bridge ZK n'a pas repondu a temps.
-    echo Verifiez le service ZKBridgeService et les logs dans zk_bridge.
+    echo Verifiez la tache Winners_ZKBridge_AutoStart et les logs dans zk_bridge.
 )
 
 if exist "%~dp0zk_bridge\setup_zk_task.ps1" (

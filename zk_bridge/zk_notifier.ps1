@@ -40,16 +40,9 @@ function Show-Notification {
 }
 
 function Test-ZKBridgeStatus {
-    $serviceName = "ZKBridgeService"
-    $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
-
-    if ($service -and $service.Status -ne 'Running') {
-        Start-Service -Name $serviceName -ErrorAction SilentlyContinue
-        Start-Sleep -Seconds 2
-    }
-
     $url = "http://localhost:5000/device/status"
     $title = "Winners Academy - ZK Bridge"
+    $taskName = "Winners_ZKBridge_AutoStart"
 
     try {
         $resp = Invoke-RestMethod -Uri $url -Method Get -TimeoutSec 4
@@ -63,7 +56,20 @@ function Test-ZKBridgeStatus {
             $msg = "Service ZK Bridge en cours d'initialisation..."
         }
     } catch {
-        $msg = "Attention: Le service ZK Bridge ne repond pas (port 5000)."
+        $task = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+        if ($task) {
+            Start-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+        } else {
+            $launcher = Join-Path $PSScriptRoot "start_zk_bridge_portable.ps1"
+            if (Test-Path $launcher) {
+                Start-Process powershell.exe -WindowStyle Hidden -ArgumentList @(
+                    "-ExecutionPolicy", "Bypass",
+                    "-File", $launcher
+                ) | Out-Null
+            }
+        }
+
+        $msg = "Attention: ZK Bridge ne repond pas. Redemarrage automatique lance."
     }
 
     Show-Notification -Title $title -Message $msg

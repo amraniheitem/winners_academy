@@ -1,6 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
-title ZK Bridge Service Installer
+title ZK Bridge Portable Installer
 
 REM Require administrator rights
 net session >nul 2>&1
@@ -12,28 +12,11 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-set "SERVICE_NAME=ZKBridgeService"
 set "SCRIPT_DIR=%~dp0"
-set "SERVICE_SCRIPT=%SCRIPT_DIR%zk_bridge_service.py"
 set "VENV_DIR=%SCRIPT_DIR%.venv"
 set "REQUIREMENTS_FILE=%SCRIPT_DIR%requirements.txt"
-
-REM Prefer the local nssm.exe shipped with the project
-set "NSSM="
-if exist "%SCRIPT_DIR%nssm.exe" (
-    set "NSSM=%SCRIPT_DIR%nssm.exe"
-) else (
-    where nssm >nul 2>&1
-    if !errorlevel! equ 0 set "NSSM=nssm"
-)
-
-if not defined NSSM (
-    echo.
-    echo ERROR: nssm.exe was not found.
-    echo Keep nssm.exe inside the zk_bridge folder or add it to PATH.
-    echo.
-    exit /b 1
-)
+set "PORTABLE_LAUNCHER=%SCRIPT_DIR%start_zk_bridge_portable.ps1"
+set "SETUP_TASK=%SCRIPT_DIR%setup_zk_bridge_task.ps1"
 
 REM Detect Python available on the machine
 set "PYTHON_EXE="
@@ -64,6 +47,8 @@ if not defined PYTHON_EXE if exist "%LOCALAPPDATA%\Programs\Python\Python312\pyt
 if not defined PYTHON_EXE (
     echo.
     echo ERROR: Python was not found.
+    echo Install Python 3 and retry.
+    echo.
     exit /b 1
 )
 
@@ -94,47 +79,38 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-echo Installing %SERVICE_NAME%...
-echo System Python: %PYTHON_EXE%
-echo Bridge Python: %BRIDGE_PYTHON%
-echo Script: %SERVICE_SCRIPT%
-
-REM Remove an existing service first
-"%NSSM%" status %SERVICE_NAME% >nul 2>&1
-if %errorlevel% equ 0 (
-    "%NSSM%" stop %SERVICE_NAME% >nul 2>&1
-    timeout /t 2 /nobreak >nul
-    "%NSSM%" remove %SERVICE_NAME% confirm >nul 2>&1
-    timeout /t 2 /nobreak >nul
-)
-
-"%NSSM%" install %SERVICE_NAME% "%BRIDGE_PYTHON%" "%SERVICE_SCRIPT%"
-if %errorlevel% neq 0 (
-    echo ERROR: service installation failed.
+if not exist "%PORTABLE_LAUNCHER%" (
+    echo ERROR: Missing launcher script: %PORTABLE_LAUNCHER%
     exit /b 1
 )
 
-"%NSSM%" set %SERVICE_NAME% AppDirectory "%SCRIPT_DIR%"
-"%NSSM%" set %SERVICE_NAME% Start SERVICE_AUTO_START
-"%NSSM%" set %SERVICE_NAME% AppExit Default Restart
-"%NSSM%" set %SERVICE_NAME% AppRestartDelay 5000
-"%NSSM%" set %SERVICE_NAME% AppStdout "%SCRIPT_DIR%service_stdout.log"
-"%NSSM%" set %SERVICE_NAME% AppStderr "%SCRIPT_DIR%service_stderr.log"
-"%NSSM%" set %SERVICE_NAME% AppStdoutCreationDisposition 4
-"%NSSM%" set %SERVICE_NAME% AppStderrCreationDisposition 4
-"%NSSM%" set %SERVICE_NAME% AppRotateFiles 1
-"%NSSM%" set %SERVICE_NAME% AppRotateBytes 5242880
-"%NSSM%" set %SERVICE_NAME% Description "ZK Bridge Service - bridge between Odoo and the ZKTeco device"
-"%NSSM%" set %SERVICE_NAME% DisplayName "ZK Bridge Service (Winners Academy)"
+echo Installing portable ZK bridge auto-start task...
+if exist "%SETUP_TASK%" (
+    powershell -ExecutionPolicy Bypass -File "%SETUP_TASK%"
+    if %errorlevel% neq 0 (
+        echo ERROR: Scheduled task creation failed.
+        exit /b 1
+    )
+) else (
+    echo ERROR: Missing task setup script: %SETUP_TASK%
+    exit /b 1
+)
 
-"%NSSM%" start %SERVICE_NAME%
+echo.
+echo Starting ZK bridge watchdog...
+powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command "Start-Process powershell.exe -WindowStyle Hidden -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File','%PORTABLE_LAUNCHER%') | Out-Null"
+
+echo.
+echo Waiting for http://localhost:5000/device/status ...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ok = $false; for ($i = 0; $i -lt 30; $i++) { try { $r = Invoke-RestMethod 'http://localhost:5000/device/status' -TimeoutSec 2; if ($r.success) { $ok = $true; break } } catch {} ; Start-Sleep -Seconds 1 }; if (-not $ok) { exit 1 }"
 if %errorlevel% neq 0 (
     echo.
-    echo WARNING: the service was installed but did not start immediately.
-    echo Check %SCRIPT_DIR%service_stderr.log for details.
+    echo WARNING: the bridge task was created, but the endpoint is not responding yet.
+    echo Check %SCRIPT_DIR%zk_bridge.log and %SCRIPT_DIR%portable_bridge_launcher.log.
+    echo.
 ) else (
     echo.
-    echo SUCCESS: %SERVICE_NAME% installed and started.
+    echo SUCCESS: ZK bridge is ready on localhost:5000.
 )
 
 echo.

@@ -1,31 +1,46 @@
-# ZK Bridge Service — Guide d'installation & Arrière-plan
+# ZK Bridge Portable - Installation et demarrage
 
-## 1. Démarrage en arrière-plan sans fenêtre CMD
-Le pont `ZK Bridge` s'exécute en tant que **Service Windows en arrière-plan** (`ZKBridgeService`).
-- **Aucune fenêtre CMD** n'est affichée à l'écran.
-- Impossible à fermer accidentellement par un employé (Ctrl+C ou fermeture de console).
-- Démarrage automatique au lancement du PC.
+## 1. Principe
+Le pont `ZK Bridge` tourne maintenant en mode **portable auto-restart** :
+- un petit watchdog PowerShell demarre le bridge en arriere-plan
+- une tache planifiee Windows le relance au logon et au deblocage de session
+- si le bridge tombe, il est relance automatiquement
 
-## 2. Notification automatique (Au démarrage & Sortie de veille)
-Un guetteur PowerShell silencieux (`zk_notifier.ps1`) vérifie le statut du service et de la pointeuse :
-- Au **démarrage du PC / Ouverture de session**.
-- À chaque **déverrouillage du PC / Sortie de veille**.
-- Une **petite notification native Windows** apparaît en bas à droite pour confirmer l'état de la connexion.
+Ce mode evite la dependance forte a `nssm.exe` et au service Windows classique.
 
-## 3. Installer / Réinstaller le service Windows
+## 2. Installation
+1. Clic droit sur `install_service.bat`
+2. Choisir **Executer en tant qu'administrateur**
+3. Attendre la fin du script
 
-1. **Clic droit** sur `install_service.bat` → **Exécuter en tant qu'administrateur**.
-2. Le service `ZKBridgeService` est configuré en démarrage automatique avec redémarrage automatique en cas d'erreur.
+Le script :
+- cree le venv local dans `zk_bridge\.venv`
+- installe les dependances Python
+- cree la tache planifiee `Winners_ZKBridge_AutoStart`
+- demarre le watchdog portable
 
-## 4. Vérifier que le service tourne
+## 3. Verification
+Le bridge doit repondre sur :
+- `http://localhost:5000/device/status`
 
-Ouvrir `services.msc` (Win+R → `services.msc`) → chercher **"ZK Bridge Service (Winners Academy)"**. L'état doit être **"En cours d'exécution"**.
+Commandes utiles :
 
-## 5. Logs système
+```powershell
+Get-ScheduledTask Winners_ZKBridge_AutoStart
+Invoke-RestMethod http://localhost:5000/device/status
+```
+
+## 4. Logs
+Les fichiers importants sont :
 
 | Fichier | Contenu |
 |---------|---------|
-| `zk_bridge.log` | Log applicatif principal (pointages, connexions, erreurs) |
-| `service_stdout.log` | Sortie standard du processus (capturé par NSSM) |
-| `service_stderr.log` | Erreurs système (import manquant, crash Python, etc.) |
+| `zk_bridge.log` | Log principal du bridge |
+| `portable_bridge_launcher.log` | Log du watchdog qui relance le bridge |
 
+## 5. En cas de probleme
+Si `device/status` ne repond pas :
+1. Verifier que la tache `Winners_ZKBridge_AutoStart` existe
+2. Regarder `portable_bridge_launcher.log`
+3. Regarder `zk_bridge.log`
+4. Relancer `install_service.bat`
